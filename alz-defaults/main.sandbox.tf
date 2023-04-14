@@ -1,15 +1,15 @@
 # Declare landing zones archetype, based on built-in landing-zones definition baked into provider
 # but adding additional policy assignments
-data "alz_archetype" "landing_zones" {
-  base_archetype = "landing_zones"
-  name           = "landing-zones"
-  display_name   = "landing zones"
+data "alz_archetype" "sandbox" {
+  base_archetype = "sandbox"
+  name           = "sandbox"
+  display_name   = "sandbox"
   parent_id      = data.alzlib_archetype.root.name
 }
 
 # create landing-zones management group and policy/roles
-module "archetype_landing_zones" {
+module "archetype_sandbox" {
   source    = "Azure/alz/azurerm"
   version   = "1.0.0"
-  archetype = data.alzlib_archetype.landing_zones
+  archetype = data.alzlib_archetype.sandbox
 }
