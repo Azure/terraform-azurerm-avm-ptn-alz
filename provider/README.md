@@ -9,6 +9,7 @@ Example of provider configuration:
 provider "alz" {
   custom_lib_directory                   = "./lib"
   custom_lib_overwrites_provider_content = true # if the artifects in the custom lib directory have the same `name` property as those included in the provider, should they overwrite?
+  default_location                       = "useast2"
   default_log_analytics_workspace_id     = "/subscriptions/..."
 }
 ```
