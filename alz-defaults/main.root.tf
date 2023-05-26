@@ -4,6 +4,8 @@ data "alz_archetype" "root" {
   name           = "alz-root"
   display_name   = "ALZ root"
   parent_id      = data.azurerm_client_config.current.tenant_id
+
+  default_log_analytics_workspace_id = module.alz-management.log_analytics_workspace_id
 }
 
 # create root management group and policy/roles

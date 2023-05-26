@@ -9,26 +9,25 @@ The provider will contain (baked into the binary) the ALZ reference architecture
 - Custom policy definitions
 - Policy assignments
 - Custom role definitions
-- Role assignments
 
 Example of provider configuration:
 
 ```terraform
 provider "alz" {
   lib_directory                             = "./lib"
-  lib_directory_overwrites_provider_content = true # if the artifects in the custom lib directory have the same `name` property as those included in the provider, should they overwrite?
+  lib_directory_overwrites_provider_content = true # if the artifacts in the custom lib directory have the same `name` property as those included in the provider, should they overwrite?
   default_location                          = "useast2"
 }
 ```
 
-Items included in the provider must be known at init time, therefore we shouldn't include resoruce ids for things like LA workspaces, etc.
+Items included in the provider must be known at init time, therefore we shouldn't include resource ids for things like LA workspaces, etc.
 These will have to be handled in resources or data sources.
 
 ## constraints
 
 ### policy definition name uniqueness
 
-This is because we must be able to identity a definition from a custom policy set, which will be definied in JSON by resource id, however the full resource id cannot be known, hence we can only take the last segment and look this up in a map within the provider.
+This is because we must be able to identity a definition from a custom policy set, which will be defined in JSON by resource id, however the full resource id cannot be known, hence we can only take the last segment and look this up in a map within the provider.
 
 ## provider schema
 
