@@ -81,7 +81,7 @@ Each policy assignment has the following properties:
 | property                         | type     | description                                                                     | optional |
 |----------------------------------|----------|---------------------------------------------------------------------------------|----------|
 | `message`                        | `string` | The non-compliance message, e.g. `"This is a non-compliant resource."`.         | no       |
-| `policy_definition_reference_id` | `string` | The policy definition reference id, e.g. `"my_ref"`. Note, not the resource id. | no       |
+| `policy_definition_reference_id` | `string` | The policy definition reference id, e.g. `"my_ref"`. Note, not the resource id. | yes      |
 
 ### override schema
 
