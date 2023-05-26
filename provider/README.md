@@ -40,7 +40,7 @@ The proposed provider schema for the `alz_archetype` data source is below:
 | `parent_id` | `string` | The name of the parent management group | no |
 | `base_archetype` | `string` | The name of the archetype that is built into the provider (use `empty` to completely customize a mg). | no |
 | `display_name` | `string` | The display name of the management group | yes |
-| policy_assignments_to_add | `map[string]policy_assignmnet` | The additional or overwritten policy assignments at this scope. See [policy_assigment](#policy_assignment schema). | yes |
+| `policy_assignments_to_add` | `map[string]policy_assignmnet` | The additional or overwritten policy assignments at this scope. See [policy_assigment](#policy_assignment schema). | yes |
 | `policy_assignments_to_remove` | `[]string` | The list of assignments to remove from the archetype | yes |
 | `policy_definitions_to_add` | `[]string` | The list of policy definition names to add from the `lib_directory` | yes |
 | `policy_definitions_to_remove` | `[]string` | The list of policy definition names to remove from the archetype | yes |
