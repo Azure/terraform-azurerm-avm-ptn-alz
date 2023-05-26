@@ -3,7 +3,7 @@
 At the moment this repo demonstrates potential v.next configurations for the ALZ Terraform module.
 It may in future contain module code but it does not at the moment.
 
-Look in the following directories for exampel usages:
+Look in the following directories for example usages:
 
 - [Deploying ALZ defaults](https://github.com/Azure/terraform-azurerm-alz/blob/main/alz-defaults)
 - [Customizing management groups](https://github.com/Azure/terraform-azurerm-alz/tree/main/customizing-mgs)
