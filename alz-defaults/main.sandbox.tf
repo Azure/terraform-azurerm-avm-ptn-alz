@@ -4,12 +4,12 @@ data "alz_archetype" "sandbox" {
   base_archetype = "sandbox"
   name           = "sandbox"
   display_name   = "sandbox"
-  parent_id      = data.alzlib_archetype.root.name
+  parent_id      = data.alz_archetype.root.name
 }
 
 # create landing-zones management group and policy/roles
 module "archetype_sandbox" {
   source    = "Azure/alz/azurerm"
   version   = "1.0.0"
-  archetype = data.alzlib_archetype.sandbox
+  archetype = data.alz_archetype.sandbox
 }

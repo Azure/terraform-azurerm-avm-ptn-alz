@@ -26,6 +26,6 @@ data "alz_archetype" "root" {
 module "archetype_root" {
   source    = "Azure/alz/azurerm"
   version   = "1.0.0"
-  archetype = data.alzlib_archetype.root
+  archetype = data.alz_archetype.root
 }
 ```

@@ -4,12 +4,12 @@ data "alz_archetype" "platform" {
   base_archetype = "platform"
   name           = "platform"
   display_name   = "platform"
-  parent_id      = data.alzlib_archetype.root.name
+  parent_id      = data.alz_archetype.root.name
 }
 
 # create landing-zones management group and policy/roles
 module "archetype_platform" {
   source    = "Azure/alz/azurerm"
   version   = "1.0.0"
-  archetype = data.alzlib_archetype.platform
+  archetype = data.alz_archetype.platform
 }

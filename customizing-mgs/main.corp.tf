@@ -4,7 +4,7 @@ data "alz_archetype" "corp" {
   base_archetype = "corp"
   name           = "corp"
   display_name   = "corp"
-  parent_id      = data.alzlib_archetype.landing_zones.name
+  parent_id      = data.alz_archetype.landing_zones.name
 
   # customization starts here
 
@@ -41,5 +41,5 @@ data "alz_archetype" "corp" {
 module "archetype_corp" {
   source    = "Azure/alz/azurerm"
   version   = "1.0.0"
-  archetype = data.alzlib_archetype.corp
+  archetype = data.alz_archetype.corp
 }
