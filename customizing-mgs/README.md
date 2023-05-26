@@ -29,6 +29,8 @@ data "alz_archetype" "corp" {
       # optional properties
       description      = "description"
       enforcement_mode = "Default"
+      managed_identity = "UserAssigned"
+      managed_identity_ids = ["<my identity resource id>"]
       overrides = [
         {
           kind = "policyEffect"
