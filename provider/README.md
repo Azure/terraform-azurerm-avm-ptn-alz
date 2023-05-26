@@ -15,9 +15,9 @@ Example of provider configuration:
 
 ```terraform
 provider "alz" {
-  custom_lib_directory                   = "./lib"
-  custom_lib_overwrites_provider_content = true # if the artifects in the custom lib directory have the same `name` property as those included in the provider, should they overwrite?
-  default_location                       = "useast2"
+  lib_directory                             = "./lib"
+  lib_directory_overwrites_provider_content = true # if the artifects in the custom lib directory have the same `name` property as those included in the provider, should they overwrite?
+  default_location                          = "useast2"
 }
 ```
 
@@ -36,6 +36,10 @@ The proposed schema for the `provider {}` block.
 
 | property | type | description | optional |
 | - | - | - | - |
+| `lib_directory` | `string` | The location of the custom directory containing custom policy & policy set definitions. | yes |
+| `lib_directory_overwrites_provider_content` | `bool` | Does an artifact with the same name overwrite the provider content? | yes |
+| `default_location` | `string` | The default location for resources contained within this module. | yes |
+| `default_log_analytics_workspace_id` | `string` | The default resource id for the log analytics workspace. | yes |
 
 ## archetype data source schema
 
@@ -49,6 +53,7 @@ The proposed provider schema for the `alz_archetype` data source is below:
 | `display_name` | `string` | The display name of the management group | yes |
 | `policy_assignments_to_add` | `map[string]policy_assignmnet` | The additional or overwritten policy assignments at this scope. See [policy_assigment](#policy_assignment-schema). The map key is the assignment name. | yes |
 | `policy_assignments_to_remove` | `[]string` | The list of assignments to remove from the archetype | yes |
+| `policy_definition_identity`
 | `policy_definitions_to_add` | `[]string` | The list of policy definition names to add from the `lib_directory` | yes |
 | `policy_definitions_to_remove` | `[]string` | The list of policy definition names to remove from the archetype | yes |
 | `policy_set_definitions_to_add` | `[]string` | The list of policy set definition names to add from the `lib_directory` | yes |
@@ -64,6 +69,8 @@ Each policy assignment has the following properties:
 | `display_name` | `string` | The display name of the policy assignment. | no |
 | `policy_definition_name` | `string` | The name of the policy definition. | no |
 | `description` | `string` | The description of the policy assignment. | yes |
+| `managed_identity` | `string` | The managed identity type, e.g. `"SystemAssigned", "UserAssigned"`. | yes |
+| `managed_identity_ids` | `[]string` | The user managed identity resource ids type. | yes |
 | `enforcement_mode` | `string` | The enforcement_mode of the policy assignment, "Default" or "DoNotEnforce". | yes |
 | `description` | `string` | The description of the policy assignment. | yes |
 | `overrides` | `[]override` | A list of policy assignment overrides. See [override](#override-schema). | yes |
@@ -74,7 +81,7 @@ Each policy assignment has the following properties:
 
 | property | type | description | optional |
 | - | - | - | - |
-| `kind` | `string` | The override kind, e.g. "`policyEffect`". | no |
+| `kind` | `string` | The override kind, e.g. `"policyEffect"`. | no |
 | `selector` | `selector` | The selector, see [selector](#selector-schema). | no |
 | `value` | `string` | The value to be used in the override, e.g. `"Disabled"`. | no |
 
