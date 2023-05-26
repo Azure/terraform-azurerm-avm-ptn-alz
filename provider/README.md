@@ -38,8 +38,6 @@ The proposed schema for the `provider {}` block.
 | `lib_directory`                             | `string` | The location of the custom directory containing custom policy & policy set definitions. | yes      |
 | `lib_directory_overwrites_provider_content` | `bool`   | Does an artifact with the same name overwrite the provider content?                     | yes      |
 | `default_location`                          | `string` | The default location for resources contained within this module.                        | yes      |
-| `default_log_analytics_workspace_id`        | `string` | The default resource id for the log analytics workspace.                                | yes      |
-| `default_non_compliance_message`            | `string` | The default non-compliance message for policy assignments.                              | yes      |
 
 ## archetype data source schema
 
@@ -51,6 +49,8 @@ The proposed provider schema for the `alz_archetype` data source is below:
 | `parent_id`                    | `string`                       | The name of the parent management group                                                                                                                | no       |
 | `base_archetype`               | `string`                       | The name of the archetype that is built into the provider (use `empty` to completely customize a mg).                                                  | no       |
 | `display_name`                 | `string`                       | The display name of the management group                                                                                                               | yes      |
+| `default_log_analytics_workspace_id`        | `string` | The default resource id for the log analytics workspace.                                | yes      |
+| `default_non_compliance_message`            | `string` | The default non-compliance message for policy assignments.                              | yes      |
 | `policy_assignments_to_add`    | `map[string]policy_assignmnet` | The additional or overwritten policy assignments at this scope. See [policy_assigment](#policy_assignment-schema). The map key is the assignment name. | yes      |
 | `policy_assignments_to_remove` | `[]string`                     | The list of assignments to remove from the archetype                                                                                                   | yes      |
 | `policy_definition_identity`
