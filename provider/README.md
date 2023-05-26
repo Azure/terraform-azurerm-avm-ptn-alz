@@ -66,27 +66,29 @@ Each policy assignment has the following properties:
 | `description` | `string` | The description of the policy assignment. | yes |
 | `enforcement_mode` | `string` | The enforcement_mode of the policy assignment, "Default" or "DoNotEnforce". | yes |
 | `description` | `string` | The description of the policy assignment. | yes |
-| `overrides` | `[]override` | A list of policy assignment overrides. See [override](#override-schema) | yes |
+| `overrides` | `[]override` | A list of policy assignment overrides. See [override](#override-schema). | yes |
 | `parameters` | `map[string]any` | A map of the policy parameters keyed by parameter name. | yes |
-| `resource_selectors` | `map[string]resource_selector` | A map of resource selectors, keyed by the selector name. See [resource_selector](#resource_selector-schema) | yes |
+| `resource_selectors` | `map[string][]selector` | A map of a list of resource selectors, keyed by the selector name. See [selector](#selector-schema). | yes |
 
 ### override schema
 
 | property | type | description | optional |
 | - | - | - | - |
 | `kind` | `string` | The override kind, e.g. "`policyEffect`". | no |
-| `selector` | `selector` | The selector, see [selector](#selector schema). | no |
+| `selector` | `selector` | The selector, see [selector](#selector-schema). | no |
 | `value` | `string` | The value to be used in the override, e.g. `"Disabled"`. | no |
 
-### resource_selector schema
+### selector schema
 
 | property | type | description | optional |
 | - | - | - | - |
-| `kind` | `string` | The override kind, e.g. "`policyEffect`". | no |
-| `selector` | `selector` | The selector, see [selector](#selector schema). | no |
-| `value` | `string` | The value to be used in the override, e.g. `"Disabled"`. | no |
+| `in` | `[]string` | A list of values to match. | yes (conflicts with `notIn`) |
+| `kind` | `string` | The selector kind, e.g. `"resourceLocation"` | no |
+| `notIn` | `[]string` | The values to not match. | Yes (conflicts with `in`) |
 
 ### role_assignment schema
 
 | property | type | description | optional |
 | - | - | - | - |
+| `definition` | `string` | The definition name or resource id | no |
+| `principal_id` | `string` | The AAD object id to assign. | no |
