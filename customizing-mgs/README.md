@@ -25,7 +25,6 @@ data "alz_archetype" "corp" {
       # required properties
       display_name                            = "new assignment"
       policy_definition_name                  = "my-definition"
-      policy_definition_management_group_name = "root" # only required in case of duplicate names
 
       # optional properties
       description      = "description"

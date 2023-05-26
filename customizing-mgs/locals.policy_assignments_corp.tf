@@ -3,9 +3,8 @@ locals {
     # new-assignment
     new-assignment = {
       # required properties
-      display_name                            = "new assignment"
-      policy_definition_name                  = "my-definition"
-      policy_definition_management_group_name = "root" # only required in case of duplicate names
+      display_name            = "new assignment"
+      policy_definition_name  = "my-definition"
 
       # optional properties
       description      = "description"
