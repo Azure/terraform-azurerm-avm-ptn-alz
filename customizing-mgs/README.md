@@ -64,14 +64,25 @@ data "alz_archetype" "corp" {
     "my-new-definition"
   ]
 
-  policy_set_definitions_to_add = [
-    "my-new-set-definition"
-  ]
-
   # these refer to the definition name (id) that is defined in the archetype from the provider
   policy_definitions_to_remove = [
     "my-unwanted-definition",
     "my-other-unwanted-definition"
+  ]
+
+  policy_set_definitions_to_add = [
+    "my-new-set-definition"
+  ]
+
+  policy_set_definitions_to_aremove = [
+    "my-unwanted-set-definition"
+  ]
+
+  role_assignments_to_add = [
+    {
+      "definition"   = "Contributor",
+      "principal_id" = "00000000-0000-0000-0000-0000000000"
+    }
   ]
 }
 
