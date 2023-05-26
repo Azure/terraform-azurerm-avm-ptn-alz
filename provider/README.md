@@ -46,6 +46,8 @@ The proposed provider schema for the `alz_archetype` data source is below:
 | `policy_definitions_to_remove` | `[]string` | The list of policy definition names to remove from the archetype | yes |
 | `policy_set_definitions_to_add` | `[]string` | The list of policy set definition names to add from the `lib_directory` | yes |
 | `policy_set_definitions_to_remove` | `[]string` | The list of policy set definition names to remove from the archetype | yes |
-
+| `role_assignments_to_add` | `[]role_assignment` a list of the role assignments to add at scope | See[role_assignment](#role_assignment schema) | yes |
 
 ### policy_assignment schema
+
+### role_assignment schema
