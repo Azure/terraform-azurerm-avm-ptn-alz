@@ -17,8 +17,8 @@ data "alz_archetype" "corp" {
 
   # This is a map of new assignments to create.
   # We do not read from JSON and instead declare the required inputs here.
-  # Reason being that if we use JSON files then we have to augment the data to support things like user assigned managed identity.
-  # This is best done withing Terraform, rather than using `template_file()`.
+  # Reason being that if we use JSON files then we have to augment the data to support data that comes from other Terraform resoruces.
+  # This is best done within Terraform, rather than using `template_file()`.
   # Will also override existing assignments with the same name.
   policy_assignments_to_add = {
     new-assignment = {
