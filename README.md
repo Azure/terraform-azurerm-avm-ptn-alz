@@ -1,9 +1,8 @@
 # terraform-azurerm-alz
 
 At the moment this repo demonstrates potential v.next configurations for the ALZ Terraform module.
-It may in future contain module code but it does not at the moment.
 
-Look in the following directories for example usages:
+We have provided three directories as examples:
 
 - [Deploying ALZ defaults](https://github.com/Azure/terraform-azurerm-alz/blob/main/alz-defaults)
 - [Customizing management groups](https://github.com/Azure/terraform-azurerm-alz/tree/main/customizing-mgs)
@@ -25,8 +24,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
+trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
