@@ -39,6 +39,7 @@ The proposed schema for the `provider {}` block.
 | `lib_directory_overwrites_provider_content` | `bool`   | Does an artifact with the same name overwrite the provider content?                     | yes      |
 | `default_location`                          | `string` | The default location for resources contained within this module.                        | yes      |
 | `default_log_analytics_workspace_id`        | `string` | The default resource id for the log analytics workspace.                                | yes      |
+| `default_non_compliance_message`            | `string` | The default non-compliance message for policy assignments workspace.                    | yes      |
 
 ## archetype data source schema
 
