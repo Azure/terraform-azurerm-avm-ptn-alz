@@ -53,7 +53,7 @@ The proposed provider schema for the `alz_archetype` data source is below:
 | `policy_definitions_to_remove` | `[]string` | The list of policy definition names to remove from the archetype | yes |
 | `policy_set_definitions_to_add` | `[]string` | The list of policy set definition names to add from the `lib_directory` | yes |
 | `policy_set_definitions_to_remove` | `[]string` | The list of policy set definition names to remove from the archetype | yes |
-| `role_assignments_to_add` | `[]role_assignment` a list of the role assignments to add at scope | See[role_assignment](#role_assignment-schema) | yes |
+| `role_assignments_to_add` | `[]role_assignment` a list of the role assignments to add at scope | See [role_assignment](#role_assignment-schema) | yes |
 
 ### policy_assignment schema
 
@@ -66,7 +66,7 @@ Each policy assignment has the following properties:
 | `description` | `string` | The description of the policy assignment. | yes |
 | `enforcement_mode` | `string` | The enforcement_mode of the policy assignment, "Default" or "DoNotEnforce". | yes |
 | `description` | `string` | The description of the policy assignment. | yes |
-| `overrides` | `[]override` | A list of policy assignment overrides. | yes |
+| `overrides` | `[]override` | A list of policy assignment overrides. See [override](#override-schema) | yes |
 | `parameters` | `map[string]any` | A map of the policy parameters keyed by parameter name. | yes |
 | `resource_selectors` | `map[string]resource_selector` | A map of resource selectors, keyed by the selector name. See [resource_selector](#resource_selector-schema) | yes |
 
