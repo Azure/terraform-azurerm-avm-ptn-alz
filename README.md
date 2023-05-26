@@ -4,8 +4,8 @@ At the moment this repo demonstrates potential v.next configurations for the ALZ
 
 The new proposed architecture contains two items:
 
-1. A new provider to perform the necessary data processing for policies, role assignments and management groups.
-2. A new lightweight module, which takes the outputs of the provider and then deploys the resources using standard Azure providers (AzureRM/AzAPI).
+1. A new *provider* to perform the necessary data processing for policies, role assignments and management groups.
+2. A new lightweight *module*, which takes the outputs of the provider and then deploys the resources using standard Azure providers (AzureRM/AzAPI).
 
 None of these items exist yet! But we would like to show you how they could work to get feedback 😃
 
