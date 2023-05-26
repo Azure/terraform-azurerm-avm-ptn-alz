@@ -4,7 +4,6 @@ This example shows how we might customize a management group.
 The input schema may look cumbersome, but we can use locals, etc. to split the contents into multiple files.
 See the `main.tf` and associated `locals.policy_assignments_corp.tf` for details.
 
-
 ```terraform
 # Declare landing zones archetype, based on built-in landing-zones definition baked into provider
 # but adding additional policy assignments
