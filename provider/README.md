@@ -3,6 +3,14 @@
 A new provider could be used to process the data required to create resources and their dependencies.
 This provider would be configured using the `provider {}` block.
 
+The provider will contain (baked into the binary) the ALZ reference architecture, consisting of:
+
+- Management group archetypes
+- Custom policy definitions
+- Policy assignments
+- Custom role definitions
+- Role assignments
+
 Example of provider configuration:
 
 ```terraform
