@@ -2,6 +2,11 @@
 
 At the moment this repo demonstrates potential v.next configurations for the ALZ Terraform module.
 
+The new proposed architecture contains two items:
+
+1. A new provider to perform the necessary data processing for policies, role assignments and management groups.
+2. A new lightweight module, which takes the outputs of the provider and then deploys the resources using standard Azure providers (AzureRM/AzAPI).
+
 We have provided three directories as examples:
 
 - [Deploying ALZ defaults](https://github.com/Azure/terraform-azurerm-alz/blob/main/alz-defaults)
