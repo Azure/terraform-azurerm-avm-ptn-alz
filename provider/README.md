@@ -1,4 +1,4 @@
-# provider
+# Provider
 
 A new provider could be used to process the data required to create resources and their dependencies.
 This provider would be configured using the `provider {}` block.
@@ -23,13 +23,13 @@ provider "alz" {
 Items included in the provider must be known at init time, therefore we shouldn't include resource ids for things like LA workspaces, etc.
 These will have to be handled in resources or data sources.
 
-## constraints
+## Constraints
 
-### policy definition name uniqueness
+### Policy definition name uniqueness
 
 This is because we must be able to identity a definition from a custom policy set, which will be defined in JSON by resource id, however the full resource id cannot be known, hence we can only take the last segment and look this up in a map within the provider.
 
-## provider schema
+## Provider schema
 
 The proposed schema for the `provider {}` block.
 
@@ -39,7 +39,7 @@ The proposed schema for the `provider {}` block.
 | `lib_directory_overwrites_provider_content` | `bool`   | Does an artifact with the same name overwrite the provider content?                     | yes      |
 | `default_location`                          | `string` | The default location for resources contained within this module.                        | yes      |
 
-## archetype data source schema
+## Archetype data source schema
 
 The proposed provider schema for the `alz_archetype` data source is below:
 
@@ -59,14 +59,15 @@ The proposed provider schema for the `alz_archetype` data source is below:
 | `policy_set_definitions_to_remove`   | `[]string`                     | The list of policy set definition names to remove from the archetype                                                                                   | yes      |
 | `role_assignments_to_add`            | `[]role_assignment`            | A list of the role assignments to add at scope. See [role_assignment](#role_assignment-schema)                                                         | yes      |
 
-### policy_assignment schema
+### `policy_assignment` schema
 
 Each policy assignment has the following properties:
 
 | property                  | type                       | description                                                                                          | optional |
 |---------------------------|----------------------------|------------------------------------------------------------------------------------------------------|----------|
 | `display_name`            | `string`                   | The display name of the policy assignment.                                                           | no       |
-| `policy_definition_name`  | `string`                   | The name of the policy definition.                                                                   | no       |
+| `policy_definition_name`  | `string`                   | The name of the policy definition. Conflicts with `policy_definition_name`.                          | yes      |
+| `policy_definition_id`    | `string`                   | The resource id of the policy definition. Conflicts with `policy_definition_name`.                   | yes      |
 | `description`             | `string`                   | The description of the policy assignment.                                                            | yes      |
 | `enforcement_mode`        | `string`                   | The enforcement_mode of the policy assignment, "Default" or "DoNotEnforce".                          | yes      |
 | `managed_identity`        | `string`                   | The managed identity type, e.g. `"SystemAssigned", "UserAssigned"`.                                  | yes      |
@@ -76,14 +77,14 @@ Each policy assignment has the following properties:
 | `parameters`              | `map[string]any`           | A map of the policy parameters keyed by parameter name.                                              | yes      |
 | `resource_selectors`      | `map[string][]selector`    | A map of a list of resource selectors, keyed by the selector name. See [selector](#selector-schema). | yes      |
 
-### non_compliance_message schema
+### `non_compliance_message` schema
 
 | property                         | type     | description                                                                     | optional |
 |----------------------------------|----------|---------------------------------------------------------------------------------|----------|
 | `message`                        | `string` | The non-compliance message, e.g. `"This is a non-compliant resource."`.         | no       |
 | `policy_definition_reference_id` | `string` | The policy definition reference id, e.g. `"my_ref"`. Note, not the resource id. | yes      |
 
-### override schema
+### `override` schema
 
 | property   | type       | description                                              | optional |
 |------------|------------|----------------------------------------------------------|----------|
@@ -91,7 +92,7 @@ Each policy assignment has the following properties:
 | `selector` | `selector` | The selector, see [selector](#selector-schema).          | no       |
 | `value`    | `string`   | The value to be used in the override, e.g. `"Disabled"`. | no       |
 
-### selector schema
+### `selector` schema
 
 | property | type       | description                                  | optional                     |
 |----------|------------|----------------------------------------------|------------------------------|
@@ -99,7 +100,7 @@ Each policy assignment has the following properties:
 | `kind`   | `string`   | The selector kind, e.g. `"resourceLocation"` | no                           |
 | `notIn`  | `[]string` | The values to not match.                     | Yes (conflicts with `in`)    |
 
-### role_assignment schema
+### `role_assignment` schema
 
 | property       | type     | description                        | optional |
 |----------------|----------|------------------------------------|----------|
