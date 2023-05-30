@@ -66,7 +66,7 @@ Each policy assignment has the following properties:
 | property                  | type                       | description                                                                                          | optional |
 |---------------------------|----------------------------|------------------------------------------------------------------------------------------------------|----------|
 | `display_name`            | `string`                   | The display name of the policy assignment.                                                           | no       |
-| `policy_definition_name`  | `string`                   | The name of the policy definition. Conflicts with `policy_definition_name`.                          | yes      |
+| `policy_definition_name`  | `string`                   | The name of the policy definition. Conflicts with `policy_definition_id`.                            | yes      |
 | `policy_definition_id`    | `string`                   | The resource id of the policy definition. Conflicts with `policy_definition_name`.                   | yes      |
 | `description`             | `string`                   | The description of the policy assignment.                                                            | yes      |
 | `enforcement_mode`        | `string`                   | The enforcement_mode of the policy assignment, "Default" or "DoNotEnforce".                          | yes      |
