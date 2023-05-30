@@ -1,6 +1,7 @@
 # terraform-azurerm-alz
 
 At the moment this repo demonstrates potential v.next configurations for the ALZ Terraform module.
+We have adopted a more modular approach and we hope we have addressed key asks, such as the ability to fully customise the management group hierarchy.
 
 The new proposed architecture contains two items:
 
