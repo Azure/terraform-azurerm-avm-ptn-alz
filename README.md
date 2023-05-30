@@ -3,6 +3,8 @@
 At the moment this repo demonstrates potential v.next configurations for the ALZ Terraform module.
 We have adopted a more modular approach and we hope we have addressed key asks, such as the ability to fully customise the management group hierarchy.
 
+The ALZ module proposal is focussed on management groups and policies, with separate modules being created for networking and management.
+
 The new proposed architecture contains two items:
 
 1. A new *provider* to perform the necessary data processing for policies, role assignments and management groups.
