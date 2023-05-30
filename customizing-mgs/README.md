@@ -8,7 +8,7 @@ See the `main.tf` and associated `locals.policy_assignments_corp.tf` for details
 # Declare landing zones archetype, based on built-in landing-zones definition baked into provider
 # but adding additional policy assignments
 data "alz_archetype" "corp" {
-  base_archetype = "corp"
+  base_archetype = "corp" # this is the built-in archetype baked into the provider, use "empty" to start from scratch
   name           = "corp"
   display_name   = "corp"
   parent_id      = data.alz_archetype.landing_zones.name
