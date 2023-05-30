@@ -1,19 +1,23 @@
 # Declare landing zones archetype, based on built-in landing-zones definition baked into provider
 # but adding additional policy assignments
 data "alz_archetype" "corp" {
-  base_archetype = "corp"
+  base_archetype = "corp" # This is the built-in archetype that is baked into the provider.
+                          # We can use "empty" to create a completely custom archetype.
   name           = "corp"
   display_name   = "corp"
-  parent_id      = data.alz_archetype.landing_zones.name
+  parent_id      = data.alz_archetype.landing_zones.landing_zones
 
   # customization starts here
 
   # This is a map of new assignments to create, this works similarly to the current module
-  # We do not read from JSON and instead declare the required inputs here.
-  # Reason being that if we use JSON files then we have to augment the data to support things like user assigned managed identity.
-  # This is best done withing Terraform, rather than using `template_file()`.
-  # Will also override existing assignments with the same name.
+  # We do not read from JSON and instead declare the required inputs here so that we can use
+  # the Terraform resource graph.
+  # If we use JSON files then we either have to augment the JSON using `template_file()`,
+  # which is inefficient, or use additional data source inputs to augment the data.
+  # Using additional inputs means there is more than one way to achieve the same thing,
+  # we have had feedback that this is confusing in the current module and are moving away from this approach.
   policy_assignments_to_add = local.policy_assignments_to_add_corp
+  # Note: The above can also override existing assignments with the same name.
 
   # these refer to the assignment name (id) that is defined in the archetype from the provider
   policy_assignments_to_remove = [
