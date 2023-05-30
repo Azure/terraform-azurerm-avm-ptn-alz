@@ -17,7 +17,8 @@ data "alz_archetype" "corp" {
 
   # This is a map of new assignments to create.
   # We do not read from JSON and instead declare the required inputs here.
-  # Reason being that if we use JSON files then we have to augment the data to support data that comes from other Terraform resources.
+  # Reason being that if we use JSON files then we have to augment this to support
+  # data that comes from other Terraform resources.
   # This is best done within Terraform, rather than using `template_file()`.
   # Will also override existing assignments with the same name.
   policy_assignments_to_add = {
@@ -61,6 +62,7 @@ data "alz_archetype" "corp" {
     "my-other-unwanted-assignment"
   ]
 
+  # these come from the lib directory specified in the provider block
   policy_definitions_to_add = [
     "my-new-definition"
   ]
@@ -71,6 +73,7 @@ data "alz_archetype" "corp" {
     "my-other-unwanted-definition"
   ]
 
+  # these come from the lib directory specified in the provider block
   policy_set_definitions_to_add = [
     "my-new-set-definition"
   ]

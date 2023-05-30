@@ -63,19 +63,19 @@ The proposed provider schema for the `alz_archetype` data source is below:
 
 Each policy assignment has the following properties:
 
-| property                  | type                       | description                                                                                          | optional |
-|---------------------------|----------------------------|------------------------------------------------------------------------------------------------------|----------|
-| `display_name`            | `string`                   | The display name of the policy assignment.                                                           | no       |
-| `policy_definition_name`  | `string`                   | The name of the policy definition. Conflicts with `policy_definition_id`.                            | yes      |
-| `policy_definition_id`    | `string`                   | The resource id of the policy definition. Conflicts with `policy_definition_name`.                   | yes      |
-| `description`             | `string`                   | The description of the policy assignment.                                                            | yes      |
-| `enforcement_mode`        | `string`                   | The enforcement_mode of the policy assignment, "Default" or "DoNotEnforce".                          | yes      |
-| `managed_identity`        | `string`                   | The managed identity type, e.g. `"SystemAssigned", "UserAssigned"`.                                  | yes      |
-| `managed_identity_ids`    | `[]string`                 | The user managed identity resource ids type.                                                         | yes      |
-| `non_compliance_messages` | `[]non_compliance_message` | A list of non-compliance messages. See [non_compliance_message](#non_compliance_message-schema).     | yes      |
-| `overrides`               | `[]override`               | A list of policy assignment overrides. See [override](#override-schema).                             | yes      |
-| `parameters`              | `map[string]any`           | A map of the policy parameters keyed by parameter name.                                              | yes      |
-| `resource_selectors`      | `map[string][]selector`    | A map of a list of resource selectors, keyed by the selector name. See [selector](#selector-schema). | yes      |
+| property                  | type                       | description                                                                                          | optional                                       |
+|---------------------------|----------------------------|------------------------------------------------------------------------------------------------------|------------------------------------------------|
+| `display_name`            | `string`                   | The display name of the policy assignment.                                                           | no                                             |
+| `policy_definition_name`  | `string`                   | The name of the policy definition.                                                                   | yes  (conflicts with `policy_definition_id`)   |
+| `policy_definition_id`    | `string`                   | The resource id of the policy definition.                                                            | yes  (conflicts with `policy_definition_name`) |
+| `description`             | `string`                   | The description of the policy assignment.                                                            | yes                                            |
+| `enforcement_mode`        | `string`                   | The enforcement_mode of the policy assignment, "Default" or "DoNotEnforce".                          | yes                                            |
+| `managed_identity`        | `string`                   | The managed identity type, e.g. `"SystemAssigned", "UserAssigned"`.                                  | yes                                            |
+| `managed_identity_ids`    | `[]string`                 | The user managed identity resource ids type.                                                         | yes                                            |
+| `non_compliance_messages` | `[]non_compliance_message` | A list of non-compliance messages. See [non_compliance_message](#non_compliance_message-schema).     | yes                                            |
+| `overrides`               | `[]override`               | A list of policy assignment overrides. See [override](#override-schema).                             | yes                                            |
+| `parameters`              | `map[string]any`           | A map of the policy parameters keyed by parameter name.                                              | yes                                            |
+| `resource_selectors`      | `map[string][]selector`    | A map of a list of resource selectors, keyed by the selector name. See [selector](#selector-schema). | yes                                            |
 
 ### `non_compliance_message` schema
 
