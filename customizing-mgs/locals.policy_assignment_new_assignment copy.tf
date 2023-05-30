@@ -11,9 +11,8 @@ locals {
       {
         kind = "policyEffect"
         selector = {
-          in     = [""]
           kind   = "resourceLocation"
-          not_in = [""]
+          not_in = ["northeurope"]
         }
         value = "Disabled"
       }
@@ -23,9 +22,8 @@ locals {
     }
     resource_selectors = {
       name = {
-        in     = [""]
+        in     = ["westeurope"]
         kind   = "resourceLocation"
-        not_in = [""]
       }
     }
   }
