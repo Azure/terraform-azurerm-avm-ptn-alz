@@ -127,7 +127,34 @@ resource "azurerm_management_group_policy_assignment" "this" {
   }
 }
 
-# resource "azurerm_role_assignment" "policy" {
-#   for_each     =
-#   principal_id = azurerm_management_group_policy_assignment.this.identity[0].principal_id
-# }
+resource "azurerm_role_assignment" "policy" {
+  for_each = local.policy_role_assignments
+
+  principal_id       = try(one(azurerm_management_group_policy_assignment.this[each.value.policy_assignment_name].identity).principal_id, "")
+  scope              = each.value.scope
+  role_definition_id = each.value.role_definition_id
+  description        = "Created for policy assignment ${each.key} at scope ${azurerm_management_group.this.id}"
+}
+
+resource "azurerm_role_definition" "this" {
+  for_each = local.alz_role_definitions_decoded
+
+  name        = each.key
+  description = try(each.value.properties.description, null)
+  scope       = azurerm_management_group.this.id
+  permissions {
+    actions          = try(one(each.value.properties.permissions).actions, [])
+    not_actions      = try(one(each.value.properties.permissions).notActions, [])
+    data_actions     = try(one(each.value.properties.permissions).dataActions, [])
+    not_data_actions = try(one(each.value.properties.permissions).notDataActions, [])
+  }
+  assignable_scopes = try(each.value.properties.assignableScopes, [])
+}
+
+resource "azurerm_role_assignment" "this" {
+  for_each             = var.role_assignments
+  principal_id         = each.value.principal_id
+  role_definition_id   = each.value.role_definition_id != "" ? each.value.role_definition_id : null
+  role_definition_name = each.value.role_definition_name != "" ? each.value.role_definition_name : null
+  description          = each.value.description
+}

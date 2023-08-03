@@ -41,3 +41,29 @@ variable "default_log_analytics_workspace_id" {
 DESCRIPTION
   default     = null
 }
+
+variable "role_assignments" {
+  type = map(object({
+    role_definition_id   = optional(string, "")
+    role_definition_name = optional(string, "")
+    principal_id         = string
+    description          = optional(string, null)
+  }))
+
+  validation {
+    condition = alltrue([
+      for _, v in var.role_assignments : alltrue([
+        !(length(v.role_definition_id) > 0 && length(v.role_definition_name) > 0),
+        !(length(v.role_definition_id) == 0 && length(v.role_definition_name) == 0)
+      ])
+    ])
+    error_message = "Specify one (and only one) of `role_definition_id` and `role_definition_name`."
+  }
+
+  validation {
+    condition     = length(toset(values(var.role_assignments))) == length(var.role_assignments)
+    error_message = "Role assignment values must not be duplicates."
+  }
+
+  default = {}
+}
