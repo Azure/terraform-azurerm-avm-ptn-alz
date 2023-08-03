@@ -12,7 +12,7 @@ data "alz_archetype" "this" {
 resource "azurerm_management_group" "this" {
   name                       = data.alz_archetype.this.id
   display_name               = data.alz_archetype.this.display_name
-  parent_management_group_id = "/providers/Microsoft.Management/managementGroups/${data.alz_archetype.this.parent_id}"
+  parent_management_group_id = format("/providers/Microsoft.Management/managementGroups/%s", data.alz_archetype.this.parent_id)
 }
 
 resource "azurerm_policy_definition" "this" {
