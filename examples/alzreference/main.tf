@@ -16,10 +16,21 @@ provider "azurerm" {
   features {}
 }
 
+resource "azurerm_resource_group" "law_rg" {
+  name     = "rg-law"
+  location = "eastus2"
+}
+
+resource "azurerm_log_analytics_workspace" "law" {
+  name                = "law-alz"
+  location            = azurerm_resource_group.law_rg.location
+  resource_group_name = azurerm_resource_group.law_rg.name
+}
+
 // These locals help keep the code DRY
 locals {
   default_location                   = "eastus2"
-  default_log_analytics_workspace_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/placeholder/providers/Microsoft.OperationalInsights/workspaces/placeholder"
+  default_log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
 }
 
 // This allows us to get the tenant id

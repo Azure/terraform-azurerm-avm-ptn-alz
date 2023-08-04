@@ -26,7 +26,7 @@ resource "azurerm_policy_definition" "this" {
   management_group_id = azurerm_management_group.this.id
   metadata            = jsonencode(try(each.value.properties.metadata, {}))
   policy_rule         = jsonencode(try(each.value.properties.policyRule, {}))
-  parameters          = jsonencode(try(each.value.properties.parameters, {}))
+  parameters          = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
 }
 
 resource "azurerm_policy_set_definition" "this" {
@@ -37,7 +37,9 @@ resource "azurerm_policy_set_definition" "this" {
   policy_type         = try(each.value.properties.policyType, "Custom")
   management_group_id = azurerm_management_group.this.id
   metadata            = jsonencode(try(each.value.properties.metadata, {}))
-  parameters          = jsonencode(try(each.value.properties.parameters, {}))
+  parameters          = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
+
+  depends_on = [azurerm_policy_definition.this]
 
   dynamic "policy_definition_reference" {
     for_each = try(each.value.properties.policyDefinitions, [])
@@ -72,13 +74,17 @@ resource "azurerm_management_group_policy_assignment" "this" {
   description          = try(each.value.properties.description, "")
   enforce              = try(each.value.properties.enforce, "Default") == "Default" ? true : false
   metadata             = jsonencode(try(each.value.properties.metadata, {}))
+  parameters           = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
+  location             = try(each.value.location, null)
+
+  depends_on = [azurerm_policy_definition.this, azurerm_policy_set_definition.this]
 
   dynamic "identity" {
-    for_each = try(each.value.properties.identity, [])
+    for_each = try(each.value.identity.type, "None") != "None" ? [each.value.identity] : []
 
     content {
       type         = identity.value.type
-      identity_ids = identity.value.type == "UserAssigned" ? one(keys(identity.value.userAssignedIdentities)) : null
+      identity_ids = identity.value.type == "SystemAssigned" ? null : toset(keys(identity.value.userAssignedIdentities))
     }
   }
 
