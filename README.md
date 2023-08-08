@@ -23,7 +23,6 @@ The following providers are used by this module:
 
 No modules.
 
-<!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
 The following input variables are required:
@@ -107,7 +106,6 @@ The following resources are used by this module:
 
 No outputs.
 
-<!-- markdownlint-enable -->
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a

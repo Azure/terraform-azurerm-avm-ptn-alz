@@ -29,14 +29,12 @@ content: |-
 
   {{ .Modules }}
 
-  <!-- markdownlint-disable MD013 -->
   {{ .Inputs }}
 
   {{ .Resources }}
 
   {{ .Outputs }}
 
-  <!-- markdownlint-enable -->
   {{ .Footer }}
 
 output:
