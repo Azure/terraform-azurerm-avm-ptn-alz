@@ -1,3 +1,7 @@
+data "alz_archetype_keys" "this" {
+  base_archetype = var.base_archetype
+}
+
 data "alz_archetype" "this" {
   id = var.id
   defaults = {
@@ -33,7 +37,7 @@ resource "azurerm_policy_set_definition" "this" {
   for_each = local.alz_policy_set_definitions_decoded
 
   name                = each.key
-  display_name        = each.value.properties.displayName
+  display_name        = try(each.value.properties.displayName, "")
   policy_type         = try(each.value.properties.policyType, "Custom")
   management_group_id = azurerm_management_group.this.id
   metadata            = jsonencode(try(each.value.properties.metadata, {}))
@@ -139,7 +143,7 @@ resource "azurerm_role_assignment" "policy" {
   principal_id       = try(one(azurerm_management_group_policy_assignment.this[each.value.policy_assignment_name].identity).principal_id, "")
   scope              = each.value.scope
   role_definition_id = each.value.role_definition_id
-  description        = "Created for policy assignment ${each.key} at scope ${azurerm_management_group.this.id}"
+  description        = "Created for policy assignment ${each.value.policy_assignment_name} at scope ${azurerm_management_group.this.id}"
 }
 
 resource "azurerm_role_definition" "this" {
