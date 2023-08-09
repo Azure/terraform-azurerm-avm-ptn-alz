@@ -140,13 +140,13 @@ resource "azurerm_management_group_policy_assignment" "this" {
 resource "azurerm_role_assignment" "policy" {
   for_each = local.policy_role_assignments
 
-  principal_id = try(one(azurerm_management_group_policy_assignment.this[each.value.policy_assignment_name].identity).principal_id, "")
+  principal_id = try(one(azurerm_management_group_policy_assignment.this[each.value.assignment_name].identity).principal_id, "")
   scope        = each.value.scope
 
   # This is a workaround to set the resource id for a built-in role definition to the scope of the subscription,
   # if the scope of the assignment begins with a subscription resource id.
   role_definition_id = can(regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}", each.value.scope)) ? "${regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}", each.value.scope)}${each.value.role_definition_id}" : each.value.role_definition_id
-  description        = "Created for policy assignment ${each.value.policy_assignment_name} at scope ${azurerm_management_group.this.id}"
+  description        = "Created for policy assignment ${each.value.assignment_name} at scope ${azurerm_management_group.this.id}"
 }
 
 resource "azurerm_role_definition" "this" {
