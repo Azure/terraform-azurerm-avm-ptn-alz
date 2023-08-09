@@ -104,7 +104,11 @@ The following resources are used by this module:
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_management_group_name"></a> [management\_group\_name](#output\_management\_group\_name)
+
+Description: The id of the management group.
 
 ## Contributing
 
