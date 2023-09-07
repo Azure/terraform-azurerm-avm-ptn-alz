@@ -11,11 +11,6 @@ module "alz_management" {
   resource_group_name          = "rg-${random_pet.this.id}"
 }
 
-# These locals help keep the code DRY
-locals {
-  default_location = "eastus2"
-}
-
 # This allows us to get the tenant id
 data "azurerm_client_config" "current" {}
 
