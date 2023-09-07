@@ -19,9 +19,19 @@ The following providers are used by this module:
 
 - <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm)
 
-## Modules
+## Resources
 
-No modules.
+The following resources are used by this module:
+
+- [azurerm_management_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
+- [azurerm_management_group_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_policy_assignment) (resource)
+- [azurerm_policy_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition) (resource)
+- [azurerm_policy_set_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_set_definition) (resource)
+- [azurerm_role_assignment.policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_role_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
+- [alz_archetype.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype) (data source)
+- [alz_archetype_keys.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype_keys) (data source)
 
 ## Required Inputs
 
@@ -88,20 +98,6 @@ map(object({
 
 Default: `{}`
 
-## Resources
-
-The following resources are used by this module:
-
-- [azurerm_management_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
-- [azurerm_management_group_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_policy_assignment) (resource)
-- [azurerm_policy_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition) (resource)
-- [azurerm_policy_set_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_set_definition) (resource)
-- [azurerm_role_assignment.policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_role_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
-- [alz_archetype.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype) (data source)
-- [alz_archetype_keys.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype_keys) (data source)
-
 ## Outputs
 
 The following outputs are exported:
@@ -109,6 +105,10 @@ The following outputs are exported:
 ### <a name="output_management_group_name"></a> [management\_group\_name](#output\_management\_group\_name)
 
 Description: The id of the management group.
+
+## Modules
+
+No modules.
 
 ## Contributing
 

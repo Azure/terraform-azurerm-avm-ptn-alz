@@ -27,13 +27,13 @@ content: |-
 
   {{ .Providers }}
 
-  {{ .Modules }}
+  {{ .Resources }}
 
   {{ .Inputs }}
 
-  {{ .Resources }}
-
   {{ .Outputs }}
+
+  {{ .Modules }}
 
   {{ .Footer }}
 
