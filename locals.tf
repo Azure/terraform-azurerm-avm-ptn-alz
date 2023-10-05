@@ -10,10 +10,10 @@ locals {
 // Create a map of role assignment for the scope of the management group
 locals {
   policy_role_assignments = {
-    for pra in data.alz_archetype.this.alz_policy_role_assignments : "${pra.assignment_name}:${pra.source}:${pra.role_definition_id}" => {
-      scope              = pra.scope
-      role_definition_id = pra.role_definition_id
-      assignment_name    = pra.assignment_name
+    for pra_key, pra_val in data.alz_archetype.this.alz_policy_role_assignments : pra_key => {
+      scope              = pra_val.scope
+      role_definition_id = pra_val.role_definition_id
+      principal_id       = one(azurerm_management_group_policy_assignment.this[pra_val.assignment_name].identity).principal_id
     }
   }
 }

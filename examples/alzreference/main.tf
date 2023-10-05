@@ -25,13 +25,13 @@ module "alz_root" {
   default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
 }
 
-# This creates the ALZ landing-zones management group
-module "alz_landing_zones" {
-  source                             = "../../"
-  id                                 = "alz-landing-zones"
-  display_name                       = "alz-landing-zones"
-  parent_id                          = module.alz_root.management_group_name
-  base_archetype                     = "landing_zones"
-  default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
-}
+# # This creates the ALZ landing-zones management group
+# module "alz_landing_zones" {
+#   source                             = "../../"
+#   id                                 = "alz-landing-zones"
+#   display_name                       = "alz-landing-zones"
+#   parent_id                          = module.alz_root.management_group_name
+#   base_archetype                     = "landing_zones"
+#   default_location                   = local.default_location
+#   default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+# }

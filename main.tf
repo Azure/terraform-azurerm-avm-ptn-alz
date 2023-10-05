@@ -137,17 +137,17 @@ resource "azurerm_management_group_policy_assignment" "this" {
   }
 }
 
-resource "azurerm_role_assignment" "policy" {
-  for_each = local.policy_role_assignments
+# resource "azurerm_role_assignment" "policy" {
+#   count = length(data.alz_archetype.this.alz_policy_role_assignments)
 
-  principal_id = try(one(azurerm_management_group_policy_assignment.this[each.value.assignment_name].identity).principal_id, "")
-  scope        = each.value.scope
+#   principal_id = try(one(azurerm_management_group_policy_assignment.this[data.alz_archetype.this.alz_policy_role_assignments[count.index].assignment_name].identity).principal_id, "")
+#   scope        = data.alz_archetype.this.alz_policy_role_assignments[count.index].scope
 
-  # This is a workaround to set the resource id for a built-in role definition to the scope of the subscription,
-  # if the scope of the assignment begins with a subscription resource id.
-  role_definition_id = can(regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}", each.value.scope)) ? "${regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}", each.value.scope)}${each.value.role_definition_id}" : each.value.role_definition_id
-  description        = "Created for policy assignment ${each.value.assignment_name} at scope ${azurerm_management_group.this.id}"
-}
+#   # This is a workaround to set the resource id for a built-in role definition to the scope of the subscription,
+#   # if the scope of the assignment begins with a subscription resource id.
+#   role_definition_id = can(regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}", data.alz_archetype.this.alz_policy_role_assignments[count.index].scope)) ? "${regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}", data.alz_archetype.this.alz_policy_role_assignments[count.index].scope)}${data.alz_archetype.this.alz_policy_role_assignments[count.index].role_definition_id}" : data.alz_archetype.this.alz_policy_role_assignments[count.index].role_definition_id
+#   #description        = "Created for policy assignment ${each.value.assignment_name} at scope ${azurerm_management_group.this.id}"
+# }
 
 resource "azurerm_role_definition" "this" {
   for_each = local.alz_role_definitions_decoded
@@ -171,4 +171,10 @@ resource "azurerm_role_assignment" "this" {
   role_definition_id   = each.value.role_definition_id != "" ? each.value.role_definition_id : null
   role_definition_name = each.value.role_definition_name != "" ? each.value.role_definition_name : null
   description          = each.value.description
+}
+
+resource "alz_policy_role_assignments" "this" {
+  id          = data.alz_archetype.this.id
+  assignments = local.policy_role_assignments
+  depends_on  = [azurerm_management_group_policy_assignment.this]
 }
