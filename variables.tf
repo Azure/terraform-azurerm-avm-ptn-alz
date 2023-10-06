@@ -108,7 +108,20 @@ variable "role_definitions_to_remove" {
   default = []
 }
 
-variable "wait_before_management_group_creation" {
-  type    = string
-  default = "30s"
+variable "delays" {
+  type = object({
+    before_management_group = optional(object({
+      create  = optional(string, "30s")
+      destroy = optional(string, "0s")
+    }), {})
+    before_policy_assignments = optional(object({
+      create  = optional(string, "30s")
+      destroy = optional(string, "0s")
+    }), {})
+    before_policy_role_assignments = optional(object({
+      create  = optional(string, "60s")
+      destroy = optional(string, "0s")
+    }), {})
+  })
+  default = {}
 }

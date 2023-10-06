@@ -15,20 +15,24 @@ module "alz_management" {
 data "azurerm_client_config" "current" {}
 
 module "alz_archetype_root" {
-  source                                = "../../"
-  id                                    = "alz-root-${random_pet.this.id}"
-  display_name                          = "alz-roo-${random_pet.this.id}"
-  parent_id                             = data.azurerm_client_config.current.tenant_id
-  base_archetype                        = "root"
-  default_location                      = local.default_location
-  default_log_analytics_workspace_id    = module.alz_management.log_analytics_workspace.id
-  wait_before_management_group_creation = "0s"
+  source                             = "../../"
+  id                                 = "alz-root"
+  display_name                       = "alz-root"
+  parent_id                          = data.azurerm_client_config.current.tenant_id
+  base_archetype                     = "root"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  delays = {
+    before_management_group_creation = {
+      create = "0s"
+    }
+  }
 }
 
 module "alz_archetype_landing_zones" {
   source                             = "../../"
-  id                                 = "landing-zones-${random_pet.this.id}"
-  display_name                       = "landing-zones-${random_pet.this.id}"
+  id                                 = "landing-zones"
+  display_name                       = "landing-zones"
   parent_id                          = module.alz_archetype_root.management_group_name
   base_archetype                     = "landing_zones"
   default_location                   = local.default_location
@@ -37,8 +41,8 @@ module "alz_archetype_landing_zones" {
 
 module "alz_archetype_platform" {
   source                             = "../../"
-  id                                 = "platform-${random_pet.this.id}"
-  display_name                       = "platform-${random_pet.this.id}"
+  id                                 = "platform"
+  display_name                       = "platform"
   parent_id                          = module.alz_archetype_root.management_group_name
   base_archetype                     = "platform"
   default_location                   = local.default_location
@@ -47,8 +51,8 @@ module "alz_archetype_platform" {
 
 module "alz_archetype_identity" {
   source                             = "../../"
-  id                                 = "identity-${random_pet.this.id}"
-  display_name                       = "identity-${random_pet.this.id}"
+  id                                 = "identity"
+  display_name                       = "identity"
   parent_id                          = module.alz_archetype_platform.management_group_name
   base_archetype                     = "identity"
   default_location                   = local.default_location
@@ -57,8 +61,8 @@ module "alz_archetype_identity" {
 
 module "alz_archetype_connectivity" {
   source                             = "../../"
-  id                                 = "connectivity-${random_pet.this.id}"
-  display_name                       = "connectivity-${random_pet.this.id}"
+  id                                 = "connectivity"
+  display_name                       = "connectivity"
   parent_id                          = module.alz_archetype_platform.management_group_name
   base_archetype                     = "connectivity"
   default_location                   = local.default_location
@@ -67,8 +71,8 @@ module "alz_archetype_connectivity" {
 
 module "alz_archetype_mgmt" {
   source                             = "../../"
-  id                                 = "management-${random_pet.this.id}"
-  display_name                       = "management-${random_pet.this.id}"
+  id                                 = "management"
+  display_name                       = "management"
   parent_id                          = module.alz_archetype_platform.management_group_name
   base_archetype                     = "management"
   default_location                   = local.default_location
@@ -77,8 +81,8 @@ module "alz_archetype_mgmt" {
 
 module "alz_archetype_corp" {
   source                             = "../../"
-  id                                 = "corp-${random_pet.this.id}"
-  display_name                       = "corp-${random_pet.this.id}"
+  id                                 = "corp"
+  display_name                       = "corp"
   parent_id                          = module.alz_archetype_landing_zones.management_group_name
   base_archetype                     = "corp"
   default_location                   = local.default_location
@@ -87,8 +91,8 @@ module "alz_archetype_corp" {
 
 module "alz_archetype_online" {
   source                             = "../../"
-  id                                 = "online-${random_pet.this.id}"
-  display_name                       = "online-${random_pet.this.id}"
+  id                                 = "online"
+  display_name                       = "online"
   parent_id                          = module.alz_archetype_landing_zones.management_group_name
   base_archetype                     = "online"
   default_location                   = local.default_location
@@ -97,10 +101,10 @@ module "alz_archetype_online" {
 
 module "alz_archetype_sandboxes" {
   source                             = "../../"
-  id                                 = "sandboxes-${random_pet.this.id}"
-  display_name                       = "sandboxes-${random_pet.this.id}"
+  id                                 = "sandboxes"
+  display_name                       = "sandboxes"
   parent_id                          = module.alz_archetype_root.management_group_name
-  base_archetype                     = "sandboxes-${random_pet.this.id}"
+  base_archetype                     = "sandboxes"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
 }
