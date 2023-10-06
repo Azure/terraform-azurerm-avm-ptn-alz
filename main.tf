@@ -1,5 +1,13 @@
 data "alz_archetype_keys" "this" {
-  base_archetype = var.base_archetype
+  base_archetype                   = var.base_archetype
+  policy_assignments_to_add        = keys(var.policy_assignments_to_add)
+  policy_assignments_to_remove     = var.policy_assignments_to_remove
+  policy_definitions_to_add        = var.policy_definitions_to_add
+  policy_definitions_to_remove     = var.policy_definitions_to_remove
+  policy_set_definitions_to_add    = var.policy_set_definitions_to_add
+  policy_set_definitions_to_remove = var.policy_set_definitions_to_remove
+  role_definitions_to_add          = var.role_definitions_to_add
+  role_definitions_to_remove       = var.role_definitions_to_remove
 }
 
 data "alz_archetype" "this" {
@@ -8,15 +16,25 @@ data "alz_archetype" "this" {
     location                   = var.default_location
     log_analytics_workspace_id = var.default_log_analytics_workspace_id
   }
-  display_name   = var.display_name
-  base_archetype = var.base_archetype
-  parent_id      = var.parent_id
+  display_name                     = var.display_name
+  base_archetype                   = var.base_archetype
+  parent_id                        = var.parent_id
+  policy_assignments_to_add        = var.policy_assignments_to_add
+  policy_assignments_to_remove     = var.policy_assignments_to_remove
+  policy_definitions_to_add        = var.policy_definitions_to_add
+  policy_definitions_to_remove     = var.policy_definitions_to_remove
+  policy_set_definitions_to_add    = var.policy_set_definitions_to_add
+  policy_set_definitions_to_remove = var.policy_set_definitions_to_remove
+  role_definitions_to_add          = var.role_definitions_to_add
+  role_definitions_to_remove       = var.role_definitions_to_remove
 }
 
 resource "azurerm_management_group" "this" {
   name                       = data.alz_archetype.this.id
   display_name               = data.alz_archetype.this.display_name
   parent_management_group_id = format("/providers/Microsoft.Management/managementGroups/%s", data.alz_archetype.this.parent_id)
+
+  depends_on = [time_sleep.before_management_group_creation]
 }
 
 resource "azurerm_policy_definition" "this" {
@@ -81,7 +99,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
   parameters           = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
   location             = try(each.value.location, null)
 
-  depends_on = [azurerm_policy_definition.this, azurerm_policy_set_definition.this]
+  depends_on = [time_sleep.before_policy_assignments]
 
   dynamic "identity" {
     for_each = try(each.value.identity.type, "None") != "None" ? [each.value.identity] : []
@@ -137,18 +155,6 @@ resource "azurerm_management_group_policy_assignment" "this" {
   }
 }
 
-resource "azurerm_role_assignment" "policy" {
-  for_each = local.policy_role_assignments
-
-  principal_id = try(one(azurerm_management_group_policy_assignment.this[each.value.policy_assignment_name].identity).principal_id, "")
-  scope        = each.value.scope
-
-  # This is a workaround to set the resource id for a built-in role definition to the scope of the subscription,
-  # if the scope of the assignment begins with a subscription resource id.
-  role_definition_id = can(regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}", each.value.scope)) ? "${regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}", each.value.scope)}${each.value.role_definition_id}" : each.value.role_definition_id
-  description        = "Created for policy assignment ${each.value.policy_assignment_name} at scope ${azurerm_management_group.this.id}"
-}
-
 resource "azurerm_role_definition" "this" {
   for_each = local.alz_role_definitions_decoded
 
@@ -171,4 +177,40 @@ resource "azurerm_role_assignment" "this" {
   role_definition_id   = each.value.role_definition_id != "" ? each.value.role_definition_id : null
   role_definition_name = each.value.role_definition_name != "" ? each.value.role_definition_name : null
   description          = each.value.description
+}
+
+resource "alz_policy_role_assignments" "this" {
+  id          = data.alz_archetype.this.id
+  assignments = local.policy_role_assignments
+  depends_on  = [time_sleep.before_policy_role_assignments]
+}
+
+resource "time_sleep" "before_management_group_creation" {
+  create_duration  = var.delays.before_management_group.create
+  destroy_duration = var.delays.before_management_group.destroy
+}
+
+resource "time_sleep" "before_policy_assignments" {
+  create_duration  = var.delays.before_policy_assignments.create
+  destroy_duration = var.delays.before_policy_assignments.destroy
+  triggers = {
+    policy_definitions     = jsonencode(azurerm_policy_definition.this)
+    policy_set_definitions = jsonencode(azurerm_policy_set_definition.this)
+  }
+
+  depends_on = [
+    azurerm_policy_definition.this,
+    azurerm_policy_set_definition.this,
+  ]
+}
+
+resource "time_sleep" "before_policy_role_assignments" {
+  create_duration  = var.delays.before_policy_role_assignments.create
+  destroy_duration = var.delays.before_policy_role_assignments.destroy
+
+  triggers = {
+    policy_assignments = jsonencode(azurerm_management_group_policy_assignment.this)
+  }
+
+  depends_on = [azurerm_management_group_policy_assignment.this]
 }

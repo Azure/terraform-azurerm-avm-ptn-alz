@@ -5,6 +5,7 @@
 
 This repository contains an early prototype of a new Terraform module for deploying Azure Landing Zones (ALZs).
 
+<!-- markdownlint-disable MD033 -->
 ## Requirements
 
 The following requirements are needed by this module:
@@ -19,10 +20,21 @@ The following providers are used by this module:
 
 - <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm)
 
-## Modules
+## Resources
 
-No modules.
+The following resources are used by this module:
 
+- [alz_policy_role_assignments.this](https://registry.terraform.io/providers/azure/alz/latest/docs/resources/policy_role_assignments) (resource)
+- [azurerm_management_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
+- [azurerm_management_group_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_policy_assignment) (resource)
+- [azurerm_policy_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition) (resource)
+- [azurerm_policy_set_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_set_definition) (resource)
+- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_role_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
+- [alz_archetype.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype) (data source)
+- [alz_archetype_keys.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype_keys) (data source)
+
+<!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
 The following input variables are required:
@@ -71,6 +83,54 @@ Type: `string`
 
 Default: `null`
 
+### <a name="input_policy_assignments_to_add"></a> [policy\_assignments\_to\_add](#input\_policy\_assignments\_to\_add)
+
+Description: n/a
+
+Type: `map(object({}))`
+
+Default: `{}`
+
+### <a name="input_policy_assignments_to_remove"></a> [policy\_assignments\_to\_remove](#input\_policy\_assignments\_to\_remove)
+
+Description: n/a
+
+Type: `set(string)`
+
+Default: `[]`
+
+### <a name="input_policy_definitions_to_add"></a> [policy\_definitions\_to\_add](#input\_policy\_definitions\_to\_add)
+
+Description: n/a
+
+Type: `set(string)`
+
+Default: `[]`
+
+### <a name="input_policy_definitions_to_remove"></a> [policy\_definitions\_to\_remove](#input\_policy\_definitions\_to\_remove)
+
+Description: n/a
+
+Type: `set(string)`
+
+Default: `[]`
+
+### <a name="input_policy_set_definitions_to_add"></a> [policy\_set\_definitions\_to\_add](#input\_policy\_set\_definitions\_to\_add)
+
+Description: n/a
+
+Type: `set(string)`
+
+Default: `[]`
+
+### <a name="input_policy_set_definitions_to_remove"></a> [policy\_set\_definitions\_to\_remove](#input\_policy\_set\_definitions\_to\_remove)
+
+Description: n/a
+
+Type: `set(string)`
+
+Default: `[]`
+
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
 Description: n/a
@@ -88,23 +148,33 @@ map(object({
 
 Default: `{}`
 
-## Resources
+### <a name="input_role_definitions_to_add"></a> [role\_definitions\_to\_add](#input\_role\_definitions\_to\_add)
 
-The following resources are used by this module:
+Description: n/a
 
-- [azurerm_management_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
-- [azurerm_management_group_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_policy_assignment) (resource)
-- [azurerm_policy_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition) (resource)
-- [azurerm_policy_set_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_set_definition) (resource)
-- [azurerm_role_assignment.policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_role_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
-- [alz_archetype.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype) (data source)
-- [alz_archetype_keys.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype_keys) (data source)
+Type: `set(string)`
+
+Default: `[]`
+
+### <a name="input_role_definitions_to_remove"></a> [role\_definitions\_to\_remove](#input\_role\_definitions\_to\_remove)
+
+Description: n/a
+
+Type: `set(string)`
+
+Default: `[]`
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_management_group_name"></a> [management\_group\_name](#output\_management\_group\_name)
+
+Description: The id of the management group.
+
+## Modules
+
+No modules.
 
 ## Contributing
 

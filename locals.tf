@@ -9,28 +9,11 @@ locals {
 
 // Create a map of role assignment for the scope of the management group
 locals {
-  policy_role_assignments = {
-    for pra in toset(
-      flatten(
-        [
-          for k, v in data.alz_archetype.this.alz_policy_role_assignments : [
-            for rdid in v.role_definition_ids : [
-              for scope in v.scopes :
-              {
-                key                    = "${k}:${rdid}:${scope}"
-                policy_assignment_name = k
-                role_definition_id     = rdid
-                scope                  = scope
-              }
-            ]
-          ]
-        ]
-      )
-      ) : pra.key => {
-      policy_assignment_name = pra.policy_assignment_name
-      role_definition_id     = pra.role_definition_id
-      scope                  = pra.scope
-      policy_assignment_name = pra.policy_assignment_name
+  policy_role_assignments = data.alz_archetype.this.alz_policy_role_assignments != null ? {
+    for pra_key, pra_val in data.alz_archetype.this.alz_policy_role_assignments : pra_key => {
+      scope              = pra_val.scope
+      role_definition_id = pra_val.role_definition_id
+      principal_id       = one(azurerm_management_group_policy_assignment.this[pra_val.assignment_name].identity).principal_id
     }
-  }
+  } : {}
 }

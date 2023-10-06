@@ -7,8 +7,14 @@ terraform {
     azurerm = {
       source = "hashicorp/azurerm"
     }
-    time = {
-      source = "hashicorp/time"
+    random = {
+      source = "hashicorp/random"
     }
   }
+}
+
+provider "alz" {}
+
+provider "azurerm" {
+  features {}
 }

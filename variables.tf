@@ -67,3 +67,61 @@ variable "role_assignments" {
 
   default = {}
 }
+
+variable "policy_assignments_to_add" {
+  type    = map(object({}))
+  default = {}
+}
+
+variable "policy_assignments_to_remove" {
+  type    = set(string)
+  default = []
+}
+
+variable "policy_definitions_to_add" {
+  type    = set(string)
+  default = []
+}
+
+variable "policy_definitions_to_remove" {
+  type    = set(string)
+  default = []
+}
+
+variable "policy_set_definitions_to_add" {
+  type    = set(string)
+  default = []
+}
+
+variable "policy_set_definitions_to_remove" {
+  type    = set(string)
+  default = []
+}
+
+variable "role_definitions_to_add" {
+  type    = set(string)
+  default = []
+}
+
+variable "role_definitions_to_remove" {
+  type    = set(string)
+  default = []
+}
+
+variable "delays" {
+  type = object({
+    before_management_group = optional(object({
+      create  = optional(string, "30s")
+      destroy = optional(string, "0s")
+    }), {})
+    before_policy_assignments = optional(object({
+      create  = optional(string, "30s")
+      destroy = optional(string, "0s")
+    }), {})
+    before_policy_role_assignments = optional(object({
+      create  = optional(string, "60s")
+      destroy = optional(string, "0s")
+    }), {})
+  })
+  default = {}
+}
