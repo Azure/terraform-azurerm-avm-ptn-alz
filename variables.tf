@@ -107,3 +107,8 @@ variable "role_definitions_to_remove" {
   type    = set(string)
   default = []
 }
+
+variable "wait_before_management_group_creation" {
+  type    = string
+  default = "30s"
+}

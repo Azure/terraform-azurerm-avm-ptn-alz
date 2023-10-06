@@ -4,8 +4,115 @@
 This example shows how to deploy the ALZ reference architecture.
 It uses the ALZ management module to deploy the Log Analytics workspace and Automation Account.
 
-See the [GitHub repo](https://github.com/Azure/terraform-azurerm-alz/blob/main/examples/alzreference/main.tf) for more information.
+```hcl
+# This helps keep naming unique
+resource "random_pet" "this" {}
 
+module "alz_management" {
+  source  = "Azure/alz-management/azurerm"
+  version = "~> 0.1.0"
+
+  automation_account_name      = "aa-${random_pet.this.id}"
+  location                     = local.default_location
+  log_analytics_workspace_name = "law-${random_pet.this.id}"
+  resource_group_name          = "rg-${random_pet.this.id}"
+}
+
+# This allows us to get the tenant id
+data "azurerm_client_config" "current" {}
+
+module "alz_root" {
+  source                             = "../../"
+  id                                 = "alz-root"
+  display_name                       = "alz-root"
+  parent_id                          = data.azurerm_client_config.current.tenant_id
+  base_archetype                     = "root"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+
+module "alz_landing_zones" {
+  source                             = "../../"
+  id                                 = "landing-zones"
+  display_name                       = "landing-zones"
+  parent_id                          = module.alz_root.management_group_name
+  base_archetype                     = "landing_zones"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+
+module "alz_platform" {
+  source                             = "../../"
+  id                                 = "platform"
+  display_name                       = "platform"
+  parent_id                          = module.alz_root.management_group_name
+  base_archetype                     = "platform"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+
+module "alz_identity" {
+  source                             = "../../"
+  id                                 = "identity"
+  display_name                       = "identity"
+  parent_id                          = module.alz_platform.management_group_name
+  base_archetype                     = "identity"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+
+module "alz_connectivity" {
+  source                             = "../../"
+  id                                 = "connectivity"
+  display_name                       = "connectivity"
+  parent_id                          = module.alz_platform.management_group_name
+  base_archetype                     = "connectivity"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+
+module "alz_mgmt" {
+  source                             = "../../"
+  id                                 = "management"
+  display_name                       = "management"
+  parent_id                          = module.alz_platform.management_group_name
+  base_archetype                     = "management"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+
+module "alz_corp" {
+  source                             = "../../"
+  id                                 = "corp"
+  display_name                       = "corp"
+  parent_id                          = module.alz_landing_zones.management_group_name
+  base_archetype                     = "corp"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+
+module "alz_online" {
+  source                             = "../../"
+  id                                 = "online"
+  display_name                       = "online"
+  parent_id                          = module.alz_landing_zones.management_group_name
+  base_archetype                     = "management"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+
+module "alz_sandboxes" {
+  source                             = "../../"
+  id                                 = "sandboxes"
+  display_name                       = "sandboxes"
+  parent_id                          = module.alz_root.management_group_name
+  base_archetype                     = "sandboxes"
+  default_location                   = local.default_location
+  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+}
+```
+
+<!-- markdownlint-disable MD033 -->
 ## Requirements
 
 The following requirements are needed by this module:
@@ -16,13 +123,51 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (3.68.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm)
 
-- <a name="provider_random"></a> [random](#provider\_random) (3.5.1)
+- <a name="provider_random"></a> [random](#provider\_random)
+
+## Resources
+
+The following resources are used by this module:
+
+- [random_pet.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) (resource)
+- [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
+
+<!-- markdownlint-disable MD013 -->
+## Required Inputs
+
+No required inputs.
+
+## Optional Inputs
+
+No optional inputs.
+
+## Outputs
+
+No outputs.
 
 ## Modules
 
 The following Modules are called:
+
+### <a name="module_alz_connectivity"></a> [alz\_connectivity](#module\_alz\_connectivity)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_corp"></a> [alz\_corp](#module\_alz\_corp)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_identity"></a> [alz\_identity](#module\_alz\_identity)
+
+Source: ../../
+
+Version:
 
 ### <a name="module_alz_landing_zones"></a> [alz\_landing\_zones](#module\_alz\_landing\_zones)
 
@@ -34,7 +179,25 @@ Version:
 
 Source: Azure/alz-management/azurerm
 
-Version: 0.1.4
+Version: ~> 0.1.0
+
+### <a name="module_alz_mgmt"></a> [alz\_mgmt](#module\_alz\_mgmt)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_online"></a> [alz\_online](#module\_alz\_online)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_platform"></a> [alz\_platform](#module\_alz\_platform)
+
+Source: ../../
+
+Version:
 
 ### <a name="module_alz_root"></a> [alz\_root](#module\_alz\_root)
 
@@ -42,44 +205,11 @@ Source: ../../
 
 Version:
 
-## Required Inputs
+### <a name="module_alz_sandboxes"></a> [alz\_sandboxes](#module\_alz\_sandboxes)
 
-No required inputs.
+Source: ../../
 
-## Optional Inputs
+Version:
 
-No optional inputs.
 
-## Resources
-
-The following resources are used by this module:
-
-- [random_pet.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) (resource)
-- [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
-
-## Outputs
-
-No outputs.
-
-## Contributing
-
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
-
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
-## Trademarks
-
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
-trademarks or logos is subject to and must follow
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
 <!-- END_TF_DOCS -->

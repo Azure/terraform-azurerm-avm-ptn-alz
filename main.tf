@@ -1,5 +1,13 @@
 data "alz_archetype_keys" "this" {
-  base_archetype = var.base_archetype
+  base_archetype                   = var.base_archetype
+  policy_assignments_to_add        = keys(var.policy_assignments_to_add)
+  policy_assignments_to_remove     = var.policy_assignments_to_remove
+  policy_definitions_to_add        = var.policy_definitions_to_add
+  policy_definitions_to_remove     = var.policy_definitions_to_remove
+  policy_set_definitions_to_add    = var.policy_set_definitions_to_add
+  policy_set_definitions_to_remove = var.policy_set_definitions_to_remove
+  role_definitions_to_add          = var.role_definitions_to_add
+  role_definitions_to_remove       = var.role_definitions_to_remove
 }
 
 data "alz_archetype" "this" {
@@ -8,15 +16,29 @@ data "alz_archetype" "this" {
     location                   = var.default_location
     log_analytics_workspace_id = var.default_log_analytics_workspace_id
   }
-  display_name   = var.display_name
-  base_archetype = var.base_archetype
-  parent_id      = var.parent_id
+  display_name                     = var.display_name
+  base_archetype                   = var.base_archetype
+  parent_id                        = var.parent_id
+  policy_assignments_to_add        = var.policy_assignments_to_add
+  policy_assignments_to_remove     = var.policy_assignments_to_remove
+  policy_definitions_to_add        = var.policy_definitions_to_add
+  policy_definitions_to_remove     = var.policy_definitions_to_remove
+  policy_set_definitions_to_add    = var.policy_set_definitions_to_add
+  policy_set_definitions_to_remove = var.policy_set_definitions_to_remove
+  role_definitions_to_add          = var.role_definitions_to_add
+  role_definitions_to_remove       = var.role_definitions_to_remove
+}
+
+resource "time_sleep" "before_management_group_creation" {
+  create_duration = var.wait_before_management_group_creation
 }
 
 resource "azurerm_management_group" "this" {
   name                       = data.alz_archetype.this.id
   display_name               = data.alz_archetype.this.display_name
   parent_management_group_id = format("/providers/Microsoft.Management/managementGroups/%s", data.alz_archetype.this.parent_id)
+
+  depends_on = [time_sleep.before_management_group_creation]
 }
 
 resource "azurerm_policy_definition" "this" {
