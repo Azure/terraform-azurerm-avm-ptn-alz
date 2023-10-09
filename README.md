@@ -12,13 +12,21 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.0.0)
 
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (>= 0.5.1)
+
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.74.0)
+
+- <a name="requirement_time"></a> [time](#requirement\_time) (>= 0.9.1)
+
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_alz"></a> [alz](#provider\_alz)
+- <a name="provider_alz"></a> [alz](#provider\_alz) (>= 0.5.1)
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.74.0)
+
+- <a name="provider_time"></a> [time](#provider\_time) (>= 0.9.1)
 
 ## Resources
 
@@ -31,6 +39,9 @@ The following resources are used by this module:
 - [azurerm_policy_set_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_set_definition) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_role_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
+- [time_sleep.before_management_group_creation](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
+- [time_sleep.before_policy_assignments](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
+- [time_sleep.before_policy_role_assignments](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_archetype.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype) (data source)
 - [alz_archetype_keys.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype_keys) (data source)
 
@@ -83,9 +94,35 @@ Type: `string`
 
 Default: `null`
 
+### <a name="input_delays"></a> [delays](#input\_delays)
+
+Description: A map of delays to apply to the creation and destruction of resources.  
+Included to work around some race conditions in Azure.
+
+Type:
+
+```hcl
+object({
+    before_management_group = optional(object({
+      create  = optional(string, "30s")
+      destroy = optional(string, "0s")
+    }), {})
+    before_policy_assignments = optional(object({
+      create  = optional(string, "30s")
+      destroy = optional(string, "0s")
+    }), {})
+    before_policy_role_assignments = optional(object({
+      create  = optional(string, "60s")
+      destroy = optional(string, "0s")
+    }), {})
+  })
+```
+
+Default: `{}`
+
 ### <a name="input_policy_assignments_to_add"></a> [policy\_assignments\_to\_add](#input\_policy\_assignments\_to\_add)
 
-Description: n/a
+Description: Not implemented yet.
 
 Type: `map(object({}))`
 
@@ -93,7 +130,7 @@ Default: `{}`
 
 ### <a name="input_policy_assignments_to_remove"></a> [policy\_assignments\_to\_remove](#input\_policy\_assignments\_to\_remove)
 
-Description: n/a
+Description: A set of policy assignment names to remove from the `base_archetype`.
 
 Type: `set(string)`
 
@@ -101,7 +138,8 @@ Default: `[]`
 
 ### <a name="input_policy_definitions_to_add"></a> [policy\_definitions\_to\_add](#input\_policy\_definitions\_to\_add)
 
-Description: n/a
+Description: A set of policy definition names to add to the `base_archetype`.  
+The definition must exist in one of the loaded lib directories.
 
 Type: `set(string)`
 
@@ -109,7 +147,7 @@ Default: `[]`
 
 ### <a name="input_policy_definitions_to_remove"></a> [policy\_definitions\_to\_remove](#input\_policy\_definitions\_to\_remove)
 
-Description: n/a
+Description: A set of policy definition names to remove from the `base_archetype`.
 
 Type: `set(string)`
 
@@ -117,7 +155,8 @@ Default: `[]`
 
 ### <a name="input_policy_set_definitions_to_add"></a> [policy\_set\_definitions\_to\_add](#input\_policy\_set\_definitions\_to\_add)
 
-Description: n/a
+Description: A set of policy set definition names to add to the `base_archetype`.  
+The definition must exist in one of the loaded lib directories.
 
 Type: `set(string)`
 
@@ -125,7 +164,7 @@ Default: `[]`
 
 ### <a name="input_policy_set_definitions_to_remove"></a> [policy\_set\_definitions\_to\_remove](#input\_policy\_set\_definitions\_to\_remove)
 
-Description: n/a
+Description: A set of policy set definition names to remove from the `base_archetype`.
 
 Type: `set(string)`
 
@@ -150,7 +189,8 @@ Default: `{}`
 
 ### <a name="input_role_definitions_to_add"></a> [role\_definitions\_to\_add](#input\_role\_definitions\_to\_add)
 
-Description: n/a
+Description: A set of role definition names to add to the `base_archetype`.  
+The definition must exist in one of the loaded lib directories.
 
 Type: `set(string)`
 
@@ -158,7 +198,7 @@ Default: `[]`
 
 ### <a name="input_role_definitions_to_remove"></a> [role\_definitions\_to\_remove](#input\_role\_definitions\_to\_remove)
 
-Description: n/a
+Description: A set of role definition names to remove from the `base_archetype`.
 
 Type: `set(string)`
 

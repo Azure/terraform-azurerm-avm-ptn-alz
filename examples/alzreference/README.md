@@ -6,109 +6,120 @@ It uses the ALZ management module to deploy the Log Analytics workspace and Auto
 
 ```hcl
 # This helps keep naming unique
-resource "random_pet" "this" {}
+resource "random_pet" "this" {
+  length = 1
+}
 
-module "alz_management" {
+module "naming" {
+  source = "Azure/naming/azurerm"
+}
+
+module "alz_management_resources" {
   source  = "Azure/alz-management/azurerm"
   version = "~> 0.1.0"
 
-  automation_account_name      = "aa-${random_pet.this.id}"
+  automation_account_name      = module.naming.automation_account.name_unique
   location                     = local.default_location
-  log_analytics_workspace_name = "law-${random_pet.this.id}"
-  resource_group_name          = "rg-${random_pet.this.id}"
+  log_analytics_workspace_name = module.naming.log_analytics_workspace.name_unique
+  resource_group_name          = module.naming.resource_group.name_unique
 }
 
 # This allows us to get the tenant id
 data "azurerm_client_config" "current" {}
 
-module "alz_root" {
+module "alz_archetype_root" {
   source                             = "../../"
-  id                                 = "alz-root"
-  display_name                       = "alz-root"
+  id                                 = "${random_pet.this.id}-alz-root"
+  display_name                       = "${random_pet.this.id}-alz-root"
   parent_id                          = data.azurerm_client_config.current.tenant_id
   base_archetype                     = "root"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  delays = {
+    before_management_group_creation = {
+      create = "0s"
+    }
+  }
 }
 
-module "alz_landing_zones" {
+module "alz_archetype_landing_zones" {
   source                             = "../../"
-  id                                 = "landing-zones"
-  display_name                       = "landing-zones"
-  parent_id                          = module.alz_root.management_group_name
+  id                                 = "${random_pet.this.id}-landing-zones"
+  display_name                       = "${random_pet.this.id}-landing-zones"
+  parent_id                          = module.alz_archetype_root.management_group_name
   base_archetype                     = "landing_zones"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
 }
 
-module "alz_platform" {
+module "alz_archetype_platform" {
   source                             = "../../"
-  id                                 = "platform"
-  display_name                       = "platform"
-  parent_id                          = module.alz_root.management_group_name
+  id                                 = "${random_pet.this.id}-platform"
+  display_name                       = "${random_pet.this.id}-platform"
+  parent_id                          = module.alz_archetype_root.management_group_name
   base_archetype                     = "platform"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
 }
 
-module "alz_identity" {
+module "alz_archetype_identity" {
   source                             = "../../"
-  id                                 = "identity"
-  display_name                       = "identity"
-  parent_id                          = module.alz_platform.management_group_name
+  id                                 = "${random_pet.this.id}-identity"
+  display_name                       = "${random_pet.this.id}-identity"
+  parent_id                          = module.alz_archetype_platform.management_group_name
   base_archetype                     = "identity"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
 }
 
-module "alz_connectivity" {
+module "alz_archetype_connectivity" {
   source                             = "../../"
-  id                                 = "connectivity"
-  display_name                       = "connectivity"
-  parent_id                          = module.alz_platform.management_group_name
+  id                                 = "${random_pet.this.id}-connectivity"
+  display_name                       = "${random_pet.this.id}-connectivity"
+  parent_id                          = module.alz_archetype_platform.management_group_name
   base_archetype                     = "connectivity"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
 }
 
-module "alz_mgmt" {
+module "alz_archetype_management" {
   source                             = "../../"
   id                                 = "management"
   display_name                       = "management"
-  parent_id                          = module.alz_platform.management_group_name
+  parent_id                          = module.alz_archetype_platform.management_group_name
   base_archetype                     = "management"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
 }
 
-module "alz_corp" {
+module "alz_archetype_corp" {
   source                             = "../../"
-  id                                 = "corp"
-  display_name                       = "corp"
-  parent_id                          = module.alz_landing_zones.management_group_name
+  id                                 = "${random_pet.this.id}-corp"
+  display_name                       = "${random_pet.this.id}-corp"
+  parent_id                          = module.alz_archetype_landing_zones.management_group_name
   base_archetype                     = "corp"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
 }
 
-module "alz_online" {
+module "alz_archetype_online" {
   source                             = "../../"
-  id                                 = "online"
-  display_name                       = "online"
-  parent_id                          = module.alz_landing_zones.management_group_name
-  base_archetype                     = "management"
+  id                                 = "${random_pet.this.id}-online"
+  display_name                       = "${random_pet.this.id}-online"
+  parent_id                          = module.alz_archetype_landing_zones.management_group_name
+  base_archetype                     = "online"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
 }
 
-module "alz_sandboxes" {
+module "alz_archetype_sandboxes" {
   source                             = "../../"
-  id                                 = "sandboxes"
-  display_name                       = "sandboxes"
-  parent_id                          = module.alz_root.management_group_name
+  id                                 = "${random_pet.this.id}-sandboxes"
+  display_name                       = "${random_pet.this.id}-sandboxes"
+  parent_id                          = module.alz_archetype_root.management_group_name
   base_archetype                     = "sandboxes"
   default_location                   = local.default_location
-  default_log_analytics_workspace_id = module.alz_management.log_analytics_workspace.id
+  default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
 }
 ```
 
@@ -151,63 +162,69 @@ No outputs.
 
 The following Modules are called:
 
-### <a name="module_alz_connectivity"></a> [alz\_connectivity](#module\_alz\_connectivity)
+### <a name="module_alz_archetype_connectivity"></a> [alz\_archetype\_connectivity](#module\_alz\_archetype\_connectivity)
 
 Source: ../../
 
 Version:
 
-### <a name="module_alz_corp"></a> [alz\_corp](#module\_alz\_corp)
+### <a name="module_alz_archetype_corp"></a> [alz\_archetype\_corp](#module\_alz\_archetype\_corp)
 
 Source: ../../
 
 Version:
 
-### <a name="module_alz_identity"></a> [alz\_identity](#module\_alz\_identity)
+### <a name="module_alz_archetype_identity"></a> [alz\_archetype\_identity](#module\_alz\_archetype\_identity)
 
 Source: ../../
 
 Version:
 
-### <a name="module_alz_landing_zones"></a> [alz\_landing\_zones](#module\_alz\_landing\_zones)
+### <a name="module_alz_archetype_landing_zones"></a> [alz\_archetype\_landing\_zones](#module\_alz\_archetype\_landing\_zones)
 
 Source: ../../
 
 Version:
 
-### <a name="module_alz_management"></a> [alz\_management](#module\_alz\_management)
+### <a name="module_alz_archetype_management"></a> [alz\_archetype\_management](#module\_alz\_archetype\_management)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_archetype_online"></a> [alz\_archetype\_online](#module\_alz\_archetype\_online)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_archetype_platform"></a> [alz\_archetype\_platform](#module\_alz\_archetype\_platform)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_archetype_root"></a> [alz\_archetype\_root](#module\_alz\_archetype\_root)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_archetype_sandboxes"></a> [alz\_archetype\_sandboxes](#module\_alz\_archetype\_sandboxes)
+
+Source: ../../
+
+Version:
+
+### <a name="module_alz_management_resources"></a> [alz\_management\_resources](#module\_alz\_management\_resources)
 
 Source: Azure/alz-management/azurerm
 
 Version: ~> 0.1.0
 
-### <a name="module_alz_mgmt"></a> [alz\_mgmt](#module\_alz\_mgmt)
+### <a name="module_naming"></a> [naming](#module\_naming)
 
-Source: ../../
-
-Version:
-
-### <a name="module_alz_online"></a> [alz\_online](#module\_alz\_online)
-
-Source: ../../
-
-Version:
-
-### <a name="module_alz_platform"></a> [alz\_platform](#module\_alz\_platform)
-
-Source: ../../
-
-Version:
-
-### <a name="module_alz_root"></a> [alz\_root](#module\_alz\_root)
-
-Source: ../../
-
-Version:
-
-### <a name="module_alz_sandboxes"></a> [alz\_sandboxes](#module\_alz\_sandboxes)
-
-Source: ../../
+Source: Azure/naming/azurerm
 
 Version:
 
