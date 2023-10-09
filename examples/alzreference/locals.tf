@@ -1,4 +1,4 @@
 # These locals help keep the code DRY
 locals {
-  default_location = "eastus2"
+  default_location = "westus2"
 }

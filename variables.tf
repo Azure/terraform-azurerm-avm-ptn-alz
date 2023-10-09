@@ -64,48 +64,76 @@ variable "role_assignments" {
     condition     = length(toset(values(var.role_assignments))) == length(var.role_assignments)
     error_message = "Role assignment values must not be duplicates."
   }
-
-  default = {}
+  default     = {}
+  description = <<DESCRIPTION
+DESCRIPTION
 }
 
 variable "policy_assignments_to_add" {
-  type    = map(object({}))
-  default = {}
+  type        = map(object({}))
+  default     = {}
+  description = <<DESCRIPTION
+Not implemented yet.
+DESCRIPTION
 }
 
 variable "policy_assignments_to_remove" {
-  type    = set(string)
-  default = []
+  type        = set(string)
+  default     = []
+  description = <<DESCRIPTION
+A set of policy assignment names to remove from the `base_archetype`.
+DESCRIPTION
 }
 
 variable "policy_definitions_to_add" {
-  type    = set(string)
-  default = []
+  type        = set(string)
+  default     = []
+  description = <<DESCRIPTION
+A set of policy definition names to add to the `base_archetype`.
+The definition must exist in one of the loaded lib directories.
+DESCRIPTION
 }
 
 variable "policy_definitions_to_remove" {
-  type    = set(string)
-  default = []
+  type        = set(string)
+  default     = []
+  description = <<DESCRIPTION
+A set of policy definition names to remove from the `base_archetype`.
+DESCRIPTION
 }
 
 variable "policy_set_definitions_to_add" {
-  type    = set(string)
-  default = []
+  type        = set(string)
+  default     = []
+  description = <<DESCRIPTION
+A set of policy set definition names to add to the `base_archetype`.
+The definition must exist in one of the loaded lib directories.
+DESCRIPTION
 }
 
 variable "policy_set_definitions_to_remove" {
-  type    = set(string)
-  default = []
+  type        = set(string)
+  default     = []
+  description = <<DESCRIPTION
+A set of policy set definition names to remove from the `base_archetype`.
+DESCRIPTION
 }
 
 variable "role_definitions_to_add" {
-  type    = set(string)
-  default = []
+  type        = set(string)
+  default     = []
+  description = <<DESCRIPTION
+A set of role definition names to add to the `base_archetype`.
+The definition must exist in one of the loaded lib directories.
+DESCRIPTION
 }
 
 variable "role_definitions_to_remove" {
-  type    = set(string)
-  default = []
+  type        = set(string)
+  default     = []
+  description = <<DESCRIPTION
+A set of role definition names to remove from the `base_archetype`.
+DESCRIPTION
 }
 
 variable "delays" {
@@ -123,5 +151,9 @@ variable "delays" {
       destroy = optional(string, "0s")
     }), {})
   })
-  default = {}
+  default     = {}
+  description = <<DESCRIPTION
+A map of delays to apply to the creation and destruction of resources.
+Included to work around some race conditions in Azure.
+DESCRIPTION
 }
