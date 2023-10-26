@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # ALZ Terraform Module
 
-> ⚠️ ***Warning*** ⚠️ This module is currently in development and is not yet ready for use. It should be considered experimental and is subject to change.
+> ⚠️ ***Warning*** ⚠️ This module is still in developemnt but is ready for initial testing and feedback via [GitHub Issues](https://github.com/Azure/terraform-azurerm-avm-ptn-alz/issues).
 
 This repository contains an early prototype of a new Terraform module for deploying Azure Landing Zones (ALZs).
 
