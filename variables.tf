@@ -77,7 +77,7 @@ DESCRIPTION
 }
 
 variable "policy_assignments_to_add" {
-  type        = map(object({
+  type = map(object({
     display_name               = optional(string, null)
     enforcement_mode           = optional(string, null)
     identity                   = optional(string, null)
