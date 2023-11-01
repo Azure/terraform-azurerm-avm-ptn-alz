@@ -13,8 +13,9 @@ data "alz_archetype_keys" "this" {
 data "alz_archetype" "this" {
   id = var.id
   defaults = {
-    location                   = var.default_location
-    log_analytics_workspace_id = var.default_log_analytics_workspace_id
+    location                           = var.default_location
+    log_analytics_workspace_id         = var.default_log_analytics_workspace_id
+    private_dns_zone_resource_group_id = var.default_private_dns_zone_resource_group_id
   }
   display_name                     = var.display_name
   base_archetype                   = var.base_archetype

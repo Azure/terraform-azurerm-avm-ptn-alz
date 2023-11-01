@@ -42,6 +42,13 @@ DESCRIPTION
   default     = null
 }
 
+variable "default_private_dns_zone_resource_group_id" {
+  type        = string
+  description = <<DESCRIPTION
+DESCRIPTION
+  default     = null
+}
+
 variable "role_assignments" {
   type = map(object({
     role_definition_id   = optional(string, "")
@@ -70,10 +77,19 @@ DESCRIPTION
 }
 
 variable "policy_assignments_to_add" {
-  type        = map(object({}))
+  type        = map(object({
+    display_name               = optional(string, null)
+    enforcement_mode           = optional(string, null)
+    identity                   = optional(string, null)
+    identity_ids               = optional(list(string), null)
+    policy_definition_id       = optional(string, null)
+    policy_definition_name     = optional(string, null)
+    policy_set_definition_name = optional(string, null)
+    parameters                 = optional(string, null)
+  }))
   default     = {}
   description = <<DESCRIPTION
-Not implemented yet.
+A map of policy assignment objects to add or update the alz archetype with.
 DESCRIPTION
 }
 
