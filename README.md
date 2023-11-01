@@ -95,6 +95,14 @@ Type: `string`
 
 Default: `null`
 
+### <a name="input_default_private_dns_zone_resource_group_id"></a> [default\_private\_dns\_zone\_resource\_group\_id](#input\_default\_private\_dns\_zone\_resource\_group\_id)
+
+Description: n/a
+
+Type: `string`
+
+Default: `null`
+
 ### <a name="input_delays"></a> [delays](#input\_delays)
 
 Description: A map of delays to apply to the creation and destruction of resources.  
@@ -123,9 +131,22 @@ Default: `{}`
 
 ### <a name="input_policy_assignments_to_add"></a> [policy\_assignments\_to\_add](#input\_policy\_assignments\_to\_add)
 
-Description: Not implemented yet.
+Description: A map of policy assignment objects to add or update the alz archetype with.
 
-Type: `map(object({}))`
+Type:
+
+```hcl
+map(object({
+    display_name               = optional(string, null)
+    enforcement_mode           = optional(string, null)
+    identity                   = optional(string, null)
+    identity_ids               = optional(list(string), null)
+    policy_definition_id       = optional(string, null)
+    policy_definition_name     = optional(string, null)
+    policy_set_definition_name = optional(string, null)
+    parameters                 = optional(string, null)
+  }))
+```
 
 Default: `{}`
 
