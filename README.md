@@ -4,7 +4,6 @@
 > ⚠️ ***Warning*** ⚠️ This module is still in development but is ready for initial testing and feedback via [GitHub Issues](https://github.com/Azure/terraform-azurerm-avm-ptn-alz/issues).
 
 - This repository contains Terraform module for deploying Azure Landing Zones (ALZs).
-
 - Make sure to review the examples.
 
 <!-- markdownlint-disable MD033 -->
