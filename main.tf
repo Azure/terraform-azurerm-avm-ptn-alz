@@ -93,6 +93,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
   name                 = each.key
   management_group_id  = azurerm_management_group.this.id
   policy_definition_id = each.value.properties.policyDefinitionId
+  display_name         = try(each.value.properties.displayName, "")
   description          = try(each.value.properties.description, "")
   enforce              = try(each.value.properties.enforce, "Default") == "Default" ? true : false
   metadata             = jsonencode(try(each.value.properties.metadata, {}))
