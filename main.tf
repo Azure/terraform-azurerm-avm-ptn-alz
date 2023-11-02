@@ -99,6 +99,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
   metadata             = jsonencode(try(each.value.properties.metadata, {}))
   parameters           = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
   location             = try(each.value.location, null)
+  not_scopes           = try(each.value.properties.notScopes, [])
 
   depends_on = [time_sleep.before_policy_assignments]
 
