@@ -12,16 +12,17 @@ resource "random_pet" "this" {
 
 module "naming" {
   source = "Azure/naming/azurerm"
+  suffix = [ random_pet.this.id ]
 }
 
 module "alz_management_resources" {
   source  = "Azure/alz-management/azurerm"
   version = "~> 0.1.0"
 
-  automation_account_name      = module.naming.automation_account.name_unique
+  automation_account_name      = module.naming.automation_account.name
   location                     = local.default_location
-  log_analytics_workspace_name = module.naming.log_analytics_workspace.name_unique
-  resource_group_name          = module.naming.resource_group.name_unique
+  log_analytics_workspace_name = module.naming.log_analytics_workspace.name
+  resource_group_name          = module.naming.resource_group.name
 }
 
 # This allows us to get the tenant id
@@ -84,8 +85,8 @@ module "alz_archetype_connectivity" {
 
 module "alz_archetype_management" {
   source                             = "../../"
-  id                                 = "management"
-  display_name                       = "management"
+  id                                 = "${random_pet.this.id}-management"
+  display_name                       = "${random_pet.this.id}-management"
   parent_id                          = module.alz_archetype_platform.management_group_name
   base_archetype                     = "management"
   default_location                   = local.default_location
