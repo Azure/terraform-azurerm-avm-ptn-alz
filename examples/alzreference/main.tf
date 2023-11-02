@@ -5,7 +5,7 @@ resource "random_pet" "this" {
 
 module "naming" {
   source = "Azure/naming/azurerm"
-  suffix = [ random_pet.this.id ]
+  suffix = [random_pet.this.id]
 }
 
 module "alz_management_resources" {
