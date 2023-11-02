@@ -206,7 +206,7 @@ resource "time_sleep" "before_policy_assignments" {
 }
 
 resource "time_sleep" "before_policy_role_assignments" {
-  count            = local.policy_role_assignments != {} ? 1 : 0
+  count            = local.alz_policy_assignments_decoded != {} ? 1 : 0
   create_duration  = var.delays.before_policy_role_assignments.create
   destroy_duration = var.delays.before_policy_role_assignments.destroy
 
