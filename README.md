@@ -156,6 +156,38 @@ Type: `set(string)`
 
 Default: `[]`
 
+### <a name="input_policy_non_compliance_message_default"></a> [policy\_non\_compliance\_message\_default](#input\_policy\_non\_compliance\_message\_default)
+
+Description: If set overrides the default non-compliance message used for policy assignments."
+
+Type: `string`
+
+Default: `"This resource {enforcementMode} be compliant with the assigned policy."`
+
+### <a name="input_policy_non_compliance_message_enforced_replacement"></a> [policy\_non\_compliance\_message\_enforced\_replacement](#input\_policy\_non\_compliance\_message\_enforced\_replacement)
+
+Description: If set overrides the non-compliance replacement used for enforced policy assignments.
+
+Type: `string`
+
+Default: `"must"`
+
+### <a name="input_policy_non_compliance_message_enforcement_placeholder"></a> [policy\_non\_compliance\_message\_enforcement\_placeholder](#input\_policy\_non\_compliance\_message\_enforcement\_placeholder)
+
+Description: If set overrides the non-compliance message placeholder used in message templates.
+
+Type: `string`
+
+Default: `"{enforcementMode}"`
+
+### <a name="input_policy_non_compliance_message_not_enforced_replacement"></a> [policy\_non\_compliance\_message\_not\_enforced\_replacement](#input\_policy\_non\_compliance\_message\_not\_enforced\_replacement)
+
+Description: If set overrides the non-compliance replacement used for unenforced policy assignments.
+
+Type: `string`
+
+Default: `"should"`
+
 ### <a name="input_policy_set_definitions_to_add"></a> [policy\_set\_definitions\_to\_add](#input\_policy\_set\_definitions\_to\_add)
 
 Description: A set of policy set definition names to add to the `base_archetype`.  
