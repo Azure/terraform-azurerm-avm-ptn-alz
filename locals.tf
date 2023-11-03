@@ -17,3 +17,6 @@ locals {
     }
   } : {}
 }
+
+//Non-compliance message constants
+
