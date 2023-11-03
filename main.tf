@@ -37,6 +37,17 @@ resource "azurerm_management_group" "this" {
   depends_on = [time_sleep.before_management_group_creation]
 }
 
+data "azurerm_subscription" "this" {
+  for_each        = var.subscription_ids
+  subscription_id = each.key
+}
+
+resource "azurerm_management_group_subscription_association" "this" {
+  for_each            = var.subscription_ids
+  management_group_id = azurerm_management_group.this.id
+  subscription_id     = data.azurerm_subscription.this[each.key].id
+}
+
 resource "azurerm_policy_definition" "this" {
   for_each = local.alz_policy_definitions_decoded
 
@@ -108,7 +119,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
 
     content {
       type         = identity.value.type
-      identity_ids = identity.value.type == "SystemAssigned" ? null : toset(keys(identity.value.userAssignedIdentities))
+      identity_ids = identity.value.type == "SystemAssigned" ? [] : toset(keys(identity.value.userAssignedIdentities))
     }
   }
 

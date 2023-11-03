@@ -84,6 +84,7 @@ module "alz_archetype_management" {
   base_archetype                     = "management"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  subscription_ids                   = [data.azurerm_client_config.current.subscription_id]
 }
 
 module "alz_archetype_corp" {

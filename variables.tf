@@ -136,6 +136,14 @@ A set of role definition names to remove from the `base_archetype`.
 DESCRIPTION
 }
 
+variable "subscription_ids" {
+  type        = set(string)
+  default     = []
+  description = <<DESCRIPTION
+A set of subscription ids to move under this management group.
+DESCRIPTION
+}
+
 variable "delays" {
   type = object({
     before_management_group = optional(object({
