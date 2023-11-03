@@ -127,7 +127,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
     for_each = try(each.value.properties.nonComplianceMessages, [])
 
     content {
-      content                        = non_compliance_message.value.message
+      content                        = replace(lookup(non_compliance_message.value, "message", var.policy_non_compliance_message_default), var.policy_non_compliance_message_enforcement_placeholder, try(each.value.properties.enforce, "Default") == "Default" ? var.policy_non_compliance_message_enforced_replacement : var.policy_non_compliance_message_not_enforced_replacement)
       policy_definition_reference_id = try(non_compliance_message.value.policyDefinitionReferenceId, null)
     }
   }
