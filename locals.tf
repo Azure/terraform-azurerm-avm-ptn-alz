@@ -19,4 +19,9 @@ locals {
 }
 
 //Non-compliance message constants
+locals {
+  policy_set_mode                               = "PolicySet"
+  non_compliance_message_supported_policy_modes = ["All", "Indexed", local.policy_set_mode]
+}
+
 
