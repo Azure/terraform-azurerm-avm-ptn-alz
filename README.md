@@ -91,7 +91,7 @@ The following input variables are optional (have default values):
 
 ### <a name="input_default_log_analytics_workspace_id"></a> [default\_log\_analytics\_workspace\_id](#input\_default\_log\_analytics\_workspace\_id)
 
-Description: n/a
+Description: The resource id of the default log analytics workspace to use for policy parameters.
 
 Type: `string`
 
@@ -99,7 +99,7 @@ Default: `null`
 
 ### <a name="input_default_private_dns_zone_resource_group_id"></a> [default\_private\_dns\_zone\_resource\_group\_id](#input\_default\_private\_dns\_zone\_resource\_group\_id)
 
-Description: n/a
+Description: Resource group id for the private dns zones to use in policy parameters.
 
 Type: `string`
 
@@ -133,7 +133,8 @@ Default: `{}`
 
 ### <a name="input_policy_assignments_to_add"></a> [policy\_assignments\_to\_add](#input\_policy\_assignments\_to\_add)
 
-Description: A map of policy assignment objects to add or update the alz archetype with.
+Description: A map of policy assignment objects to add or update the alz archetype with.  
+When updating a policy assignment, you only need to specify the properties you want to change.
 
 The key is the name of the policy assignment.  
 The value is a map of the properties of the policy assignment.
@@ -162,6 +163,10 @@ map(object({
     policy_definition_name     = optional(string, null)
     policy_set_definition_name = optional(string, null)
     parameters                 = optional(string, null)
+    non_compliance_message = optional(set(object({
+      message                        = string
+      policy_definition_reference_id = optional(string, null)
+    })), null)
   }))
 ```
 
