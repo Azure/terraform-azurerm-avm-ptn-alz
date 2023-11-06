@@ -38,6 +38,7 @@ DESCRIPTION
 variable "default_log_analytics_workspace_id" {
   type        = string
   description = <<DESCRIPTION
+The resource id of the default log analytics workspace to use for policy parameters.
 DESCRIPTION
   default     = null
 }
@@ -45,6 +46,7 @@ DESCRIPTION
 variable "default_private_dns_zone_resource_group_id" {
   type        = string
   description = <<DESCRIPTION
+Resource group id for the private dns zones to use in policy parameters.
 DESCRIPTION
   default     = null
 }
@@ -86,10 +88,15 @@ variable "policy_assignments_to_add" {
     policy_definition_name     = optional(string, null)
     policy_set_definition_name = optional(string, null)
     parameters                 = optional(string, null)
+    non_compliance_message = optional(set(object({
+      message                        = string
+      policy_definition_reference_id = optional(string, null)
+    })), null)
   }))
   default     = {}
   description = <<DESCRIPTION
 A map of policy assignment objects to add or update the alz archetype with.
+When updating a policy assignment, you only need to specify the properties you want to change.
 
 The key is the name of the policy assignment.
 The value is a map of the properties of the policy assignment.
