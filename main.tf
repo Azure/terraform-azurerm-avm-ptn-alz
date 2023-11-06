@@ -38,6 +38,17 @@ resource "azurerm_management_group" "this" {
   depends_on = [time_sleep.before_management_group_creation]
 }
 
+data "azurerm_subscription" "this" {
+  for_each        = var.subscription_ids
+  subscription_id = each.key
+}
+
+resource "azurerm_management_group_subscription_association" "this" {
+  for_each            = var.subscription_ids
+  management_group_id = azurerm_management_group.this.id
+  subscription_id     = data.azurerm_subscription.this[each.key].id
+}
+
 resource "azurerm_policy_definition" "this" {
   for_each = local.alz_policy_definitions_decoded
 
@@ -94,11 +105,13 @@ resource "azurerm_management_group_policy_assignment" "this" {
   name                 = each.key
   management_group_id  = azurerm_management_group.this.id
   policy_definition_id = each.value.properties.policyDefinitionId
+  display_name         = try(each.value.properties.displayName, "")
   description          = try(each.value.properties.description, "")
   enforce              = try(each.value.properties.enforce, "Default") == "Default" ? true : false
   metadata             = jsonencode(try(each.value.properties.metadata, {}))
   parameters           = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
   location             = try(each.value.location, null)
+  not_scopes           = try(each.value.properties.notScopes, [])
 
   depends_on = [time_sleep.before_policy_assignments]
 
@@ -107,7 +120,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
 
     content {
       type         = identity.value.type
-      identity_ids = identity.value.type == "SystemAssigned" ? null : toset(keys(identity.value.userAssignedIdentities))
+      identity_ids = identity.value.type == "SystemAssigned" ? [] : toset(keys(identity.value.userAssignedIdentities))
     }
   }
 
@@ -207,7 +220,7 @@ resource "time_sleep" "before_policy_assignments" {
 }
 
 resource "time_sleep" "before_policy_role_assignments" {
-  count            = local.policy_role_assignments != {} ? 1 : 0
+  count            = local.alz_policy_assignments_decoded != {} ? 1 : 0
   create_duration  = var.delays.before_policy_role_assignments.create
   destroy_duration = var.delays.before_policy_role_assignments.destroy
 
