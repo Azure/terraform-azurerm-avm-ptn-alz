@@ -42,6 +42,13 @@ DESCRIPTION
   default     = null
 }
 
+variable "default_private_dns_zone_resource_group_id" {
+  type        = string
+  description = <<DESCRIPTION
+DESCRIPTION
+  default     = null
+}
+
 variable "role_assignments" {
   type = map(object({
     role_definition_id   = optional(string, "")
@@ -70,10 +77,34 @@ DESCRIPTION
 }
 
 variable "policy_assignments_to_add" {
-  type        = map(object({}))
+  type = map(object({
+    display_name               = optional(string, null)
+    enforcement_mode           = optional(string, null)
+    identity                   = optional(string, null)
+    identity_ids               = optional(list(string), null)
+    policy_definition_id       = optional(string, null)
+    policy_definition_name     = optional(string, null)
+    policy_set_definition_name = optional(string, null)
+    parameters                 = optional(string, null)
+  }))
   default     = {}
   description = <<DESCRIPTION
-Not implemented yet.
+A map of policy assignment objects to add or update the alz archetype with.
+
+The key is the name of the policy assignment.
+The value is a map of the properties of the policy assignment.
+
+- `display_name` - (Optional) The display name of the policy assignment.
+- `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
+- `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
+- `identity_ids` - (Optional) A set of ids of the user assigned identities to assign to the policy assignment.
+- `non_compliance_message` - (Optional) A set of non compliance message objects to use for the policy assignment. Each object has the following properties:
+  - `message` - (Required) The non compliance message.
+  - `policy_definition_reference_id` - (Optional) The reference id of the policy definition to use for the non compliance message.
+- `parameters` - (Optional) A JSON string of parameters to use for the policy assignment. Use `jsonencode()` to convert a map of the parameter names to values.
+- `policy_definition_id` - (Optional) The id of the policy definition to assign to the policy assignment. Conflicts with `policy_definition_name` and `policy_set_definition_name`.
+- `policy_definition_name` - (Optional) The name of the policy definition to assign to the policy assignment. Conflicts with `policy_definition_id` and `policy_set_definition_name`.
+- `policy_set_definition_name` - (Optional) The name of the policy set definition to assign to the policy assignment. Conflicts with `policy_definition_id` and `policy_definition_name`.
 DESCRIPTION
 }
 
