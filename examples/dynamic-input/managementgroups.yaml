@@ -1,0 +1,46 @@
+---
+root:
+  id: root
+  display_name: root
+  parent: null
+  base_archetype: root
+landing_zones:
+  id: landing-zones
+  display_name: landing-zones
+  parent: root
+  base_archetype: landing_zones
+platform:
+  id: platform
+  display_name: platform
+  parent: root
+  base_archetype: platform
+identity:
+  id: identity
+  display_name: identity
+  parent: platform
+  base_archetype: identity
+connectivity:
+  id: connectivity
+  display_name: connectivity
+  parent: platform
+  base_archetype: connectivity
+management:
+  id: management
+  display_name: management
+  parent: platform
+  base_archetype: management
+corp:
+  id: corp
+  display_name: corp
+  parent: landing_zones
+  base_archetype: corp
+online:
+  id: online
+  display_name: online
+  parent: landing_zones
+  base_archetype: online
+sandboxes:
+  id: sandboxes
+  display_name: sandboxes
+  parent: root
+  base_archetype: sandboxes
