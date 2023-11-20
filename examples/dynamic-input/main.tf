@@ -19,7 +19,7 @@ module "management_groups_layer_2" {
   for_each         = local.management_groups_layer_2
   id               = each.value.id
   display_name     = try(each.value.display_name, each.value.id)
-  parent_id        = each.value.id
+  parent_id        = each.value.parent
   base_archetype   = each.value.base_archetype
   default_location = local.location
   #default_log_analytics_workspace_id = module.management_resources.log_analytics_workspace.id
@@ -33,7 +33,7 @@ module "management_groups_layer_3" {
   for_each         = local.management_groups_layer_3
   id               = each.value.id
   display_name     = try(each.value.display_name, each.value.id)
-  parent_id        = each.value.parent_id
+  parent_id        = each.value.parent
   base_archetype   = each.value.base_archetype
   default_location = local.location
   #default_log_analytics_workspace_id = module.management_resources.log_analytics_workspace.id
@@ -47,7 +47,7 @@ module "management_groups_layer_4" {
   for_each         = local.management_groups_layer_4
   id               = each.value.id
   display_name     = try(each.value.display_name, each.value.id)
-  parent_id        = each.value.parent_id
+  parent_id        = each.value.parent
   base_archetype   = each.value.base_archetype
   default_location = local.location
   #default_log_analytics_workspace_id = module.management_resources.log_analytics_workspace.id
@@ -61,7 +61,7 @@ module "management_groups_layer_5" {
   for_each         = local.management_groups_layer_5
   id               = each.value.id
   display_name     = try(each.value.display_name, each.value.id)
-  parent_id        = each.value.parent_id
+  parent_id        = each.value.parent
   base_archetype   = each.value.base_archetype
   default_location = local.location
   #default_log_analytics_workspace_id = module.management_resources.log_analytics_workspace.id
@@ -75,7 +75,7 @@ module "management_groups_layer_6" {
   for_each         = local.management_groups_layer_6
   id               = each.value.id
   display_name     = try(each.value.display_name, each.value.id)
-  parent_id        = each.value.parent_id
+  parent_id        = each.value.parent
   base_archetype   = each.value.base_archetype
   default_location = local.location
   #default_log_analytics_workspace_id = module.management_resources.log_analytics_workspace.id

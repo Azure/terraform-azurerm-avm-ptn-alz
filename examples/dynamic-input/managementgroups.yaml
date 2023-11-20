@@ -2,7 +2,7 @@
 root:
   id: root
   display_name: root
-  parent: null
+  parent: base
   base_archetype: root
 landing_zones:
   id: landing-zones
