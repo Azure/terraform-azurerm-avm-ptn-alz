@@ -3,7 +3,8 @@ name: e2e test
 
 on:
   pull_request:
-    types: ['opened', 'reopened', 'synchronize']
+    branches: [ main ]
+    types: ['opened', 'reopened', 'synchronize','labeled']
   merge_group:
   workflow_dispatch:
 
@@ -25,6 +26,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   testexamples:
+    if: "${{ github.repository == 'Azure/terraform-azurerm-avm-ptn-alz' && (contains(github.event.pull_request.labels.*.name, 'PR: Safe to test 🧪') || github.event_name == 'workflow_dispatch') }}"
     runs-on: ubuntu-latest
     needs: getexamples
     environment: test
