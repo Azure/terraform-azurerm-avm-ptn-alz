@@ -172,7 +172,7 @@ resource "azurerm_management_group_policy_assignment" "this" {
 resource "azurerm_role_definition" "this" {
   for_each = local.alz_role_definitions_decoded
 
-  name        = each.key
+  name        = "${each.key}-${data.alz_archetype.this.id}"
   description = try(each.value.properties.description, null)
   scope       = azurerm_management_group.this.id
   permissions {
