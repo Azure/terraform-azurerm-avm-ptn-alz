@@ -14,6 +14,7 @@ resource "random_pet" "this" {
 module "naming" {
   source = "Azure/naming/azurerm"
   suffix = [random_pet.this.id]
+  prefix = ["test-avm-ptn-alz"]
 }
 
 module "alz_management_resources" {
