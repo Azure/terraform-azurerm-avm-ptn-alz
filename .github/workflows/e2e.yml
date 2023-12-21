@@ -51,6 +51,12 @@ jobs:
           export ARM_OIDC_REQUEST_TOKEN=$ACTIONS_ID_TOKEN_REQUEST_TOKEN
           export ARM_OIDC_REQUEST_URL=$ACTIONS_ID_TOKEN_REQUEST_URL
 
+          echo "ARM_CLIENT_ID: $ARM_CLIENT_ID"
+          echo "ARM_SUBSCRIPTION_ID: $ARM_SUBSCRIPTION_ID"
+          echo "ARM_TENANT_ID: $ARM_TENANT_ID"
+          echo "ARM_OIDC_REQUEST_TOKEN: $ARM_OIDC_REQUEST_TOKEN"
+          echo "ARM_OIDC_REQUEST_URL: $ARM_OIDC_REQUEST_URL"
+
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src -w /src --network=host -e TF_IN_AUTOMATION -e TF_VAR_enable_telemetry -e AVM_MOD_PATH=/src -e AVM_EXAMPLE=${{ matrix.example }} -e ARM_CLIENT_ID -e ARM_SUBSCRIPTION_ID -e ARM_TENANT_ID -e ARM_OIDC_REQUEST_TOKEN -e ARM_OIDC_REQUEST_URL -e ARM_USE_OIDC=true mcr.microsoft.com/azterraform:latest make test-example
 
   # This job is only run when all the previous jobs are successful.
