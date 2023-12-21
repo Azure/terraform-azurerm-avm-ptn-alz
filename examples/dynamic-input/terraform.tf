@@ -1,15 +1,20 @@
 terraform {
   required_providers {
     alz = {
-      source = "azure/alz"
+      source  = "azure/alz"
+      version = ">= 0.5.1"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 2.79.0"
+      version = ">= 3.74.0"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = ">= 0.9.1"
     }
     random = {
       source  = "hashicorp/random"
-      version = ">= 3.5.1"
+      version = ">= 3.5.0"
     }
   }
 }

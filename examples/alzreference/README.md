@@ -37,11 +37,11 @@ module "alz_archetype_root" {
   base_archetype                     = "root"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
-  delays = {
+  delays = merge(local.default_delays, {
     before_management_group_creation = {
       create = "0s"
     }
-  }
+  })
 }
 
 module "alz_archetype_landing_zones" {
@@ -52,6 +52,7 @@ module "alz_archetype_landing_zones" {
   base_archetype                     = "landing_zones"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  delays                             = local.default_delays
 }
 
 module "alz_archetype_platform" {
@@ -62,6 +63,7 @@ module "alz_archetype_platform" {
   base_archetype                     = "platform"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  delays                             = local.default_delays
 }
 
 module "alz_archetype_identity" {
@@ -72,6 +74,7 @@ module "alz_archetype_identity" {
   base_archetype                     = "identity"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  delays                             = local.default_delays
 }
 
 module "alz_archetype_connectivity" {
@@ -82,6 +85,7 @@ module "alz_archetype_connectivity" {
   base_archetype                     = "connectivity"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  delays                             = local.default_delays
 }
 
 module "alz_archetype_management" {
@@ -93,6 +97,7 @@ module "alz_archetype_management" {
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
   subscription_ids                   = [data.azurerm_client_config.current.subscription_id]
+  delays                             = local.default_delays
 }
 
 module "alz_archetype_corp" {
@@ -103,6 +108,7 @@ module "alz_archetype_corp" {
   base_archetype                     = "corp"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  delays                             = local.default_delays
 }
 
 module "alz_archetype_online" {
@@ -113,6 +119,7 @@ module "alz_archetype_online" {
   base_archetype                     = "online"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  delays                             = local.default_delays
 }
 
 module "alz_archetype_sandboxes" {
@@ -123,6 +130,7 @@ module "alz_archetype_sandboxes" {
   base_archetype                     = "sandboxes"
   default_location                   = local.default_location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
+  delays                             = local.default_delays
 }
 ```
 

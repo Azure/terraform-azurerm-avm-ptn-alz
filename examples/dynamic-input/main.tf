@@ -31,6 +31,11 @@ module "management_groups_layer_1" {
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
   subscription_ids                   = try(each.value.subscription_ids, [])
+  delays = merge(local.default_delays, {
+    before_management_group_creation = {
+      create = "0s"
+    }
+  })
 }
 
 module "management_groups_layer_2" {
@@ -43,6 +48,7 @@ module "management_groups_layer_2" {
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
   subscription_ids                   = try(each.value.subscription_ids, [])
+  delays                             = local.default_delays
 }
 
 module "management_groups_layer_3" {
@@ -55,6 +61,7 @@ module "management_groups_layer_3" {
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
   subscription_ids                   = try(each.value.subscription_ids, [])
+  delays                             = local.default_delays
 }
 
 module "management_groups_layer_4" {
@@ -67,6 +74,7 @@ module "management_groups_layer_4" {
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
   subscription_ids                   = try(each.value.subscription_ids, [])
+  delays                             = local.default_delays
 }
 
 module "management_groups_layer_5" {
@@ -79,6 +87,7 @@ module "management_groups_layer_5" {
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
   subscription_ids                   = try(each.value.subscription_ids, [])
+  delays                             = local.default_delays
 }
 
 module "management_groups_layer_6" {
@@ -91,4 +100,5 @@ module "management_groups_layer_6" {
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
   subscription_ids                   = try(each.value.subscription_ids, [])
+  delays                             = local.default_delays
 }
