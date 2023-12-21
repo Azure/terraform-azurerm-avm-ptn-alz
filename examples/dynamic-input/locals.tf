@@ -13,10 +13,12 @@ locals {
       create = "30s"
     }
     before_policy_assignments = {
-      create = "300s"
+      create  = "300s"
+      destroy = "120s"
     }
     before_policy_role_assignments = {
-      create = "30s"
+      create  = "60s"
+      destroy = "60s"
     }
   }
 }
