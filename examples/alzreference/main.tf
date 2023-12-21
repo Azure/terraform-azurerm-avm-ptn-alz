@@ -4,9 +4,10 @@ resource "random_pet" "this" {
 }
 
 module "naming" {
-  source = "Azure/naming/azurerm"
-  suffix = [random_pet.this.id]
-  prefix = ["test-avm-ptn-alz"]
+  source  = "Azure/naming/azurerm"
+  version = ">= 0.3.0"
+  suffix  = [random_pet.this.id]
+  prefix  = ["test-avm-ptn-alz"]
 }
 
 module "alz_management_resources" {
