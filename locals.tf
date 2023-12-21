@@ -7,7 +7,7 @@ locals {
   alz_role_definitions_decoded       = { for k in data.alz_archetype_keys.this.alz_role_definition_keys : k => jsondecode(data.alz_archetype.this.alz_role_definitions[k]) }
 }
 
-// Create a map of role assignment for the scope of the management group
+# Create a map of role assignment for the scope of the management group
 locals {
   policy_role_assignments = data.alz_archetype.this.alz_policy_role_assignments != null ? {
     for pra_key, pra_val in data.alz_archetype.this.alz_policy_role_assignments : pra_key => {

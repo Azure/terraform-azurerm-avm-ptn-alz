@@ -75,6 +75,15 @@ variable "role_assignments" {
   }
   default     = {}
   description = <<DESCRIPTION
+A map of role assignments to associated principals and role definitions to the management group.
+
+The key is the your reference for the role assignment. The value is a map of the properties of the role assignment.
+
+- `role_definition_id` - (Optional) The id of the role definition to assign to the principal. Conflicts with `role_definition_name`. `role_definition_id` and `role_definition_name` are mutually exclusive and one of them must be supplied.
+- `role_definition_name` - (Optional) The name of the role definition to assign to the principal. Conflicts with `role_definition_id`.
+- `principal_id` - (Required) The id of the principal to assign the role definition to.
+- `description` - (Optional) The description of the role assignment.
+
 DESCRIPTION
 }
 
