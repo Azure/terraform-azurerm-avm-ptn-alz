@@ -16,13 +16,3 @@ configuration:
     prBody: |
       This repository needs the standard workflow and policy files to ensure compliance.
     file:
-      - path: .github/workflows/version-check.yml
-        prContentLink: https://raw.githubusercontent.com/Azure/terraform-azurerm-avm-template/main/.github/workflows/version-check.yml
-      - path: .github/workflows/linting.yml
-        prContentLink: https://raw.githubusercontent.com/Azure/terraform-azurerm-avm-template/main/.github/workflows/linting.yml
-      - path: Makefile
-        prContentLink: https://raw.githubusercontent.com/Azure/terraform-azurerm-avm-template/main/Makefile
-      - path: .github/policies/avmrequiredfiles.yml
-        prContentLink: https://raw.githubusercontent.com/Azure/terraform-azurerm-avm-template/main/.github/policies/avmrequiredfiles.yml
-      - path: .github/policies/branchprotection.yml
-        prContentLink: https://raw.githubusercontent.com/Azure/terraform-azurerm-avm-template/main/.github/policies/branchprotection.yml
