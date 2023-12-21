@@ -31,20 +31,22 @@ data "alz_archetype" "this" {
 }
 
 resource "azurerm_management_group" "this" {
-  name                       = data.alz_archetype.this.id
   display_name               = data.alz_archetype.this.display_name
+  name                       = data.alz_archetype.this.id
   parent_management_group_id = format("/providers/Microsoft.Management/managementGroups/%s", data.alz_archetype.this.parent_id)
 
   depends_on = [time_sleep.before_management_group_creation]
 }
 
 data "azurerm_subscription" "this" {
-  for_each        = var.subscription_ids
+  for_each = var.subscription_ids
+
   subscription_id = each.key
 }
 
 resource "azurerm_management_group_subscription_association" "this" {
-  for_each            = var.subscription_ids
+  for_each = var.subscription_ids
+
   management_group_id = azurerm_management_group.this.id
   subscription_id     = data.azurerm_subscription.this[each.key].id
 }
@@ -52,28 +54,26 @@ resource "azurerm_management_group_subscription_association" "this" {
 resource "azurerm_policy_definition" "this" {
   for_each = local.alz_policy_definitions_decoded
 
-  name                = each.key
-  description         = try(each.value.properties.description, "")
   display_name        = try(each.value.properties.displayName, "")
-  policy_type         = try(each.value.properties.policyType, "Custom")
   mode                = each.value.properties.mode
+  name                = each.key
+  policy_type         = try(each.value.properties.policyType, "Custom")
+  description         = try(each.value.properties.description, "")
   management_group_id = azurerm_management_group.this.id
   metadata            = jsonencode(try(each.value.properties.metadata, {}))
-  policy_rule         = jsonencode(try(each.value.properties.policyRule, {}))
   parameters          = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
+  policy_rule         = jsonencode(try(each.value.properties.policyRule, {}))
 }
 
 resource "azurerm_policy_set_definition" "this" {
   for_each = local.alz_policy_set_definitions_decoded
 
-  name                = each.key
   display_name        = try(each.value.properties.displayName, "")
+  name                = each.key
   policy_type         = try(each.value.properties.policyType, "Custom")
   management_group_id = azurerm_management_group.this.id
   metadata            = jsonencode(try(each.value.properties.metadata, {}))
   parameters          = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
-
-  depends_on = [azurerm_policy_definition.this]
 
   dynamic "policy_definition_reference" {
     for_each = try(each.value.properties.policyDefinitions, [])
@@ -85,35 +85,34 @@ resource "azurerm_policy_set_definition" "this" {
       reference_id         = try(policy_definition_reference.value.policyDefinitionReferenceId, "")
     }
   }
-
   dynamic "policy_definition_group" {
     for_each = try(each.value.properties.policyDefinitionGroups, [])
 
     content {
       name                            = policy_definition_group.value.name
-      display_name                    = try(policy_definition_group.value.displayName, "")
-      description                     = try(policy_definition_group.value.description, "")
-      category                        = try(policy_definition_group.value.category, "")
       additional_metadata_resource_id = try(policy_definition_group.value.additionalMetadataId, "")
+      category                        = try(policy_definition_group.value.category, "")
+      description                     = try(policy_definition_group.value.description, "")
+      display_name                    = try(policy_definition_group.value.displayName, "")
     }
   }
+
+  depends_on = [azurerm_policy_definition.this]
 }
 
 resource "azurerm_management_group_policy_assignment" "this" {
   for_each = local.alz_policy_assignments_decoded
 
-  name                 = each.key
   management_group_id  = azurerm_management_group.this.id
+  name                 = each.key
   policy_definition_id = each.value.properties.policyDefinitionId
-  display_name         = try(each.value.properties.displayName, "")
   description          = try(each.value.properties.description, "")
+  display_name         = try(each.value.properties.displayName, "")
   enforce              = try(each.value.properties.enforce, "Default") == "Default" ? true : false
-  metadata             = jsonencode(try(each.value.properties.metadata, {}))
-  parameters           = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
   location             = try(each.value.location, null)
+  metadata             = jsonencode(try(each.value.properties.metadata, {}))
   not_scopes           = try(each.value.properties.notScopes, [])
-
-  depends_on = [time_sleep.before_policy_assignments]
+  parameters           = try(each.value.properties.parameters, null) != null && try(each.value.properties.parameters, {}) != {} ? jsonencode(each.value.properties.parameters) : null
 
   dynamic "identity" {
     for_each = try(each.value.identity.type, "None") != "None" ? [each.value.identity] : []
@@ -123,7 +122,6 @@ resource "azurerm_management_group_policy_assignment" "this" {
       identity_ids = identity.value.type == "SystemAssigned" ? [] : toset(keys(identity.value.userAssignedIdentities))
     }
   }
-
   dynamic "non_compliance_message" {
     for_each = try(each.value.properties.nonComplianceMessages, [])
 
@@ -132,7 +130,22 @@ resource "azurerm_management_group_policy_assignment" "this" {
       policy_definition_reference_id = try(non_compliance_message.value.policyDefinitionReferenceId, null)
     }
   }
+  dynamic "overrides" {
+    for_each = try(each.value.properties.overrides, [])
 
+    content {
+      value = overrides.value.value
+
+      dynamic "selectors" {
+        for_each = try(overrides.value.selectors, [])
+
+        content {
+          in     = try(selectors.value.in, null)
+          not_in = try(selectors.value.notIn, null)
+        }
+      }
+    }
+  }
   dynamic "resource_selectors" {
     for_each = try(each.value.properties.resourceSelectors, [])
 
@@ -151,46 +164,33 @@ resource "azurerm_management_group_policy_assignment" "this" {
     }
   }
 
-  dynamic "overrides" {
-    for_each = try(each.value.properties.overrides, [])
-
-    content {
-      value = overrides.value.value
-
-      dynamic "selectors" {
-        for_each = try(overrides.value.selectors, [])
-
-        content {
-          in     = try(selectors.value.in, null)
-          not_in = try(selectors.value.notIn, null)
-        }
-      }
-    }
-  }
+  depends_on = [time_sleep.before_policy_assignments]
 }
 
 resource "azurerm_role_definition" "this" {
   for_each = local.alz_role_definitions_decoded
 
-  name        = each.key
-  description = try(each.value.properties.description, null)
-  scope       = azurerm_management_group.this.id
+  name              = "${each.key}-${data.alz_archetype.this.id}"
+  scope             = azurerm_management_group.this.id
+  assignable_scopes = try(each.value.properties.assignableScopes, [])
+  description       = try(each.value.properties.description, null)
+
   permissions {
     actions          = try(one(each.value.properties.permissions).actions, [])
-    not_actions      = try(one(each.value.properties.permissions).notActions, [])
     data_actions     = try(one(each.value.properties.permissions).dataActions, [])
+    not_actions      = try(one(each.value.properties.permissions).notActions, [])
     not_data_actions = try(one(each.value.properties.permissions).notDataActions, [])
   }
-  assignable_scopes = try(each.value.properties.assignableScopes, [])
 }
 
 resource "azurerm_role_assignment" "this" {
-  for_each             = var.role_assignments
-  scope                = azurerm_management_group.this.id
+  for_each = var.role_assignments
+
   principal_id         = each.value.principal_id
+  scope                = azurerm_management_group.this.id
+  description          = each.value.description
   role_definition_id   = each.value.role_definition_id != "" ? each.value.role_definition_id : null
   role_definition_name = each.value.role_definition_name != "" ? each.value.role_definition_name : null
-  description          = each.value.description
 }
 
 resource "alz_policy_role_assignments" "this" {
@@ -205,7 +205,8 @@ resource "time_sleep" "before_management_group_creation" {
 }
 
 resource "time_sleep" "before_policy_assignments" {
-  count            = local.alz_policy_assignments_decoded != {} ? 1 : 0
+  count = local.alz_policy_assignments_decoded != {} ? 1 : 0
+
   create_duration  = var.delays.before_policy_assignments.create
   destroy_duration = var.delays.before_policy_assignments.destroy
   triggers = {
@@ -220,10 +221,10 @@ resource "time_sleep" "before_policy_assignments" {
 }
 
 resource "time_sleep" "before_policy_role_assignments" {
-  count            = local.alz_policy_assignments_decoded != {} ? 1 : 0
+  count = local.alz_policy_assignments_decoded != {} ? 1 : 0
+
   create_duration  = var.delays.before_policy_role_assignments.create
   destroy_duration = var.delays.before_policy_role_assignments.destroy
-
   triggers = {
     policy_assignments = jsonencode(azurerm_management_group_policy_assignment.this)
   }

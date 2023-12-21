@@ -1,0 +1,51 @@
+---
+root: # `key`: the unique identifier for the management group within the Terraform Module this is used in the `parent` field to build the hierarchy
+  id: root # `id`: the id the management group will be created with in Azure
+  display_name: Intermediate Root # `display_name`: the name the management group will be created with in Azure
+  parent: base # `parent`: for the root management group this should set to `base`
+  base_archetype: root # `archetype`: the archetype to use for this management group
+landing_zones:
+  id: landing-zones
+  display_name: Landing Zones
+  parent: root # Note that `parent` refers to the `key` of it's parent as opposed to the `id` which can be different
+  base_archetype: landing_zones
+platform:
+  id: platform
+  display_name: Platform
+  parent: root
+  base_archetype: platform
+identity:
+  id: identity
+  display_name: Identity
+  parent: platform
+  base_archetype: identity
+connectivity:
+  id: connectivity
+  display_name: Connectivity
+  parent: platform
+  base_archetype: connectivity
+management:
+  id: management
+  display_name: Management
+  parent: platform
+  base_archetype: management
+corp:
+  id: corp
+  display_name: Corp
+  parent: landing_zones
+  base_archetype: corp
+online:
+  id: online
+  display_name: Online
+  parent: landing_zones
+  base_archetype: online
+sandboxes:
+  id: sandboxes
+  display_name: Sandboxes
+  parent: root
+  base_archetype: sandboxes
+decommissioned:
+  id: decommissioned
+  display_name: Decommissioned
+  parent: root
+  base_archetype: decommissioned

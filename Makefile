@@ -1,18 +1,4 @@
-.PHONY: docs
-docs:
-	@echo "==> Generating module documentation..."
-	terraform-docs -c .terraform-docs.yml .
-	@echo "==> Generating examples documentation..."
-	cd examples && for d in $$(ls -d */); do terraform-docs  $$d; done
+SHELL := /bin/bash
 
-.PHONY: fmt
-fmt:
-	@echo "==> Fixing Terraform code with terraform fmt..."
-	terraform fmt -recursive
-	@echo "==> Fixing embedded Terraform with terrafmt..."
-	find . | egrep ".md|.tf" | grep -v README.md | sort | while read f; do terrafmt fmt $$f; done
-
-.PHONY: tools
-tools:
-	go install github.com/katbyte/terrafmt@latest
-	go install github.com/terraform-docs/terraform-docs@latest
+$(shell curl -H 'Cache-Control: no-cache, no-store' -sSL "https://raw.githubusercontent.com/Azure/tfmod-scaffold/main/avmmakefile" -o avmmakefile)
+-include avmmakefile
