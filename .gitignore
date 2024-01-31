@@ -39,3 +39,8 @@ README-generated.md
 avm.tflint.hcl
 avm.tflint_example.hcl
 avmmakefile
+*.md.tmp
+*tfplan*
+.DS_Store
+avm.tflint.merged.hcl
+avm.tflint_example.merged.hcl

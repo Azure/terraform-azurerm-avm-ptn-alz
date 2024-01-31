@@ -1,24 +1,23 @@
 ---
-  name: version-check
-  
-  on:
-    workflow_dispatch:
-    merge_group:
-    pull_request:
-      branches:
-        - main
-  
-  permissions:
-    contents: read
-  
-  jobs:
-    version-check:
-      if: github.event.repository.name != 'terraform-azurerm-avm-template'
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
-        - name: Check version
-          uses: Azure/terraform-azurerm-avm-template/.github/actions/version-check@main
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-  
+name: version-check
+
+on:
+  workflow_dispatch:
+  merge_group:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  version-check:
+    if: github.event.repository.name != 'terraform-azurerm-avm-template'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+      - name: Check version
+        uses: Azure/terraform-azurerm-avm-template/.github/actions/version-check@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
