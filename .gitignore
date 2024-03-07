@@ -44,3 +44,6 @@ avmmakefile
 .DS_Store
 avm.tflint.merged.hcl
 avm.tflint_example.merged.hcl
+
+# Ignore the provider download cache
+.alzlib
