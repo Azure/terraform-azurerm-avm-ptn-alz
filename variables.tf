@@ -73,16 +73,12 @@ Included to work around some race conditions in Azure.
 DESCRIPTION
 }
 
-variable "policy_assignments_to_add" {
+variable "policy_assignments_to_modify" {
   type = map(object({
-    display_name               = optional(string, null)
-    enforcement_mode           = optional(string, null)
-    identity                   = optional(string, null)
-    identity_ids               = optional(list(string), null)
-    policy_definition_id       = optional(string, null)
-    policy_definition_name     = optional(string, null)
-    policy_set_definition_name = optional(string, null)
-    parameters                 = optional(string, null)
+    enforcement_mode = optional(string, null)
+    identity         = optional(string, null)
+    identity_ids     = optional(list(string), null)
+    parameters       = optional(string, null)
     non_compliance_message = optional(set(object({
       message                        = string
       policy_definition_reference_id = optional(string, null)
@@ -90,13 +86,12 @@ variable "policy_assignments_to_add" {
   }))
   default     = {}
   description = <<DESCRIPTION
-A map of policy assignment objects to add or update the alz archetype with.
-When updating a policy assignment, you only need to specify the properties you want to change.
+A map of policy assignment objects to modify the ALZ archetype with.
+You only need to specify the properties you want to change.
 
 The key is the name of the policy assignment.
 The value is a map of the properties of the policy assignment.
 
-- `display_name` - (Optional) The display name of the policy assignment.
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
 - `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
 - `identity_ids` - (Optional) A set of ids of the user assigned identities to assign to the policy assignment.
@@ -104,53 +99,9 @@ The value is a map of the properties of the policy assignment.
   - `message` - (Required) The non compliance message.
   - `policy_definition_reference_id` - (Optional) The reference id of the policy definition to use for the non compliance message.
 - `parameters` - (Optional) A JSON string of parameters to use for the policy assignment. Use `jsonencode()` to convert a map of the parameter names to values.
-- `policy_definition_id` - (Optional) The id of the policy definition to assign to the policy assignment. Conflicts with `policy_definition_name` and `policy_set_definition_name`.
-- `policy_definition_name` - (Optional) The name of the policy definition to assign to the policy assignment. Conflicts with `policy_definition_id` and `policy_set_definition_name`.
-- `policy_set_definition_name` - (Optional) The name of the policy set definition to assign to the policy assignment. Conflicts with `policy_definition_id` and `policy_definition_name`.
 DESCRIPTION
 }
 
-variable "policy_assignments_to_remove" {
-  type        = set(string)
-  default     = []
-  description = <<DESCRIPTION
-A set of policy assignment names to remove from the `base_archetype`.
-DESCRIPTION
-}
-
-variable "policy_definitions_to_add" {
-  type        = set(string)
-  default     = []
-  description = <<DESCRIPTION
-A set of policy definition names to add to the `base_archetype`.
-The definition must exist in one of the loaded lib directories.
-DESCRIPTION
-}
-
-variable "policy_definitions_to_remove" {
-  type        = set(string)
-  default     = []
-  description = <<DESCRIPTION
-A set of policy definition names to remove from the `base_archetype`.
-DESCRIPTION
-}
-
-variable "policy_set_definitions_to_add" {
-  type        = set(string)
-  default     = []
-  description = <<DESCRIPTION
-A set of policy set definition names to add to the `base_archetype`.
-The definition must exist in one of the loaded lib directories.
-DESCRIPTION
-}
-
-variable "policy_set_definitions_to_remove" {
-  type        = set(string)
-  default     = []
-  description = <<DESCRIPTION
-A set of policy set definition names to remove from the `base_archetype`.
-DESCRIPTION
-}
 
 variable "role_assignments" {
   type = map(object({
@@ -185,23 +136,6 @@ DESCRIPTION
     condition     = length(toset(values(var.role_assignments))) == length(var.role_assignments)
     error_message = "Role assignment values must not be duplicates."
   }
-}
-
-variable "role_definitions_to_add" {
-  type        = set(string)
-  default     = []
-  description = <<DESCRIPTION
-A set of role definition names to add to the `base_archetype`.
-The definition must exist in one of the loaded lib directories.
-DESCRIPTION
-}
-
-variable "role_definitions_to_remove" {
-  type        = set(string)
-  default     = []
-  description = <<DESCRIPTION
-A set of role definition names to remove from the `base_archetype`.
-DESCRIPTION
 }
 
 variable "subscription_ids" {
