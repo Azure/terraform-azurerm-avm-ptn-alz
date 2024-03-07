@@ -83,6 +83,23 @@ variable "policy_assignments_to_modify" {
       message                        = string
       policy_definition_reference_id = optional(string, null)
     })), null)
+    resource_selectors = optional(list(object({
+      name = string
+      selectors = optional(list(object({
+        kind   = string
+        in     = optional(set(string), null)
+        not_in = optional(set(string), null)
+      })), [])
+    })))
+    overrides = optional(list(object({
+      kind  = string
+      value = string
+      selectors = optional(list(object({
+        kind   = string
+        in     = optional(set(string), null)
+        not_in = optional(set(string), null)
+      })), [])
+    })))
   }))
   default     = {}
   description = <<DESCRIPTION
@@ -98,7 +115,20 @@ The value is a map of the properties of the policy assignment.
 - `non_compliance_message` - (Optional) A set of non compliance message objects to use for the policy assignment. Each object has the following properties:
   - `message` - (Required) The non compliance message.
   - `policy_definition_reference_id` - (Optional) The reference id of the policy definition to use for the non compliance message.
-- `parameters` - (Optional) A JSON string of parameters to use for the policy assignment. Use `jsonencode()` to convert a map of the parameter names to values.
+- `parameters` - (Optional) A JSON string of parameters to use for the policy assignment. E.g. `jsonencode({"param1": "value1", "param2": 2})`.
+- `resource_selectors` - (Optional) A list of resource selector objects to use for the policy assignment. Each object has the following properties:
+  - `name` - (Required) The name of the resource selector.
+  - `selectors` - (Optional) A list of selector objects to use for the resource selector. Each object has the following properties:
+    - `kind` - (Required) The kind of the selector. Allowed values are: `resourceLocation`, `resourceType`, `resourceWithoutLocation`. `resourceWithoutLocation` cannot be used in the same resource selector as `resourceLocation`.
+    - `in` - (Optional) A set of strings to include in the selector.
+    - `not_in` - (Optional) A set of strings to exclude from the selector.
+- `overrides` - (Optional) A list of override objects to use for the policy assignment. Each object has the following properties:
+  - `kind` - (Required) The kind of the override.
+  - `value` - (Required) The value of the override. Supported values are policy effects: <https://learn.microsoft.com/azure/governance/policy/concepts/effects>.
+  - `selectors` - (Optional) A list of selector objects to use for the override. Each object has the following properties:
+    - `kind` - (Required) The kind of the selector.
+    - `in` - (Optional) A set of strings to include in the selector.
+    - `not_in` - (Optional) A set of strings to exclude from the selector.
 DESCRIPTION
 }
 
