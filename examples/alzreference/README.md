@@ -12,14 +12,14 @@ resource "random_pet" "this" {
 
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = ">= 0.3.0"
+  version = "~> 0.3"
   suffix  = [random_pet.this.id]
   prefix  = ["test-avm-ptn-alz"]
 }
 
 module "alz_management_resources" {
   source  = "Azure/alz-management/azurerm"
-  version = "~> 0.1.0"
+  version = "~> 0.1"
 
   automation_account_name      = module.naming.automation_account.name
   location                     = local.default_location
@@ -142,7 +142,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.0.0)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (>= 0.5.1)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (>= 0.6.3)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.74.0)
 
@@ -238,13 +238,12 @@ Version:
 
 Source: Azure/alz-management/azurerm
 
-Version: ~> 0.1.0
+Version: ~> 0.1
 
 ### <a name="module_naming"></a> [naming](#module\_naming)
 
 Source: Azure/naming/azurerm
 
-Version: >= 0.3.0
-
+Version: ~> 0.3
 
 <!-- END_TF_DOCS -->
