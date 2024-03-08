@@ -156,7 +156,7 @@ The following outputs are exported:
 
 ### <a name="output_test"></a> [test](#output\_test)
 
-Description: n/a
+Description: An object containing the management groups for each layer.
 
 ## Modules
 

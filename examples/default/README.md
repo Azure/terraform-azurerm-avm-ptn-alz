@@ -4,13 +4,18 @@
 TBC
 
 ```hcl
-
+terraform {
+  required_version = ">= 1.0.0"
+  required_providers {}
+}
 ```
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
-No requirements.
+The following requirements are needed by this module:
+
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.0.0)
 
 ## Providers
 
