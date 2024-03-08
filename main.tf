@@ -1,13 +1,5 @@
 data "alz_archetype_keys" "this" {
-  base_archetype                   = var.base_archetype
-  policy_assignments_to_add        = keys(var.policy_assignments_to_add)
-  policy_assignments_to_remove     = var.policy_assignments_to_remove
-  policy_definitions_to_add        = var.policy_definitions_to_add
-  policy_definitions_to_remove     = var.policy_definitions_to_remove
-  policy_set_definitions_to_add    = var.policy_set_definitions_to_add
-  policy_set_definitions_to_remove = var.policy_set_definitions_to_remove
-  role_definitions_to_add          = var.role_definitions_to_add
-  role_definitions_to_remove       = var.role_definitions_to_remove
+  base_archetype = var.base_archetype
 }
 
 data "alz_archetype" "this" {
@@ -17,17 +9,10 @@ data "alz_archetype" "this" {
     log_analytics_workspace_id         = var.default_log_analytics_workspace_id
     private_dns_zone_resource_group_id = var.default_private_dns_zone_resource_group_id
   }
-  display_name                     = var.display_name
-  base_archetype                   = var.base_archetype
-  parent_id                        = var.parent_id
-  policy_assignments_to_add        = var.policy_assignments_to_add
-  policy_assignments_to_remove     = var.policy_assignments_to_remove
-  policy_definitions_to_add        = var.policy_definitions_to_add
-  policy_definitions_to_remove     = var.policy_definitions_to_remove
-  policy_set_definitions_to_add    = var.policy_set_definitions_to_add
-  policy_set_definitions_to_remove = var.policy_set_definitions_to_remove
-  role_definitions_to_add          = var.role_definitions_to_add
-  role_definitions_to_remove       = var.role_definitions_to_remove
+  display_name                 = var.display_name
+  base_archetype               = var.base_archetype
+  parent_id                    = var.parent_id
+  policy_assignments_to_modify = var.policy_assignments_to_modify
 }
 
 resource "azurerm_management_group" "this" {

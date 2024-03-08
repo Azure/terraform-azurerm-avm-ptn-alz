@@ -13,25 +13,25 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.0.0)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (>= 0.5.1)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.10)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.74.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.74)
 
-- <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0)
+- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
-- <a name="requirement_time"></a> [time](#requirement\_time) (>= 0.9.1)
+- <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_alz"></a> [alz](#provider\_alz) (>= 0.5.1)
+- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.10)
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.74.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 3.74)
 
-- <a name="provider_random"></a> [random](#provider\_random) (>= 3.5.0)
+- <a name="provider_random"></a> [random](#provider\_random) (~> 3.5)
 
-- <a name="provider_time"></a> [time](#provider\_time) (>= 0.9.1)
+- <a name="provider_time"></a> [time](#provider\_time) (~> 0.9)
 
 ## Resources
 
@@ -147,88 +147,68 @@ Type: `bool`
 
 Default: `true`
 
-### <a name="input_policy_assignments_to_add"></a> [policy\_assignments\_to\_add](#input\_policy\_assignments\_to\_add)
+### <a name="input_policy_assignments_to_modify"></a> [policy\_assignments\_to\_modify](#input\_policy\_assignments\_to\_modify)
 
-Description: A map of policy assignment objects to add or update the alz archetype with.  
-When updating a policy assignment, you only need to specify the properties you want to change.
+Description: A map of policy assignment objects to modify the ALZ archetype with.  
+You only need to specify the properties you want to change.
 
 The key is the name of the policy assignment.  
 The value is a map of the properties of the policy assignment.
 
-- `display_name` - (Optional) The display name of the policy assignment.
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
 - `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
 - `identity_ids` - (Optional) A set of ids of the user assigned identities to assign to the policy assignment.
 - `non_compliance_message` - (Optional) A set of non compliance message objects to use for the policy assignment. Each object has the following properties:
   - `message` - (Required) The non compliance message.
   - `policy_definition_reference_id` - (Optional) The reference id of the policy definition to use for the non compliance message.
-- `parameters` - (Optional) A JSON string of parameters to use for the policy assignment. Use `jsonencode()` to convert a map of the parameter names to values.
-- `policy_definition_id` - (Optional) The id of the policy definition to assign to the policy assignment. Conflicts with `policy_definition_name` and `policy_set_definition_name`.
-- `policy_definition_name` - (Optional) The name of the policy definition to assign to the policy assignment. Conflicts with `policy_definition_id` and `policy_set_definition_name`.
-- `policy_set_definition_name` - (Optional) The name of the policy set definition to assign to the policy assignment. Conflicts with `policy_definition_id` and `policy_definition_name`.
+- `parameters` - (Optional) A JSON string of parameters to use for the policy assignment. E.g. `jsonencode({"param1": "value1", "param2": 2})`.
+- `resource_selectors` - (Optional) A list of resource selector objects to use for the policy assignment. Each object has the following properties:
+  - `name` - (Required) The name of the resource selector.
+  - `selectors` - (Optional) A list of selector objects to use for the resource selector. Each object has the following properties:
+    - `kind` - (Required) The kind of the selector. Allowed values are: `resourceLocation`, `resourceType`, `resourceWithoutLocation`. `resourceWithoutLocation` cannot be used in the same resource selector as `resourceLocation`.
+    - `in` - (Optional) A set of strings to include in the selector.
+    - `not_in` - (Optional) A set of strings to exclude from the selector.
+- `overrides` - (Optional) A list of override objects to use for the policy assignment. Each object has the following properties:
+  - `kind` - (Required) The kind of the override.
+  - `value` - (Required) The value of the override. Supported values are policy effects: <https://learn.microsoft.com/azure/governance/policy/concepts/effects>.
+  - `selectors` - (Optional) A list of selector objects to use for the override. Each object has the following properties:
+    - `kind` - (Required) The kind of the selector.
+    - `in` - (Optional) A set of strings to include in the selector.
+    - `not_in` - (Optional) A set of strings to exclude from the selector.
 
 Type:
 
 ```hcl
 map(object({
-    display_name               = optional(string, null)
-    enforcement_mode           = optional(string, null)
-    identity                   = optional(string, null)
-    identity_ids               = optional(list(string), null)
-    policy_definition_id       = optional(string, null)
-    policy_definition_name     = optional(string, null)
-    policy_set_definition_name = optional(string, null)
-    parameters                 = optional(string, null)
+    enforcement_mode = optional(string, null)
+    identity         = optional(string, null)
+    identity_ids     = optional(list(string), null)
+    parameters       = optional(string, null)
     non_compliance_message = optional(set(object({
       message                        = string
       policy_definition_reference_id = optional(string, null)
     })), null)
+    resource_selectors = optional(list(object({
+      name = string
+      selectors = optional(list(object({
+        kind   = string
+        in     = optional(set(string), null)
+        not_in = optional(set(string), null)
+      })), [])
+    })))
+    overrides = optional(list(object({
+      kind  = string
+      value = string
+      selectors = optional(list(object({
+        kind   = string
+        in     = optional(set(string), null)
+        not_in = optional(set(string), null)
+      })), [])
+    })))
   }))
 ```
 
 Default: `{}`
-
-### <a name="input_policy_assignments_to_remove"></a> [policy\_assignments\_to\_remove](#input\_policy\_assignments\_to\_remove)
-
-Description: A set of policy assignment names to remove from the `base_archetype`.
-
-Type: `set(string)`
-
-Default: `[]`
-
-### <a name="input_policy_definitions_to_add"></a> [policy\_definitions\_to\_add](#input\_policy\_definitions\_to\_add)
-
-Description: A set of policy definition names to add to the `base_archetype`.  
-The definition must exist in one of the loaded lib directories.
-
-Type: `set(string)`
-
-Default: `[]`
-
-### <a name="input_policy_definitions_to_remove"></a> [policy\_definitions\_to\_remove](#input\_policy\_definitions\_to\_remove)
-
-Description: A set of policy definition names to remove from the `base_archetype`.
-
-Type: `set(string)`
-
-Default: `[]`
-
-### <a name="input_policy_set_definitions_to_add"></a> [policy\_set\_definitions\_to\_add](#input\_policy\_set\_definitions\_to\_add)
-
-Description: A set of policy set definition names to add to the `base_archetype`.  
-The definition must exist in one of the loaded lib directories.
-
-Type: `set(string)`
-
-Default: `[]`
-
-### <a name="input_policy_set_definitions_to_remove"></a> [policy\_set\_definitions\_to\_remove](#input\_policy\_set\_definitions\_to\_remove)
-
-Description: A set of policy set definition names to remove from the `base_archetype`.
-
-Type: `set(string)`
-
-Default: `[]`
 
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
@@ -253,23 +233,6 @@ map(object({
 ```
 
 Default: `{}`
-
-### <a name="input_role_definitions_to_add"></a> [role\_definitions\_to\_add](#input\_role\_definitions\_to\_add)
-
-Description: A set of role definition names to add to the `base_archetype`.  
-The definition must exist in one of the loaded lib directories.
-
-Type: `set(string)`
-
-Default: `[]`
-
-### <a name="input_role_definitions_to_remove"></a> [role\_definitions\_to\_remove](#input\_role\_definitions\_to\_remove)
-
-Description: A set of role definition names to remove from the `base_archetype`.
-
-Type: `set(string)`
-
-Default: `[]`
 
 ### <a name="input_subscription_ids"></a> [subscription\_ids](#input\_subscription\_ids)
 
@@ -299,25 +262,8 @@ Description: The id of the management group.
 
 No modules.
 
-## Contributing
+<!-- markdownlint-disable-next-line MD041 -->
+## Data Collection
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
-
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
-## Trademarks
-
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
-trademarks or logos is subject to and must follow
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+The software may collect information about you and your use of the software and send it to Microsoft. Microsoft may use this information to provide services and improve our products and services. You may turn off the telemetry as described in the repository. There are also some features in the software that may enable you and Microsoft to collect data from users of your applications. If you use these features, you must comply with applicable law, including providing appropriate notices to users of your applications together with a copy of Microsoft’s privacy statement. Our privacy statement is located at <https://go.microsoft.com/fwlink/?LinkID=824704>. You can learn more about data collection and use in the help documentation and our privacy statement. Your use of the software operates as your consent to these practices.
 <!-- END_TF_DOCS -->
