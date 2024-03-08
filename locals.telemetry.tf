@@ -18,21 +18,20 @@ locals {
     64
   )
   # This is an empty ARM deployment template.
-  telem_arm_template_content = <<TEMPLATE
-{
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {},
-  "variables": {},
-  "resources": [],
-  "outputs": {
-    "telemetry": {
-      "type": "String",
-      "value": "For more information, see https://aka.ms/avm/telemetry"
+  telem_arm_template_content = jsonencode({
+    "$schema"      = "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    contentVersion = "1.0.0.0"
+    parameters : {}
+    variables = {}
+    resources = []
+    outputs = {
+      telemetry = {
+        type  = "String",
+        value = "For more information, see https://aka.ms/avm/telemetry"
+      }
     }
-  }
-}
-TEMPLATE
+  })
+
   # This is the unique id AVM Terraform modules that is supplied by the AVM team.
   # See https://azure.github.io/Azure-Verified-Modules/specs/shared/#id-sfr3---category-telemetry---deploymentusage-telemetry
   telem_puid = "46d3xgtf"
