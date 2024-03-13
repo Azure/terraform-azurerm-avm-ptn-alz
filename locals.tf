@@ -17,3 +17,8 @@ locals {
     }
   } : {}
 }
+
+# Get parent management group name from the parent_id
+locals {
+  parent_management_group_name = element(split("/", var.parent_resource_id), length(split("/", var.parent_resource_id)) - 1)
+}

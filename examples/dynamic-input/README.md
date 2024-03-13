@@ -13,14 +13,14 @@ resource "random_pet" "this" {
 
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = ">= 0.3.0"
+  version = "~> 0.3"
   suffix  = [random_pet.this.id]
   prefix  = ["test-avm-ptn-alz"]
 }
 
 module "alz_management_resources" {
   source  = "Azure/alz-management/azurerm"
-  version = "~> 0.1.0"
+  version = "~> 0.1"
 
   automation_account_name      = module.naming.automation_account.name
   location                     = local.location
@@ -166,7 +166,7 @@ The following Modules are called:
 
 Source: Azure/alz-management/azurerm
 
-Version: ~> 0.1.0
+Version: ~> 0.1
 
 ### <a name="module_management_groups_layer_1"></a> [management\_groups\_layer\_1](#module\_management\_groups\_layer\_1)
 
@@ -208,6 +208,6 @@ Version:
 
 Source: Azure/naming/azurerm
 
-Version: >= 0.3.0
+Version: ~> 0.3
 
 <!-- END_TF_DOCS -->

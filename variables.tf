@@ -27,12 +27,16 @@ The id of the management group. This must be unique and cannot be changed after 
 DESCRIPTION
 }
 
-variable "parent_id" {
+variable "parent_resource_id" {
   type        = string
   description = <<DESCRIPTION
-The id of the parent management group. Use the tenant id to create a child of the tenant root group.
+The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.
 The `azurerm_client_config` data source from the AzureRM provider is useful to get the tenant id.
 DESCRIPTION
+  validation {
+    error_message = "Value must be a valid management group resource id."
+    condition     = can(regex("^/providers/Microsoft.Management/managementGroups/[^/]+$", var.parent_resource_id))
+  }
 }
 
 variable "default_log_analytics_workspace_id" {

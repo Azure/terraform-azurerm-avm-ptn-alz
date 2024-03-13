@@ -5,14 +5,14 @@ resource "random_pet" "this" {
 
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = ">= 0.3.0"
+  version = "~> 0.3"
   suffix  = [random_pet.this.id]
   prefix  = ["test-avm-ptn-alz"]
 }
 
 module "alz_management_resources" {
   source  = "Azure/alz-management/azurerm"
-  version = "~> 0.1.0"
+  version = "~> 0.1"
 
   automation_account_name      = module.naming.automation_account.name
   location                     = local.location
@@ -27,7 +27,7 @@ module "management_groups_layer_1" {
   for_each                           = local.management_groups_layer_1
   id                                 = "${each.value.id}-${random_pet.this.id}"
   display_name                       = try(each.value.display_name, each.value.id)
-  parent_id                          = data.azurerm_client_config.current.tenant_id
+  parent_resource_id                 = "/providers/Microsoft.Management/managementGroups/${data.azurerm_client_config.current.tenant_id}"
   base_archetype                     = each.value.base_archetype
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
@@ -44,7 +44,7 @@ module "management_groups_layer_2" {
   for_each                           = local.management_groups_layer_2
   id                                 = "${each.value.id}-${random_pet.this.id}"
   display_name                       = try(each.value.display_name, each.value.id)
-  parent_id                          = module.management_groups_layer_1[each.value.parent].management_group_name
+  parent_resource_id                 = module.management_groups_layer_1[each.value.parent].management_group_resource_id
   base_archetype                     = each.value.base_archetype
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
@@ -57,7 +57,7 @@ module "management_groups_layer_3" {
   for_each                           = local.management_groups_layer_3
   id                                 = "${each.value.id}-${random_pet.this.id}"
   display_name                       = try(each.value.display_name, each.value.id)
-  parent_id                          = module.management_groups_layer_2[each.value.parent].management_group_name
+  parent_resource_id                 = module.management_groups_layer_2[each.value.parent].management_group_resource_id
   base_archetype                     = each.value.base_archetype
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
@@ -70,7 +70,7 @@ module "management_groups_layer_4" {
   for_each                           = local.management_groups_layer_4
   id                                 = "${each.value.id}-${random_pet.this.id}"
   display_name                       = try(each.value.display_name, each.value.id)
-  parent_id                          = module.management_groups_layer_3[each.value.parent].management_group_name
+  parent_resource_id                 = module.management_groups_layer_3[each.value.parent].management_group_resource_id
   base_archetype                     = each.value.base_archetype
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
@@ -83,7 +83,7 @@ module "management_groups_layer_5" {
   for_each                           = local.management_groups_layer_5
   id                                 = "${each.value.id}-${random_pet.this.id}"
   display_name                       = try(each.value.display_name, each.value.id)
-  parent_id                          = module.management_groups_layer_4[each.value.parent].management_group_name
+  parent_resource_id                 = module.management_groups_layer_4[each.value.parent].management_group_resource_id
   base_archetype                     = each.value.base_archetype
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
@@ -96,7 +96,7 @@ module "management_groups_layer_6" {
   for_each                           = local.management_groups_layer_6
   id                                 = "${each.value.id}-${random_pet.this.id}"
   display_name                       = try(each.value.display_name, each.value.id)
-  parent_id                          = module.management_groups_layer_5[each.value.parent].management_group_name
+  parent_resource_id                 = module.management_groups_layer_5[each.value.parent].management_group_resource_id
   base_archetype                     = each.value.base_archetype
   default_location                   = local.location
   default_log_analytics_workspace_id = module.alz_management_resources.log_analytics_workspace.id
