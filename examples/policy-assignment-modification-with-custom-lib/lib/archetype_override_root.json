@@ -1,0 +1,7 @@
+{
+  "base_archetype": "root",
+  "name": "root_override",
+  "policy_assignments_to_add": [
+    "Update-Ring1"
+  ]
+}

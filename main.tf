@@ -11,14 +11,14 @@ data "alz_archetype" "this" {
   }
   display_name                 = var.display_name
   base_archetype               = var.base_archetype
-  parent_id                    = var.parent_id
+  parent_id                    = local.parent_management_group_name
   policy_assignments_to_modify = var.policy_assignments_to_modify
 }
 
 resource "azurerm_management_group" "this" {
   display_name               = data.alz_archetype.this.display_name
   name                       = data.alz_archetype.this.id
-  parent_management_group_id = format("/providers/Microsoft.Management/managementGroups/%s", data.alz_archetype.this.parent_id)
+  parent_management_group_id = var.parent_resource_id
 
   depends_on = [time_sleep.before_management_group_creation]
 }
@@ -195,8 +195,8 @@ resource "time_sleep" "before_policy_assignments" {
   create_duration  = var.delays.before_policy_assignments.create
   destroy_duration = var.delays.before_policy_assignments.destroy
   triggers = {
-    policy_definitions     = jsonencode(azurerm_policy_definition.this)
-    policy_set_definitions = jsonencode(azurerm_policy_set_definition.this)
+    policy_definitions     = sha256(jsonencode(azurerm_policy_definition.this))
+    policy_set_definitions = sha256(jsonencode(azurerm_policy_set_definition.this))
   }
 
   depends_on = [
@@ -211,7 +211,7 @@ resource "time_sleep" "before_policy_role_assignments" {
   create_duration  = var.delays.before_policy_role_assignments.create
   destroy_duration = var.delays.before_policy_role_assignments.destroy
   triggers = {
-    policy_assignments = jsonencode(azurerm_management_group_policy_assignment.this)
+    policy_assignments = sha256(jsonencode(azurerm_management_group_policy_assignment.this))
   }
 
   depends_on = [azurerm_management_group_policy_assignment.this]

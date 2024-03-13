@@ -11,9 +11,9 @@
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.0.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.10)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.11)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.74)
 
@@ -25,7 +25,7 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.10)
+- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.11)
 
 - <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 3.74)
 
@@ -41,9 +41,9 @@ The following resources are used by this module:
 - [azurerm_management_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
 - [azurerm_management_group_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_policy_assignment) (resource)
 - [azurerm_management_group_subscription_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_subscription_association) (resource)
+- [azurerm_management_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_template_deployment) (resource)
 - [azurerm_policy_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition) (resource)
 - [azurerm_policy_set_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_set_definition) (resource)
-- [azurerm_resource_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_role_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
 - [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
@@ -84,9 +84,9 @@ Description: The id of the management group. This must be unique and cannot be c
 
 Type: `string`
 
-### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
+### <a name="input_parent_resource_id"></a> [parent\_resource\_id](#input\_parent\_resource\_id)
 
-Description: The id of the parent management group. Use the tenant id to create a child of the tenant root group.  
+Description: The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.  
 The `azurerm_client_config` data source from the AzureRM provider is useful to get the tenant id.
 
 Type: `string`
@@ -242,21 +242,13 @@ Type: `set(string)`
 
 Default: `[]`
 
-### <a name="input_telemetry_resource_group_name"></a> [telemetry\_resource\_group\_name](#input\_telemetry\_resource\_group\_name)
-
-Description: The resource group where the telemetry will be deployed.
-
-Type: `string`
-
-Default: `""`
-
 ## Outputs
 
 The following outputs are exported:
 
-### <a name="output_management_group_name"></a> [management\_group\_name](#output\_management\_group\_name)
+### <a name="output_management_group_resource_id"></a> [management\_group\_resource\_id](#output\_management\_group\_resource\_id)
 
-Description: The id of the management group.
+Description: The resource id of the created management group.
 
 ## Modules
 

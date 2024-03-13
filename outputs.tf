@@ -1,4 +1,4 @@
-output "management_group_name" {
-  description = "The id of the management group."
-  value       = azurerm_management_group.this.name
+output "management_group_resource_id" {
+  description = "The resource id of the created management group."
+  value       = azurerm_management_group.this.id
 }
