@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # Default
 
-TBC
+Left deliberately empty for now.
 
 ```hcl
 terraform {

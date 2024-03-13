@@ -7,7 +7,7 @@ This example demonstrates some common patterns:
 - The use of a custom library, with an archetype override and additional policy assignment
 - Modification of a policy assignment to supply new parameters to an assigned policy
 
-Thanks to [@phx-tim-butters](https://github.com/phx-tim-butters) for this example
+Thanks to [@phx-tim-butters](https://github.com/phx-tim-butters) for this example!
 
 ```hcl
 terraform {
@@ -36,28 +36,28 @@ provider "alz" {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "update_manager" {
-  name     = "rg_test"
   location = "uksouth"
+  name     = "rg_test"
 }
 
 resource "azurerm_maintenance_configuration" "this" {
+  location            = azurerm_resource_group.update_manager.location
   name                = "ring1"
   resource_group_name = azurerm_resource_group.update_manager.name
-  location            = azurerm_resource_group.update_manager.location
   scope               = "InGuestPatch"
 
-  window {
-    start_date_time = "2024-01-03 00:00"
-    duration        = "03:55"
-    time_zone       = "GMT Standard Time"
-    recur_every     = "Week"
-  }
-
   install_patches {
+    reboot = "IfRequired"
+
     windows {
       classifications_to_include = ["Critical", "Security", "Definition"]
     }
-    reboot = "IfRequired"
+  }
+  window {
+    start_date_time = "2024-01-03 00:00"
+    time_zone       = "GMT Standard Time"
+    duration        = "03:55"
+    recur_every     = "Week"
   }
 }
 

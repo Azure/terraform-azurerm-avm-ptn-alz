@@ -24,7 +24,8 @@ resource "azurerm_management_group" "this" {
 }
 
 data "azurerm_subscription" "this" {
-  for_each        = var.subscription_ids
+  for_each = var.subscription_ids
+
   subscription_id = each.key
 }
 

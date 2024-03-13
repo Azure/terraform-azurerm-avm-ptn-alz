@@ -33,6 +33,7 @@ variable "parent_resource_id" {
 The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.
 The `azurerm_client_config` data source from the AzureRM provider is useful to get the tenant id.
 DESCRIPTION
+
   validation {
     error_message = "Value must be a valid management group resource id."
     condition     = can(regex("^/providers/Microsoft.Management/managementGroups/[^/]+$", var.parent_resource_id))
@@ -135,7 +136,6 @@ The value is a map of the properties of the policy assignment.
     - `not_in` - (Optional) A set of strings to exclude from the selector.
 DESCRIPTION
 }
-
 
 variable "role_assignments" {
   type = map(object({
