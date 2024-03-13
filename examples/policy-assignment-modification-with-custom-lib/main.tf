@@ -1,20 +1,3 @@
-terraform {
-  required_providers {
-    alz = {
-      source  = "azure/alz"
-      version = "~> 0.11"
-    }
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 3.74.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
 # Include the additional policies and override archetypes
 provider "alz" {
   lib_urls = ["${path.root}/lib"]
