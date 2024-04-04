@@ -55,6 +55,7 @@ resource "azurerm_policy_set_definition" "this" {
 
   display_name        = try(each.value.properties.displayName, "")
   name                = each.key
+  description         = try(each.value.properties.description, "")
   policy_type         = try(each.value.properties.policyType, "Custom")
   management_group_id = azurerm_management_group.this.id
   metadata            = jsonencode(try(each.value.properties.metadata, {}))
