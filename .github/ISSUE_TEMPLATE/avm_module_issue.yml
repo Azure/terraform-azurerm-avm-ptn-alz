@@ -7,11 +7,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for submitting this AVM Module Issue!
+        Thank you for submitting this AVM Module Issue! To help us triage your issue, please provide the below details.
 
-        To help us triage your issue, please provide the below details.
-
-        > **NOTE**: If you'd like to propose a new AVM module, please follow the process described in the [AVM repo](https://aka.ms/AVM/ModuleProposal).
+        > **NOTE**: If you'd like to propose a new AVM module, please file an [AVM Module Proposal](https://aka.ms/AVM/ModuleProposal).
   - type: checkboxes
     id: existing-checks
     attributes:
@@ -20,20 +18,13 @@ body:
       options:
         - label: I have checked for previous/existing GitHub issues
           required: true
-  - type: checkboxes
-    id: module-specific-checks
-    attributes:
-      label: Module specific issue
-      description: By submitting this issue, you confirm that this issue is about this AVM module and not about the resource itself, or how to use Terraform.
-      options:
-        - label: I confirm that this issue is about this AVM module and not about the resource itself, or how to use Terraform.
-          required: true
   - type: dropdown
     id: issue-type
     attributes:
       label: Issue Type?
       description: How would you best describe this issue? Is this a...
       options:
+        - ""
         - "Feature Request"
         - "Bug"
         - "Security Bug"
