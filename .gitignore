@@ -47,3 +47,5 @@ avm.tflint_example.merged.hcl
 
 # Ignore the provider download cache
 .alzlib
+avm.tflint_module.hcl
+avm.tflint_module.merged.hcl
