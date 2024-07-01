@@ -1,8 +1,9 @@
-resource "azapi_resource" "mg0" {
+module "management_groups_level_0" {
+  source    = "./modules/azapi_helper"
   for_each  = local.management_groups_level_0
+  name      = each.value.id
   type      = "Microsoft.Management/managementGroups@2023-04-01"
   parent_id = "/"
-  name      = each.value.id
   body = {
     properties = {
       details = {
@@ -13,13 +14,15 @@ resource "azapi_resource" "mg0" {
       displayName = each.value.display_name
     }
   }
-}
 
-resource "azapi_resource" "mg1" {
+  replace_triggered_by = []
+}
+module "management_groups_level_1" {
+  source    = "./modules/azapi_helper"
   for_each  = local.management_groups_level_1
+  name      = each.value.id
   type      = "Microsoft.Management/managementGroups@2023-04-01"
   parent_id = "/"
-  name      = each.value.id
   body = {
     properties = {
       details = {
@@ -30,14 +33,16 @@ resource "azapi_resource" "mg1" {
       displayName = each.value.display_name
     }
   }
-  depends_on = [azapi_resource.mg0]
+
+  depends_on = [module.management_groups_level_0]
 }
 
-resource "azapi_resource" "mg2" {
+module "management_groups_level_2" {
+  source    = "./modules/azapi_helper"
   for_each  = local.management_groups_level_2
+  name      = each.value.id
   type      = "Microsoft.Management/managementGroups@2023-04-01"
   parent_id = "/"
-  name      = each.value.id
   body = {
     properties = {
       details = {
@@ -48,14 +53,19 @@ resource "azapi_resource" "mg2" {
       displayName = each.value.display_name
     }
   }
-  depends_on = [azapi_resource.mg1]
+  replace_triggered_by = [
+    each.value.parent_id,
+    each.value.id,
+  ]
+  depends_on = [module.management_groups_level_1]
 }
 
-resource "azapi_resource" "mg3" {
+module "management_groups_level_3" {
+  source    = "./modules/azapi_helper"
   for_each  = local.management_groups_level_3
+  name      = each.value.id
   type      = "Microsoft.Management/managementGroups@2023-04-01"
   parent_id = "/"
-  name      = each.value.id
   body = {
     properties = {
       details = {
@@ -66,14 +76,16 @@ resource "azapi_resource" "mg3" {
       displayName = each.value.display_name
     }
   }
-  depends_on = [azapi_resource.mg2]
+
+  depends_on = [module.management_groups_level_2]
 }
 
-resource "azapi_resource" "mg4" {
+module "management_groups_level_4" {
+  source    = "./modules/azapi_helper"
   for_each  = local.management_groups_level_4
+  name      = each.value.id
   type      = "Microsoft.Management/managementGroups@2023-04-01"
   parent_id = "/"
-  name      = each.value.id
   body = {
     properties = {
       details = {
@@ -84,14 +96,16 @@ resource "azapi_resource" "mg4" {
       displayName = each.value.display_name
     }
   }
-  depends_on = [azapi_resource.mg3]
+
+  depends_on = [module.management_groups_level_3]
 }
 
-resource "azapi_resource" "mg5" {
+module "management_groups_level_5" {
+  source    = "./modules/azapi_helper"
   for_each  = local.management_groups_level_5
+  name      = each.value.id
   type      = "Microsoft.Management/managementGroups@2023-04-01"
   parent_id = "/"
-  name      = each.value.id
   body = {
     properties = {
       details = {
@@ -102,14 +116,16 @@ resource "azapi_resource" "mg5" {
       displayName = each.value.display_name
     }
   }
-  depends_on = [azapi_resource.mg4]
+
+  depends_on = [module.management_groups_level_4]
 }
 
-resource "azapi_resource" "mg6" {
+module "management_groups_level_6" {
+  source    = "./modules/azapi_helper"
   for_each  = local.management_groups_level_6
   type      = "Microsoft.Management/managementGroups@2023-04-01"
-  parent_id = "/"
   name      = each.value.id
+  parent_id = "/"
   body = {
     properties = {
       details = {
@@ -120,5 +136,6 @@ resource "azapi_resource" "mg6" {
       displayName = each.value.display_name
     }
   }
-  depends_on = [azapi_resource.mg5]
+
+  depends_on = [module.management_groups_level_5]
 }

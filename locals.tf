@@ -49,18 +49,11 @@ locals {
 }
 
 locals {
-  # policy_role_assignments = data.alz_architecture.this.policy_role_assignments != null ? toset([
-  #   for pra in data.alz_architecture.this.policy_role_assignments : {
-  #     principal_id       = azapi_resource.policy_assignments[pra.policy_assignment_name].output.identity.principalId
-  #     role_definition_id = pra.role_definition_id
-  #     scope              = pra.scope
-  #   }
-  # ]) : toset([])
   policy_role_assignments = data.alz_architecture.this.policy_role_assignments != null ? {
     for pra in data.alz_architecture.this.policy_role_assignments : uuidv5("url", "${pra.policy_assignment_name}${pra.scope}${pra.management_group_id}${pra.role_definition_id}") => {
       principal_id       = module.policy_assignment["${pra.management_group_id}/${pra.policy_assignment_name}"].output.identity.principalId
       role_definition_id = pra.role_definition_id
       scope              = pra.scope
-    }
+    } if !strcontains(pra.scope, "00000000-0000-0000-0000-000000000000")
   } : {}
 }

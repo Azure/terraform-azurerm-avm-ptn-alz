@@ -2,10 +2,11 @@
 #   assignments = local.policy_role_assignments
 # }
 
-resource "azapi_resource" "policy_role_assignments" {
+module "policy_role_assignments" {
+  source    = "./modules/azapi_helper"
   for_each  = local.policy_role_assignments
   type      = "Microsoft.Authorization/roleAssignments@2022-04-01"
-  name      = uuidv5("url", "${each.value.principal_id}${each.value.role_definition_id}${each.value.scope}")
+  name      = each.key
   parent_id = each.value.scope
   body = {
     properties = {
@@ -15,4 +16,9 @@ resource "azapi_resource" "policy_role_assignments" {
       principalType    = "ServicePrincipal"
     }
   }
+
+  replace_triggered_by = [
+    each.value.principal_id,
+    each.value.role_definition_id,
+  ]
 }

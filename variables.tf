@@ -12,11 +12,6 @@ variable "parent_resource_id" {
 The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.
 The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.
 DESCRIPTION
-
-  # validation {
-  #   error_message = "Value must be a valid management group resource id."
-  #   condition     = can(regex("^/providers/Microsoft.Management/managementGroups/[^/]+$", var.parent_resource_id))
-  # }
 }
 
 variable "delays" {
@@ -43,39 +38,42 @@ DESCRIPTION
 
 variable "policy_assignments_to_modify" {
   type = map(object({
-    enforcement_mode = optional(string, null)
-    identity         = optional(string, null)
-    identity_ids     = optional(list(string), null)
-    parameters       = optional(string, null)
-    non_compliance_message = optional(set(object({
-      message                        = string
-      policy_definition_reference_id = optional(string, null)
-    })), null)
-    resource_selectors = optional(list(object({
-      name = string
-      selectors = optional(list(object({
-        kind   = string
-        in     = optional(set(string), null)
-        not_in = optional(set(string), null)
-      })), [])
-    })))
-    overrides = optional(list(object({
-      kind  = string
-      value = string
-      selectors = optional(list(object({
-        kind   = string
-        in     = optional(set(string), null)
-        not_in = optional(set(string), null)
-      })), [])
-    })))
+    policy_assignments = map(object({
+      enforcement_mode = optional(string, null)
+      identity         = optional(string, null)
+      identity_ids     = optional(list(string), null)
+      parameters       = optional(string, null)
+      non_compliance_message = optional(set(object({
+        message                        = string
+        policy_definition_reference_id = optional(string, null)
+      })), null)
+      resource_selectors = optional(list(object({
+        name = string
+        selectors = optional(list(object({
+          kind   = string
+          in     = optional(set(string), null)
+          not_in = optional(set(string), null)
+        })), [])
+      })))
+      overrides = optional(list(object({
+        kind  = string
+        value = string
+        selectors = optional(list(object({
+          kind   = string
+          in     = optional(set(string), null)
+          not_in = optional(set(string), null)
+        })), [])
+      })))
+    }))
   }))
   default     = {}
   description = <<DESCRIPTION
 A map of policy assignment objects to modify the ALZ archetype with.
 You only need to specify the properties you want to change.
 
-The key is the name of the policy assignment.
-The value is a map of the properties of the policy assignment.
+The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.
+The `policy_assignments` value is a map of policy assignments to modify.
+The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.
 
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
 - `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.

@@ -1,4 +1,5 @@
-resource "azapi_resource" "policy_set_definitions" {
+module "policy_set_definitions" {
+  source    = "./modules/azapi_helper"
   for_each  = local.policy_set_definitions
   type      = "Microsoft.Authorization/policySetDefinitions@2023-04-01"
   parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
@@ -7,6 +8,10 @@ resource "azapi_resource" "policy_set_definitions" {
     properties = each.value.set_definition.properties
   }
   depends_on = [
-    azapi_resource.policy_definitions
+    module.policy_definitions
+  ]
+
+  replace_triggered_by = [
+    lookup(each.value.set_definition.properties, "policyType", null),
   ]
 }
