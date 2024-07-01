@@ -12,10 +12,15 @@ module "policy_assignment" {
 
   body = {
     properties = {
-      description           = lookup(each.value.assignment.properties, "description", null)
-      displayName           = lookup(each.value.assignment.properties, "displayName", null)
-      enforcementMode       = lookup(each.value.assignment.properties, "enforcementMode", null)
-      metadata              = lookup(each.value.assignment.properties, "metadata", null)
+      description     = lookup(each.value.assignment.properties, "description", null)
+      displayName     = lookup(each.value.assignment.properties, "displayName", null)
+      enforcementMode = lookup(each.value.assignment.properties, "enforcementMode", null)
+      metadata = lookup(each.value.assignment.properties, "metadata", {
+        createdBy = ""
+        createdOn = ""
+        updatedBy = ""
+        updatedOn = ""
+      })
       nonComplianceMessages = lookup(each.value.assignment.properties, "nonComplianceMessages", null)
       notScopes             = lookup(each.value.assignment.properties, "notScopes", null)
       overrides             = lookup(each.value.assignment.properties, "overrides", null)
@@ -30,12 +35,6 @@ module "policy_assignment" {
   replace_triggered_by = [
     lookup(each.value.assignment.properties, "policyDefinitionId", null),
     var.location,
-  ]
-
-  response_export_values = [
-    "identity.principalId",
-    "identity.tenantId",
-    "identity.type",
   ]
 
   depends_on = [

@@ -14,10 +14,15 @@ resource "azapi_resource" "this" {
     }
   }
 
-
   response_export_values = var.response_export_values
 
   lifecycle {
+    ignore_changes = [
+      body.properties.metadata.createdBy,
+      body.properties.metadata.createdOn,
+      body.properties.metadata.updatedBy,
+      body.properties.metadata.updatedOn,
+    ]
     replace_triggered_by = [
       terraform_data.replace_trigger
     ]
