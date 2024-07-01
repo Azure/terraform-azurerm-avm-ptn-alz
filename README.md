@@ -13,13 +13,11 @@
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.11)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.74)
-
-- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.13, != 1.13.0)
 
 - <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
@@ -29,60 +27,32 @@ The following providers are used by this module:
 
 - <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.11)
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 3.74)
-
-- <a name="provider_random"></a> [random](#provider\_random) (~> 3.5)
-
-- <a name="provider_time"></a> [time](#provider\_time) (~> 0.9)
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.13, != 1.13.0)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [alz_policy_role_assignments.this](https://registry.terraform.io/providers/azure/alz/latest/docs/resources/policy_role_assignments) (resource)
-- [azurerm_management_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
-- [azurerm_management_group_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_policy_assignment) (resource)
-- [azurerm_management_group_subscription_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_subscription_association) (resource)
-- [azurerm_management_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_template_deployment) (resource)
-- [azurerm_policy_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition) (resource)
-- [azurerm_policy_set_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_set_definition) (resource)
-- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_role_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
-- [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
-- [time_sleep.before_management_group_creation](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [time_sleep.before_policy_assignments](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [time_sleep.before_policy_role_assignments](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [alz_archetype.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype) (data source)
-- [alz_archetype_keys.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype_keys) (data source)
-- [azurerm_subscription.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) (data source)
+- [azapi_resource.mg0](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.mg1](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.mg2](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.mg3](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.mg4](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.mg5](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.mg6](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
 The following input variables are required:
 
-### <a name="input_base_archetype"></a> [base\_archetype](#input\_base\_archetype)
-
-Description: The archetype of the management group.  
-This should be one of the built in archetypes, or a custom one defined in one of the `lib_dirs`.
-
-Type: `string`
-
-### <a name="input_default_location"></a> [default\_location](#input\_default\_location)
+### <a name="input_location"></a> [location](#input\_location)
 
 Description: The default location for resources in this management group. Used for policy managed identities.
-
-Type: `string`
-
-### <a name="input_display_name"></a> [display\_name](#input\_display\_name)
-
-Description: The display name of the management group.
-
-Type: `string`
-
-### <a name="input_id"></a> [id](#input\_id)
-
-Description: The id of the management group. This must be unique and cannot be changed after creation.
 
 Type: `string`
 
@@ -96,22 +66,6 @@ Type: `string`
 ## Optional Inputs
 
 The following input variables are optional (have default values):
-
-### <a name="input_default_log_analytics_workspace_id"></a> [default\_log\_analytics\_workspace\_id](#input\_default\_log\_analytics\_workspace\_id)
-
-Description: The resource id of the default log analytics workspace to use for policy parameters.
-
-Type: `string`
-
-Default: `null`
-
-### <a name="input_default_private_dns_zone_resource_group_id"></a> [default\_private\_dns\_zone\_resource\_group\_id](#input\_default\_private\_dns\_zone\_resource\_group\_id)
-
-Description: Resource group id for the private dns zones to use in policy parameters.
-
-Type: `string`
-
-Default: `null`
 
 ### <a name="input_delays"></a> [delays](#input\_delays)
 
@@ -212,30 +166,6 @@ map(object({
 
 Default: `{}`
 
-### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
-
-Description: A map of role assignments to associated principals and role definitions to the management group.
-
-The key is the your reference for the role assignment. The value is a map of the properties of the role assignment.
-
-- `role_definition_id` - (Optional) The id of the role definition to assign to the principal. Conflicts with `role_definition_name`. `role_definition_id` and `role_definition_name` are mutually exclusive and one of them must be supplied.
-- `role_definition_name` - (Optional) The name of the role definition to assign to the principal. Conflicts with `role_definition_id`.
-- `principal_id` - (Required) The id of the principal to assign the role definition to.
-- `description` - (Optional) The description of the role assignment.
-
-Type:
-
-```hcl
-map(object({
-    role_definition_id   = optional(string, "")
-    role_definition_name = optional(string, "")
-    principal_id         = string
-    description          = optional(string, null)
-  }))
-```
-
-Default: `{}`
-
 ### <a name="input_subscription_ids"></a> [subscription\_ids](#input\_subscription\_ids)
 
 Description: A set of subscription ids to move under this management group.
@@ -246,15 +176,17 @@ Default: `[]`
 
 ## Outputs
 
-The following outputs are exported:
-
-### <a name="output_management_group_resource_id"></a> [management\_group\_resource\_id](#output\_management\_group\_resource\_id)
-
-Description: The resource id of the created management group.
+No outputs.
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_policy_assignment"></a> [policy\_assignment](#module\_policy\_assignment)
+
+Source: ./modules/policy_assignment
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
