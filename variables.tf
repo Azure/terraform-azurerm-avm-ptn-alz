@@ -1,29 +1,7 @@
-variable "base_archetype" {
-  type        = string
-  description = <<DESCRIPTION
-The archetype of the management group.
-This should be one of the built in archetypes, or a custom one defined in one of the `lib_dirs`.
-DESCRIPTION
-}
-
-variable "default_location" {
+variable "location" {
   type        = string
   description = <<DESCRIPTION
 The default location for resources in this management group. Used for policy managed identities.
-DESCRIPTION
-}
-
-variable "display_name" {
-  type        = string
-  description = <<DESCRIPTION
-The display name of the management group.
-DESCRIPTION
-}
-
-variable "id" {
-  type        = string
-  description = <<DESCRIPTION
-The id of the management group. This must be unique and cannot be changed after creation.
 DESCRIPTION
 }
 
@@ -31,28 +9,7 @@ variable "parent_resource_id" {
   type        = string
   description = <<DESCRIPTION
 The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.
-The `azurerm_client_config` data source from the AzureRM provider is useful to get the tenant id.
-DESCRIPTION
-
-  validation {
-    error_message = "Value must be a valid management group resource id."
-    condition     = can(regex("^/providers/Microsoft.Management/managementGroups/[^/]+$", var.parent_resource_id))
-  }
-}
-
-variable "default_log_analytics_workspace_id" {
-  type        = string
-  default     = null
-  description = <<DESCRIPTION
-The resource id of the default log analytics workspace to use for policy parameters.
-DESCRIPTION
-}
-
-variable "default_private_dns_zone_resource_group_id" {
-  type        = string
-  default     = null
-  description = <<DESCRIPTION
-Resource group id for the private dns zones to use in policy parameters.
+The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.
 DESCRIPTION
 }
 
@@ -80,39 +37,42 @@ DESCRIPTION
 
 variable "policy_assignments_to_modify" {
   type = map(object({
-    enforcement_mode = optional(string, null)
-    identity         = optional(string, null)
-    identity_ids     = optional(list(string), null)
-    parameters       = optional(string, null)
-    non_compliance_message = optional(set(object({
-      message                        = string
-      policy_definition_reference_id = optional(string, null)
-    })), null)
-    resource_selectors = optional(list(object({
-      name = string
-      selectors = optional(list(object({
-        kind   = string
-        in     = optional(set(string), null)
-        not_in = optional(set(string), null)
-      })), [])
-    })))
-    overrides = optional(list(object({
-      kind  = string
-      value = string
-      selectors = optional(list(object({
-        kind   = string
-        in     = optional(set(string), null)
-        not_in = optional(set(string), null)
-      })), [])
-    })))
+    policy_assignments = map(object({
+      enforcement_mode = optional(string, null)
+      identity         = optional(string, null)
+      identity_ids     = optional(list(string), null)
+      parameters       = optional(string, null)
+      non_compliance_message = optional(set(object({
+        message                        = string
+        policy_definition_reference_id = optional(string, null)
+      })), null)
+      resource_selectors = optional(list(object({
+        name = string
+        selectors = optional(list(object({
+          kind   = string
+          in     = optional(set(string), null)
+          not_in = optional(set(string), null)
+        })), [])
+      })))
+      overrides = optional(list(object({
+        kind  = string
+        value = string
+        selectors = optional(list(object({
+          kind   = string
+          in     = optional(set(string), null)
+          not_in = optional(set(string), null)
+        })), [])
+      })))
+    }))
   }))
   default     = {}
   description = <<DESCRIPTION
 A map of policy assignment objects to modify the ALZ archetype with.
 You only need to specify the properties you want to change.
 
-The key is the name of the policy assignment.
-The value is a map of the properties of the policy assignment.
+The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.
+The `policy_assignments` value is a map of policy assignments to modify.
+The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.
 
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
 - `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
@@ -135,41 +95,6 @@ The value is a map of the properties of the policy assignment.
     - `in` - (Optional) A set of strings to include in the selector.
     - `not_in` - (Optional) A set of strings to exclude from the selector.
 DESCRIPTION
-}
-
-variable "role_assignments" {
-  type = map(object({
-    role_definition_id   = optional(string, "")
-    role_definition_name = optional(string, "")
-    principal_id         = string
-    description          = optional(string, null)
-  }))
-  default     = {}
-  description = <<DESCRIPTION
-A map of role assignments to associated principals and role definitions to the management group.
-
-The key is the your reference for the role assignment. The value is a map of the properties of the role assignment.
-
-- `role_definition_id` - (Optional) The id of the role definition to assign to the principal. Conflicts with `role_definition_name`. `role_definition_id` and `role_definition_name` are mutually exclusive and one of them must be supplied.
-- `role_definition_name` - (Optional) The name of the role definition to assign to the principal. Conflicts with `role_definition_id`.
-- `principal_id` - (Required) The id of the principal to assign the role definition to.
-- `description` - (Optional) The description of the role assignment.
-
-DESCRIPTION
-
-  validation {
-    condition = alltrue([
-      for _, v in var.role_assignments : alltrue([
-        !(length(v.role_definition_id) > 0 && length(v.role_definition_name) > 0),
-        !(length(v.role_definition_id) == 0 && length(v.role_definition_name) == 0)
-      ])
-    ])
-    error_message = "Specify one (and only one) of `role_definition_id` and `role_definition_name`."
-  }
-  validation {
-    condition     = length(toset(values(var.role_assignments))) == length(var.role_assignments)
-    error_message = "Role assignment values must not be duplicates."
-  }
 }
 
 variable "subscription_ids" {

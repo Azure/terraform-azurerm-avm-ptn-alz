@@ -6,4 +6,3 @@
 
 - This repository contains a Terraform module for deploying Azure Landing Zones (ALZs).
 - Make sure to review the examples.
-

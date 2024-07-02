@@ -13,13 +13,11 @@
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.11)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.74)
-
-- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.13, != 1.13.0)
 
 - <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
@@ -29,89 +27,33 @@ The following providers are used by this module:
 
 - <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.11)
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 3.74)
-
-- <a name="provider_random"></a> [random](#provider\_random) (~> 3.5)
-
-- <a name="provider_time"></a> [time](#provider\_time) (~> 0.9)
-
 ## Resources
 
 The following resources are used by this module:
 
-- [alz_policy_role_assignments.this](https://registry.terraform.io/providers/azure/alz/latest/docs/resources/policy_role_assignments) (resource)
-- [azurerm_management_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group) (resource)
-- [azurerm_management_group_policy_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_policy_assignment) (resource)
-- [azurerm_management_group_subscription_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_subscription_association) (resource)
-- [azurerm_management_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_group_template_deployment) (resource)
-- [azurerm_policy_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_definition) (resource)
-- [azurerm_policy_set_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/policy_set_definition) (resource)
-- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_role_definition.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) (resource)
-- [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
-- [time_sleep.before_management_group_creation](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [time_sleep.before_policy_assignments](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [time_sleep.before_policy_role_assignments](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [alz_archetype.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype) (data source)
-- [alz_archetype_keys.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/archetype_keys) (data source)
-- [azurerm_subscription.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) (data source)
+- [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
 The following input variables are required:
 
-### <a name="input_base_archetype"></a> [base\_archetype](#input\_base\_archetype)
-
-Description: The archetype of the management group.  
-This should be one of the built in archetypes, or a custom one defined in one of the `lib_dirs`.
-
-Type: `string`
-
-### <a name="input_default_location"></a> [default\_location](#input\_default\_location)
+### <a name="input_location"></a> [location](#input\_location)
 
 Description: The default location for resources in this management group. Used for policy managed identities.
-
-Type: `string`
-
-### <a name="input_display_name"></a> [display\_name](#input\_display\_name)
-
-Description: The display name of the management group.
-
-Type: `string`
-
-### <a name="input_id"></a> [id](#input\_id)
-
-Description: The id of the management group. This must be unique and cannot be changed after creation.
 
 Type: `string`
 
 ### <a name="input_parent_resource_id"></a> [parent\_resource\_id](#input\_parent\_resource\_id)
 
 Description: The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.  
-The `azurerm_client_config` data source from the AzureRM provider is useful to get the tenant id.
+The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.
 
 Type: `string`
 
 ## Optional Inputs
 
 The following input variables are optional (have default values):
-
-### <a name="input_default_log_analytics_workspace_id"></a> [default\_log\_analytics\_workspace\_id](#input\_default\_log\_analytics\_workspace\_id)
-
-Description: The resource id of the default log analytics workspace to use for policy parameters.
-
-Type: `string`
-
-Default: `null`
-
-### <a name="input_default_private_dns_zone_resource_group_id"></a> [default\_private\_dns\_zone\_resource\_group\_id](#input\_default\_private\_dns\_zone\_resource\_group\_id)
-
-Description: Resource group id for the private dns zones to use in policy parameters.
-
-Type: `string`
-
-Default: `null`
 
 ### <a name="input_delays"></a> [delays](#input\_delays)
 
@@ -154,8 +96,9 @@ Default: `true`
 Description: A map of policy assignment objects to modify the ALZ archetype with.  
 You only need to specify the properties you want to change.
 
-The key is the name of the policy assignment.  
-The value is a map of the properties of the policy assignment.
+The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.  
+The `policy_assignments` value is a map of policy assignments to modify.  
+The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.
 
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
 - `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
@@ -182,55 +125,33 @@ Type:
 
 ```hcl
 map(object({
-    enforcement_mode = optional(string, null)
-    identity         = optional(string, null)
-    identity_ids     = optional(list(string), null)
-    parameters       = optional(string, null)
-    non_compliance_message = optional(set(object({
-      message                        = string
-      policy_definition_reference_id = optional(string, null)
-    })), null)
-    resource_selectors = optional(list(object({
-      name = string
-      selectors = optional(list(object({
-        kind   = string
-        in     = optional(set(string), null)
-        not_in = optional(set(string), null)
-      })), [])
-    })))
-    overrides = optional(list(object({
-      kind  = string
-      value = string
-      selectors = optional(list(object({
-        kind   = string
-        in     = optional(set(string), null)
-        not_in = optional(set(string), null)
-      })), [])
-    })))
-  }))
-```
-
-Default: `{}`
-
-### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
-
-Description: A map of role assignments to associated principals and role definitions to the management group.
-
-The key is the your reference for the role assignment. The value is a map of the properties of the role assignment.
-
-- `role_definition_id` - (Optional) The id of the role definition to assign to the principal. Conflicts with `role_definition_name`. `role_definition_id` and `role_definition_name` are mutually exclusive and one of them must be supplied.
-- `role_definition_name` - (Optional) The name of the role definition to assign to the principal. Conflicts with `role_definition_id`.
-- `principal_id` - (Required) The id of the principal to assign the role definition to.
-- `description` - (Optional) The description of the role assignment.
-
-Type:
-
-```hcl
-map(object({
-    role_definition_id   = optional(string, "")
-    role_definition_name = optional(string, "")
-    principal_id         = string
-    description          = optional(string, null)
+    policy_assignments = map(object({
+      enforcement_mode = optional(string, null)
+      identity         = optional(string, null)
+      identity_ids     = optional(list(string), null)
+      parameters       = optional(string, null)
+      non_compliance_message = optional(set(object({
+        message                        = string
+        policy_definition_reference_id = optional(string, null)
+      })), null)
+      resource_selectors = optional(list(object({
+        name = string
+        selectors = optional(list(object({
+          kind   = string
+          in     = optional(set(string), null)
+          not_in = optional(set(string), null)
+        })), [])
+      })))
+      overrides = optional(list(object({
+        kind  = string
+        value = string
+        selectors = optional(list(object({
+          kind   = string
+          in     = optional(set(string), null)
+          not_in = optional(set(string), null)
+        })), [])
+      })))
+    }))
   }))
 ```
 
@@ -248,13 +169,95 @@ Default: `[]`
 
 The following outputs are exported:
 
-### <a name="output_management_group_resource_id"></a> [management\_group\_resource\_id](#output\_management\_group\_resource\_id)
+### <a name="output_management_group_resource_ids"></a> [management\_group\_resource\_ids](#output\_management\_group\_resource\_ids)
 
-Description: The resource id of the created management group.
+Description: n/a
+
+### <a name="output_policy_assignment_resource_ids"></a> [policy\_assignment\_resource\_ids](#output\_policy\_assignment\_resource\_ids)
+
+Description: n/a
+
+### <a name="output_policy_definition_resource_ids"></a> [policy\_definition\_resource\_ids](#output\_policy\_definition\_resource\_ids)
+
+Description: n/a
+
+### <a name="output_policy_role_assignment_resource_ids"></a> [policy\_role\_assignment\_resource\_ids](#output\_policy\_role\_assignment\_resource\_ids)
+
+Description: n/a
+
+### <a name="output_policy_set_definition_resource_ids"></a> [policy\_set\_definition\_resource\_ids](#output\_policy\_set\_definition\_resource\_ids)
+
+Description: n/a
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_management_groups_level_0"></a> [management\_groups\_level\_0](#module\_management\_groups\_level\_0)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_1"></a> [management\_groups\_level\_1](#module\_management\_groups\_level\_1)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_2"></a> [management\_groups\_level\_2](#module\_management\_groups\_level\_2)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_3"></a> [management\_groups\_level\_3](#module\_management\_groups\_level\_3)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_4"></a> [management\_groups\_level\_4](#module\_management\_groups\_level\_4)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_5"></a> [management\_groups\_level\_5](#module\_management\_groups\_level\_5)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_6"></a> [management\_groups\_level\_6](#module\_management\_groups\_level\_6)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_policy_assignment"></a> [policy\_assignment](#module\_policy\_assignment)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_policy_definitions"></a> [policy\_definitions](#module\_policy\_definitions)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_policy_role_assignments"></a> [policy\_role\_assignments](#module\_policy\_role\_assignments)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_policy_set_definitions"></a> [policy\_set\_definitions](#module\_policy\_set\_definitions)
+
+Source: ./modules/azapi_helper
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
