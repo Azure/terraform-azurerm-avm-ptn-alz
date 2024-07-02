@@ -27,22 +27,10 @@ The following providers are used by this module:
 
 - <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.11)
 
-- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.13, != 1.13.0)
-
 ## Resources
 
 The following resources are used by this module:
 
-- [azapi_resource.mg0](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.mg1](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.mg2](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.mg3](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.mg4](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.mg5](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.mg6](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -59,7 +47,7 @@ Type: `string`
 ### <a name="input_parent_resource_id"></a> [parent\_resource\_id](#input\_parent\_resource\_id)
 
 Description: The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.  
-The `azurerm_client_config` data source from the AzureRM provider is useful to get the tenant id.
+The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.
 
 Type: `string`
 
@@ -108,8 +96,9 @@ Default: `true`
 Description: A map of policy assignment objects to modify the ALZ archetype with.  
 You only need to specify the properties you want to change.
 
-The key is the name of the policy assignment.  
-The value is a map of the properties of the policy assignment.
+The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.  
+The `policy_assignments` value is a map of policy assignments to modify.  
+The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.
 
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
 - `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
@@ -136,31 +125,33 @@ Type:
 
 ```hcl
 map(object({
-    enforcement_mode = optional(string, null)
-    identity         = optional(string, null)
-    identity_ids     = optional(list(string), null)
-    parameters       = optional(string, null)
-    non_compliance_message = optional(set(object({
-      message                        = string
-      policy_definition_reference_id = optional(string, null)
-    })), null)
-    resource_selectors = optional(list(object({
-      name = string
-      selectors = optional(list(object({
-        kind   = string
-        in     = optional(set(string), null)
-        not_in = optional(set(string), null)
-      })), [])
-    })))
-    overrides = optional(list(object({
-      kind  = string
-      value = string
-      selectors = optional(list(object({
-        kind   = string
-        in     = optional(set(string), null)
-        not_in = optional(set(string), null)
-      })), [])
-    })))
+    policy_assignments = map(object({
+      enforcement_mode = optional(string, null)
+      identity         = optional(string, null)
+      identity_ids     = optional(list(string), null)
+      parameters       = optional(string, null)
+      non_compliance_message = optional(set(object({
+        message                        = string
+        policy_definition_reference_id = optional(string, null)
+      })), null)
+      resource_selectors = optional(list(object({
+        name = string
+        selectors = optional(list(object({
+          kind   = string
+          in     = optional(set(string), null)
+          not_in = optional(set(string), null)
+        })), [])
+      })))
+      overrides = optional(list(object({
+        kind  = string
+        value = string
+        selectors = optional(list(object({
+          kind   = string
+          in     = optional(set(string), null)
+          not_in = optional(set(string), null)
+        })), [])
+      })))
+    }))
   }))
 ```
 
@@ -176,15 +167,95 @@ Default: `[]`
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_management_group_resource_ids"></a> [management\_group\_resource\_ids](#output\_management\_group\_resource\_ids)
+
+Description: n/a
+
+### <a name="output_policy_assignment_resource_ids"></a> [policy\_assignment\_resource\_ids](#output\_policy\_assignment\_resource\_ids)
+
+Description: n/a
+
+### <a name="output_policy_definition_resource_ids"></a> [policy\_definition\_resource\_ids](#output\_policy\_definition\_resource\_ids)
+
+Description: n/a
+
+### <a name="output_policy_role_assignment_resource_ids"></a> [policy\_role\_assignment\_resource\_ids](#output\_policy\_role\_assignment\_resource\_ids)
+
+Description: n/a
+
+### <a name="output_policy_set_definition_resource_ids"></a> [policy\_set\_definition\_resource\_ids](#output\_policy\_set\_definition\_resource\_ids)
+
+Description: n/a
 
 ## Modules
 
 The following Modules are called:
 
+### <a name="module_management_groups_level_0"></a> [management\_groups\_level\_0](#module\_management\_groups\_level\_0)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_1"></a> [management\_groups\_level\_1](#module\_management\_groups\_level\_1)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_2"></a> [management\_groups\_level\_2](#module\_management\_groups\_level\_2)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_3"></a> [management\_groups\_level\_3](#module\_management\_groups\_level\_3)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_4"></a> [management\_groups\_level\_4](#module\_management\_groups\_level\_4)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_5"></a> [management\_groups\_level\_5](#module\_management\_groups\_level\_5)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_management_groups_level_6"></a> [management\_groups\_level\_6](#module\_management\_groups\_level\_6)
+
+Source: ./modules/azapi_helper
+
+Version:
+
 ### <a name="module_policy_assignment"></a> [policy\_assignment](#module\_policy\_assignment)
 
-Source: ./modules/policy_assignment
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_policy_definitions"></a> [policy\_definitions](#module\_policy\_definitions)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_policy_role_assignments"></a> [policy\_role\_assignments](#module\_policy\_role\_assignments)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_policy_set_definitions"></a> [policy\_set\_definitions](#module\_policy\_set\_definitions)
+
+Source: ./modules/azapi_helper
 
 Version:
 

@@ -1,31 +1,43 @@
 <!-- BEGIN_TF_DOCS -->
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Azure/terraform-azurerm-avm-ptn-alz/badge)](https://scorecard.dev/viewer/?uri=github.com/Azure/terraform-azurerm-avm-ptn-alz)
 
-# ALZ Terraform Module (policy assignment)
+# ALZ Terraform Module (azapi\_helper)
 
 > ⚠️ **\_Warning\_** ⚠️ This module is still in development but is ready for initial testing and feedback via [GitHub Issues](https://github.com/Azure/terraform-azurerm-avm-ptn-alz/issues).
 
-As we are using AzAPI, we do not have the full Terraform schema optopns available for detecting attribute changes that require recreating the resource.
+This module is a wrapper for `azapi_resource`, adding convenience features.
+As we are using AzAPI, we do not have the full Terraform schema options available for detecting attribute changes that require recreating the resource.
+
 This submodule is therefore used to enable the `terraform_data` method for `replace_triggered_by`: <https://developer.hashicorp.com/terraform/language/resources/terraform-data#example-usage-data-for-replace_triggered_by>.
 This allows us to replace the resource when certain key attributes change.
 
+You can use the `var.replace_triggered_by` attribute to specify any data, that when changed, will trigger a replacement of the resource.
+
 ```hcl
 resource "azapi_resource" "this" {
-  type      = "Microsoft.Authorization/policyAssignments@2024-04-01"
-  name      = var.name
-  parent_id = var.parent_id
-  location  = var.location
-  body = {
-    properties = var.properties
+  type                    = var.type
+  body                    = var.body
+  ignore_missing_property = var.ignore_missing_property
+  location                = var.location
+  name                    = var.name
+  parent_id               = var.parent_id
+  response_export_values  = var.response_export_values
+
+  dynamic "identity" {
+    for_each = var.identity == null ? [] : var.identity.type != "None" ? [var.identity] : []
+    content {
+      type         = identity.value.type
+      identity_ids = identity.value.identity_ids
+    }
   }
 
-  response_export_values = [
-    "identity.principalId",
-    "identity.tenantId",
-    "identity.type",
-  ]
-
   lifecycle {
+    ignore_changes = [
+      body.properties.metadata.createdBy,
+      body.properties.metadata.createdOn,
+      body.properties.metadata.updatedBy,
+      body.properties.metadata.updatedOn,
+    ]
     replace_triggered_by = [
       terraform_data.replace_trigger
     ]
@@ -33,11 +45,7 @@ resource "azapi_resource" "this" {
 }
 
 resource "terraform_data" "replace_trigger" {
-  input = [
-    var.name,
-    lookup(var.properties, "location", null),
-    lookup(var.properties, "policyDefinitionId", null),
-  ]
+  input = var.replace_triggered_by
 }
 ```
 
@@ -70,49 +78,103 @@ The following resources are used by this module:
 
 The following input variables are required:
 
-### <a name="input_location"></a> [location](#input\_location)
+### <a name="input_body"></a> [body](#input\_body)
 
-Description: Value of the location field in the resource.
+Description: The body object of the resource.
 
-Type: `string`
+Type: `any`
 
 ### <a name="input_name"></a> [name](#input\_name)
 
-Description: The name of the policy assignment.
+Description: The name of resource.
 
 Type: `string`
 
 ### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
 
-Description: The parent ID of the policy assignment.
+Description: The parent ID of the resource.
 
 Type: `string`
 
-### <a name="input_properties"></a> [properties](#input\_properties)
+### <a name="input_type"></a> [type](#input\_type)
 
-Description: The body properties object of the policy assignment.
+Description: The type and API version of the resource.
 
-Type: `any`
+Type: `string`
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_identity"></a> [identity](#input\_identity)
+
+Description:   Controls the Managed Identity configuration on this resource. The following properties can be specified:
+
+  - `type` - Either: `SystemAssigned`, `SystemAssigned, UserAssigned`, or `UserAssigned`.
+  - `user_assigned_resource_ids` - (Optional) Specifies a list of User Assigned Managed Identity resource IDs to be assigned to this resource.
+
+Type:
+
+```hcl
+object({
+    type         = string
+    identity_ids = optional(set(string), [])
+  })
+```
+
+Default: `null`
+
+### <a name="input_ignore_missing_property"></a> [ignore\_missing\_property](#input\_ignore\_missing\_property)
+
+Description: If set to true, the resource will not be replaced if a property is missing.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: Location of the resource.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_replace_triggered_by"></a> [replace\_triggered\_by](#input\_replace\_triggered\_by)
+
+Description: Values that trigger a replacement.
+
+Type: `any`
+
+Default: `null`
+
+### <a name="input_response_export_values"></a> [response\_export\_values](#input\_response\_export\_values)
+
+Description: List of values to export from the response, made available in the output.
+
+Type: `set(string)`
+
+Default: `null`
 
 ## Outputs
 
 The following outputs are exported:
 
-### <a name="output_identity_type"></a> [identity\_type](#output\_identity\_type)
+### <a name="output_id"></a> [id](#output\_id)
 
-Description: Value of the type attribute of the identity object
+Description: The Azure resource id of the resource.
 
-### <a name="output_principal_id"></a> [principal\_id](#output\_principal\_id)
+### <a name="output_identity"></a> [identity](#output\_identity)
 
-Description: Value of the principalId attribute of the identity object
+Description: The identity configuration of the resource.
 
-### <a name="output_tenant_id"></a> [tenant\_id](#output\_tenant\_id)
+### <a name="output_name"></a> [name](#output\_name)
 
-Description: Value of the tenantId attribute of the identity object
+Description: The name of the resource.
+
+### <a name="output_output"></a> [output](#output\_output)
+
+Description: The output values of the resource as defined by `response_export_values`.
 
 ## Modules
 

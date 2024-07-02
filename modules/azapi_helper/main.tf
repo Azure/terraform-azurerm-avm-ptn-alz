@@ -1,10 +1,11 @@
 resource "azapi_resource" "this" {
   type                    = var.type
-  name                    = var.name
-  parent_id               = var.parent_id
-  location                = var.location
   body                    = var.body
   ignore_missing_property = var.ignore_missing_property
+  location                = var.location
+  name                    = var.name
+  parent_id               = var.parent_id
+  response_export_values  = var.response_export_values
 
   dynamic "identity" {
     for_each = var.identity == null ? [] : var.identity.type != "None" ? [var.identity] : []
@@ -13,8 +14,6 @@ resource "azapi_resource" "this" {
       identity_ids = identity.value.identity_ids
     }
   }
-
-  response_export_values = var.response_export_values
 
   lifecycle {
     ignore_changes = [

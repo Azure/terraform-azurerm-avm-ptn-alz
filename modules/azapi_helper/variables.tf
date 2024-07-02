@@ -1,37 +1,19 @@
-variable "name" {
-  type        = string
-  nullable    = false
-  description = "The name of resource."
-}
-
 variable "body" {
   type        = any
-  nullable    = false
   description = "The body object of the resource."
+  nullable    = false
+}
+
+variable "name" {
+  type        = string
+  description = "The name of resource."
+  nullable    = false
 }
 
 variable "parent_id" {
   type        = string
-  nullable    = false
   description = "The parent ID of the resource."
-}
-
-variable "location" {
-  type        = string
-  description = "Location of the resource."
-  default     = null
-}
-
-variable "response_export_values" {
-  type        = set(string)
-  description = "List of values to export from the response, made available in the output."
-  default     = null
-}
-
-variable "replace_triggered_by" {
-  type        = any
-  description = "Values that trigger a replacement."
-  default     = null
+  nullable    = false
 }
 
 variable "type" {
@@ -56,12 +38,6 @@ variable "identity" {
     error_message = "If `identity` is specified, `type` must be specified."
     condition     = var.identity == null ? true : lookup(var.identity, "type", null) != null
   }
-
-  # validation {
-  #   error_message = "If `identity` is specified and `type` contains `UserAssigned`, `identity_ids` must also be specified."
-  #   condition     = var.identity == null ? true : contains(["UserAssigned", "SystemAssigned, UserAssigned"], var.identity.type) && length(var.identity.identity_ids) > 0
-  # }
-
   validation {
     error_message = "If `identity` is specified, `type` must be one of `SystemAssigned`, `SystemAssigned, UserAssigned`, or `UserAssigned`."
     condition     = var.identity == null ? true : contains(["None", "SystemAssigned", "SystemAssigned, UserAssigned", "UserAssigned"], var.identity.type)
@@ -72,4 +48,22 @@ variable "ignore_missing_property" {
   type        = bool
   default     = false
   description = "If set to true, the resource will not be replaced if a property is missing."
+}
+
+variable "location" {
+  type        = string
+  default     = null
+  description = "Location of the resource."
+}
+
+variable "replace_triggered_by" {
+  type        = any
+  default     = null
+  description = "Values that trigger a replacement."
+}
+
+variable "response_export_values" {
+  type        = set(string)
+  default     = null
+  description = "List of values to export from the response, made available in the output."
 }

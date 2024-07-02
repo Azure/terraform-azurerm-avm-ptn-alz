@@ -5,7 +5,6 @@ The default location for resources in this management group. Used for policy man
 DESCRIPTION
 }
 
-
 variable "parent_resource_id" {
   type        = string
   description = <<DESCRIPTION
@@ -97,41 +96,6 @@ The key of this map is the assignment name, and the value is an object with opti
     - `not_in` - (Optional) A set of strings to exclude from the selector.
 DESCRIPTION
 }
-
-# variable "role_assignments" {
-#   type = map(object({
-#     role_definition_id   = optional(string, "")
-#     role_definition_name = optional(string, "")
-#     principal_id         = string
-#     description          = optional(string, null)
-#   }))
-#   default     = {}
-#   description = <<DESCRIPTION
-# A map of role assignments to associated principals and role definitions to the management group.
-
-# The key is the your reference for the role assignment. The value is a map of the properties of the role assignment.
-
-# - `role_definition_id` - (Optional) The id of the role definition to assign to the principal. Conflicts with `role_definition_name`. `role_definition_id` and `role_definition_name` are mutually exclusive and one of them must be supplied.
-# - `role_definition_name` - (Optional) The name of the role definition to assign to the principal. Conflicts with `role_definition_id`.
-# - `principal_id` - (Required) The id of the principal to assign the role definition to.
-# - `description` - (Optional) The description of the role assignment.
-
-# DESCRIPTION
-
-#   validation {
-#     condition = alltrue([
-#       for _, v in var.role_assignments : alltrue([
-#         !(length(v.role_definition_id) > 0 && length(v.role_definition_name) > 0),
-#         !(length(v.role_definition_id) == 0 && length(v.role_definition_name) == 0)
-#       ])
-#     ])
-#     error_message = "Specify one (and only one) of `role_definition_id` and `role_definition_name`."
-#   }
-#   validation {
-#     condition     = length(toset(values(var.role_assignments))) == length(var.role_assignments)
-#     error_message = "Role assignment values must not be duplicates."
-#   }
-# }
 
 variable "subscription_ids" {
   type        = set(string)

@@ -15,7 +15,9 @@ module "management_groups_level_0" {
     }
   }
 
-  replace_triggered_by = []
+  replace_triggered_by = [
+    each.value.parent_id,
+  ]
 }
 module "management_groups_level_1" {
   source    = "./modules/azapi_helper"
@@ -33,6 +35,10 @@ module "management_groups_level_1" {
       displayName = each.value.display_name
     }
   }
+
+  replace_triggered_by = [
+    each.value.parent_id,
+  ]
 
   depends_on = [module.management_groups_level_0]
 }
@@ -53,10 +59,11 @@ module "management_groups_level_2" {
       displayName = each.value.display_name
     }
   }
+
   replace_triggered_by = [
     each.value.parent_id,
-    each.value.id,
   ]
+
   depends_on = [module.management_groups_level_1]
 }
 
@@ -76,6 +83,10 @@ module "management_groups_level_3" {
       displayName = each.value.display_name
     }
   }
+
+  replace_triggered_by = [
+    each.value.parent_id,
+  ]
 
   depends_on = [module.management_groups_level_2]
 }
@@ -97,6 +108,10 @@ module "management_groups_level_4" {
     }
   }
 
+  replace_triggered_by = [
+    each.value.parent_id,
+  ]
+
   depends_on = [module.management_groups_level_3]
 }
 
@@ -117,6 +132,10 @@ module "management_groups_level_5" {
     }
   }
 
+  replace_triggered_by = [
+    each.value.parent_id,
+  ]
+
   depends_on = [module.management_groups_level_4]
 }
 
@@ -136,6 +155,10 @@ module "management_groups_level_6" {
       displayName = each.value.display_name
     }
   }
+
+  replace_triggered_by = [
+    each.value.parent_id,
+  ]
 
   depends_on = [module.management_groups_level_5]
 }
