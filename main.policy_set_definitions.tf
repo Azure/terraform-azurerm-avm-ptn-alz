@@ -8,7 +8,7 @@ module "policy_set_definitions" {
     properties = each.value.set_definition.properties
   }
   depends_on = [
-    module.policy_definitions
+    time_sleep.after_policy_definitions
   ]
 
   replace_triggered_by = [

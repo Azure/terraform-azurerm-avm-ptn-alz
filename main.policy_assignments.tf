@@ -38,6 +38,6 @@ module "policy_assignment" {
   ]
 
   depends_on = [
-    module.policy_set_definitions
+    time_sleep.after_policy_set_definitions
   ]
 }

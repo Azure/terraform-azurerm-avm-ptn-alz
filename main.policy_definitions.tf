@@ -8,12 +8,6 @@ module "policy_definitions" {
     properties = each.value.definition.properties
   }
   depends_on = [
-    module.management_groups_level_0,
-    module.management_groups_level_1,
-    module.management_groups_level_2,
-    module.management_groups_level_3,
-    module.management_groups_level_4,
-    module.management_groups_level_5,
-    module.management_groups_level_6,
+    time_sleep.after_management_groups
   ]
 }

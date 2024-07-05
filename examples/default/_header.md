@@ -1,3 +1,4 @@
-# Default
+# Deploying the ALZ Reference Architecture
 
-Left deliberately empty for now.
+This example shows how to deploy the ALZ reference architecture.
+It uses the ALZ management module to deploy the Log Analytics workspace and Automation Account.

@@ -15,7 +15,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.11)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.12)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.14)
 
@@ -25,12 +25,17 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.11)
+- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.12)
+
+- <a name="provider_time"></a> [time](#provider\_time) (~> 0.9)
 
 ## Resources
 
 The following resources are used by this module:
 
+- [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
+- [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
+- [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -70,16 +75,20 @@ Type:
 
 ```hcl
 object({
-    before_management_group = optional(object({
+    after_management_group = optional(object({
       create  = optional(string, "30s")
       destroy = optional(string, "0s")
     }), {})
-    before_policy_assignments = optional(object({
+    after_policy_definitions = optional(object({
       create  = optional(string, "30s")
       destroy = optional(string, "0s")
     }), {})
-    before_policy_role_assignments = optional(object({
-      create  = optional(string, "60s")
+    after_policy_set_definitions = optional(object({
+      create  = optional(string, "30s")
+      destroy = optional(string, "0s")
+    }), {})
+    after_policy_assignments = optional(object({
+      create  = optional(string, "30s")
       destroy = optional(string, "0s")
     }), {})
   })
@@ -260,6 +269,12 @@ Source: ./modules/azapi_helper
 Version:
 
 ### <a name="module_policy_set_definitions"></a> [policy\_set\_definitions](#module\_policy\_set\_definitions)
+
+Source: ./modules/azapi_helper
+
+Version:
+
+### <a name="module_role_definitions"></a> [role\_definitions](#module\_role\_definitions)
 
 Source: ./modules/azapi_helper
 

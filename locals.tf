@@ -57,3 +57,17 @@ locals {
     } if !strcontains(pra.scope, "00000000-0000-0000-0000-000000000000")
   } : {}
 }
+
+locals {
+  role_definitions = {
+    for rdval in flatten([
+      for mg in data.alz_architecture.this.management_groups : [
+        for rdname, rd in mg.role_definitions : {
+          key             = rdname
+          role_definition = jsondecode(rd)
+          mg              = mg.id
+        }
+      ]
+    ]) : "${rdval.mg}/${rdval.key}" => rdval
+  }
+}

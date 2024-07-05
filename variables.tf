@@ -23,16 +23,16 @@ DESCRIPTION
 
 variable "delays" {
   type = object({
-    before_management_group = optional(object({
+    after_management_group = optional(object({
       create  = optional(string, "30s")
       destroy = optional(string, "0s")
     }), {})
-    before_policy_assignments = optional(object({
+    after_policy_definitions = optional(object({
       create  = optional(string, "30s")
       destroy = optional(string, "0s")
     }), {})
-    before_policy_role_assignments = optional(object({
-      create  = optional(string, "60s")
+    after_policy_set_definitions = optional(object({
+      create  = optional(string, "30s")
       destroy = optional(string, "0s")
     }), {})
   })
@@ -75,7 +75,7 @@ variable "policy_assignments_to_modify" {
   }))
   default     = {}
   description = <<DESCRIPTION
-A map of policy assignment objects to modify the ALZ archetype with.
+A map of policy assignment objects to modify the ALZ architecture with.
 You only need to specify the properties you want to change.
 
 The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.
@@ -102,13 +102,5 @@ The key of this map is the assignment name, and the value is an object with opti
     - `kind` - (Required) The kind of the selector.
     - `in` - (Optional) A set of strings to include in the selector.
     - `not_in` - (Optional) A set of strings to exclude from the selector.
-DESCRIPTION
-}
-
-variable "subscription_ids" {
-  type        = set(string)
-  default     = []
-  description = <<DESCRIPTION
-A set of subscription ids to move under this management group.
 DESCRIPTION
 }

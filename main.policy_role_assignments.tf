@@ -1,7 +1,3 @@
-# resource "alz_policy_role_assignments" "this" {
-#   assignments = local.policy_role_assignments
-# }
-
 module "policy_role_assignments" {
   source    = "./modules/azapi_helper"
   for_each  = local.policy_role_assignments
