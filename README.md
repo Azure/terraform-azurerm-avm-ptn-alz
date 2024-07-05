@@ -17,7 +17,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.11)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.13, != 1.13.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.14)
 
 - <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
@@ -37,6 +37,12 @@ The following resources are used by this module:
 ## Required Inputs
 
 The following input variables are required:
+
+### <a name="input_architecture_name"></a> [architecture\_name](#input\_architecture\_name)
+
+Description: The name of the architecture to create. This needs to be of the `*.alz_architecture_definition.[json|yaml|yml]` files.
+
+Type: `string`
 
 ### <a name="input_location"></a> [location](#input\_location)
 
