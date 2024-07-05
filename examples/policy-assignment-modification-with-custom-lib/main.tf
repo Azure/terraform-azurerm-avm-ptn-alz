@@ -1,6 +1,14 @@
 # Include the additional policies and override archetypes
 provider "alz" {
-  lib_urls = ["${path.root}/lib"]
+  alz_library_references = [
+    {
+      path = "platform/alz",
+      ref  = "2024.07.01"
+    },
+    {
+      custom_url = "${path.root}/lib"
+    }
+  ]
 }
 
 # This allows us to get the tenant id
@@ -32,36 +40,18 @@ resource "azurerm_maintenance_configuration" "this" {
   }
 }
 
-module "alz_archetype_root" {
+module "alz" {
   source             = "../../"
-  id                 = "root"
-  display_name       = "root"
-  parent_resource_id = "/providers/Microsoft.Management/managementGroups/${data.azurerm_client_config.current.tenant_id}"
-  base_archetype     = "root_override"
-  default_location   = "uksouth"
+  architecture_name  = "alz-custom"
+  parent_resource_id = data.azurerm_client_config.current.tenant_id
+  location           = "northeurope"
   policy_assignments_to_modify = {
-    Update-Ring1 = {
-      parameters = jsonencode({
-        maintenanceConfigurationResourceId = azurerm_maintenance_configuration.this.id
-      })
+    landing_zones = {
+      Update-Ring1 = {
+        parameters = jsonencode({
+          maintenanceConfigurationResourceId = azurerm_maintenance_configuration.this.id
+        })
+      }
     }
   }
-}
-
-module "alz_archetype_platform" {
-  source             = "../../"
-  id                 = "plat"
-  display_name       = "plat"
-  parent_resource_id = module.alz_archetype_root.management_group_resource_id
-  base_archetype     = "platform"
-  default_location   = "uksouth"
-}
-
-module "alz_archetype_landing_zones" {
-  source             = "../../"
-  id                 = "landing_zones"
-  display_name       = "landing_zones"
-  parent_resource_id = module.alz_archetype_root.management_group_resource_id
-  base_archetype     = "landing_zones"
-  default_location   = "uksouth"
 }

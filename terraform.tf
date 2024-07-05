@@ -9,6 +9,10 @@ terraform {
       source  = "azure/azapi"
       version = "~> 1.14"
     }
+    modtm = {
+      source  = "azure/modtm"
+      version = "~> 0.3"
+    }
     time = {
       source  = "hashicorp/time"
       version = "~> 0.9"
