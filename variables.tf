@@ -1,3 +1,11 @@
+variable "architecture_name" {
+  type        = string
+  description = <<DESCRIPTION
+The name of the architecture to create. This needs to be of the `*.alz_architecture_definition.[json|yaml|yml]` files.
+DESCRIPTION
+  nullable    = false
+}
+
 variable "location" {
   type        = string
   description = <<DESCRIPTION
