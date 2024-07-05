@@ -1,12 +1,12 @@
 locals {
   management_groups         = { for v in data.alz_architecture.this.management_groups : v.id => v }
-  management_groups_level_0 = { for k, v in local.management_groups : k => v if v.level == 0 }
-  management_groups_level_1 = { for k, v in local.management_groups : k => v if v.level == 1 }
-  management_groups_level_2 = { for k, v in local.management_groups : k => v if v.level == 2 }
-  management_groups_level_3 = { for k, v in local.management_groups : k => v if v.level == 3 }
-  management_groups_level_4 = { for k, v in local.management_groups : k => v if v.level == 4 }
-  management_groups_level_5 = { for k, v in local.management_groups : k => v if v.level == 5 }
-  management_groups_level_6 = { for k, v in local.management_groups : k => v if v.level == 6 }
+  management_groups_level_0 = { for k, v in local.management_groups : k => v if v.level == 0 && !v.exists }
+  management_groups_level_1 = { for k, v in local.management_groups : k => v if v.level == 1 && !v.exists }
+  management_groups_level_2 = { for k, v in local.management_groups : k => v if v.level == 2 && !v.exists }
+  management_groups_level_3 = { for k, v in local.management_groups : k => v if v.level == 3 && !v.exists }
+  management_groups_level_4 = { for k, v in local.management_groups : k => v if v.level == 4 && !v.exists }
+  management_groups_level_5 = { for k, v in local.management_groups : k => v if v.level == 5 && !v.exists }
+  management_groups_level_6 = { for k, v in local.management_groups : k => v if v.level == 6 && !v.exists }
 }
 
 locals {
