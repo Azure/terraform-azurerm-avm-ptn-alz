@@ -8,10 +8,10 @@ DESCRIPTION
 
 variable "location" {
   type        = string
-  nullable    = false
   description = <<DESCRIPTION
 The default location for resources in this management group. Used for policy managed identities.
 DESCRIPTION
+  nullable    = false
 }
 
 variable "parent_resource_id" {
