@@ -22,19 +22,19 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 1.14)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.14)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azapi"></a> [azapi](#provider\_azapi)
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.14)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azapi_client_config.current](https://registry.terraform.io/providers/hashicorp/azapi/latest/docs/data-sources/client_config) (data source)
+- [azapi_client_config.current](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs

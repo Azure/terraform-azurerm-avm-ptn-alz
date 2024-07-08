@@ -70,6 +70,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
+- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
+
 - <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
 ## Providers
@@ -82,7 +84,7 @@ The following providers are used by this module:
 
 - <a name="provider_modtm"></a> [modtm](#provider\_modtm) (~> 0.3)
 
-- <a name="provider_random"></a> [random](#provider\_random)
+- <a name="provider_random"></a> [random](#provider\_random) (~> 3.6)
 
 - <a name="provider_time"></a> [time](#provider\_time) (~> 0.9)
 

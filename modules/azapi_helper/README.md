@@ -192,10 +192,6 @@ Default:
 
 The following outputs are exported:
 
-### <a name="output_id"></a> [id](#output\_id)
-
-Description: The Azure resource id of the resource.
-
 ### <a name="output_identity"></a> [identity](#output\_identity)
 
 Description: The identity configuration of the resource.
@@ -207,6 +203,10 @@ Description: The name of the resource.
 ### <a name="output_output"></a> [output](#output\_output)
 
 Description: The output values of the resource as defined by `response_export_values`.
+
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The Azure resource id of the resource.
 
 ## Modules
 
