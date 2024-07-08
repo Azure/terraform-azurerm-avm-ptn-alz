@@ -1,17 +1,24 @@
-resource "random_id" "telem" {
+data "azapi_client_config" "telemetry" {
   count = var.enable_telemetry ? 1 : 0
-
-  byte_length = 4
 }
 
-# This is the module telemetry deployment that is only created if telemetry is enabled.
-# It is deployed to the management group.
-resource "azurerm_management_group_template_deployment" "telemetry" {
+data "modtm_module_source" "telemetry" {
+  count       = var.enable_telemetry ? 1 : 0
+  module_path = path.module
+}
+
+resource "random_uuid" "telemetry" {
+  count = var.enable_telemetry ? 1 : 0
+}
+
+resource "modtm_telemetry" "telemetry" {
   count = var.enable_telemetry ? 1 : 0
 
-  location            = var.default_location
-  management_group_id = azurerm_management_group.this.id
-  name                = local.telem_arm_deployment_name
-  tags                = null
-  template_content    = local.telem_arm_template_content
+  tags = {
+    subscription_id = one(data.azapi_client_config.telemetry).subscription_id
+    tenant_id       = one(data.azapi_client_config.telemetry).tenant_id
+    module_source   = one(data.modtm_module_source.telemetry).module_source
+    module_version  = one(data.modtm_module_source.telemetry).module_version
+    random_id       = one(random_uuid.telemetry).result
+  }
 }

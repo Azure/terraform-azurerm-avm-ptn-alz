@@ -49,3 +49,6 @@ avm.tflint_example.merged.hcl
 .alzlib
 avm.tflint_module.hcl
 avm.tflint_module.merged.hcl
+
+*.tfrc
+

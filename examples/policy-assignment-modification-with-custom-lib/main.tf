@@ -1,21 +1,30 @@
 # Include the additional policies and override archetypes
 provider "alz" {
-  lib_urls = ["${path.root}/lib"]
+  library_references = [
+    {
+      path = "platform/alz",
+      ref  = "2024.07.02"
+    },
+    {
+      custom_url = "${path.cwd}/lib"
+    }
+  ]
 }
 
 # This allows us to get the tenant id
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "update_manager" {
-  location = "uksouth"
-  name     = "rg_test"
+  location = "northeurope"
+  name     = local.update_manager_rg_name
 }
 
 resource "azurerm_maintenance_configuration" "this" {
-  location            = azurerm_resource_group.update_manager.location
-  name                = "ring1"
-  resource_group_name = azurerm_resource_group.update_manager.name
-  scope               = "InGuestPatch"
+  location                 = azurerm_resource_group.update_manager.location
+  name                     = local.maintenance_configuration_name
+  resource_group_name      = azurerm_resource_group.update_manager.name
+  scope                    = "InGuestPatch"
+  in_guest_user_patch_mode = "User"
 
   install_patches {
     reboot = "IfRequired"
@@ -32,36 +41,28 @@ resource "azurerm_maintenance_configuration" "this" {
   }
 }
 
-module "alz_archetype_root" {
+# The provider shouldn't have any unknown values passed in, or it will mark
+# all resources as needing replacement.
+locals {
+  maintenance_configuration_name        = "ring1"
+  maintenance_configuration_resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${local.update_manager_rg_name}/providers/Microsoft.Maintenance/maintenanceConfigurations/${local.maintenance_configuration_name}"
+  update_manager_rg_name                = "rg-update-manager"
+}
+
+module "alz" {
   source             = "../../"
-  id                 = "root"
-  display_name       = "root"
-  parent_resource_id = "/providers/Microsoft.Management/managementGroups/${data.azurerm_client_config.current.tenant_id}"
-  base_archetype     = "root_override"
-  default_location   = "uksouth"
+  architecture_name  = "custom"
+  parent_resource_id = data.azurerm_client_config.current.tenant_id
+  location           = "northeurope"
   policy_assignments_to_modify = {
-    Update-Ring1 = {
-      parameters = jsonencode({
-        maintenanceConfigurationResourceId = azurerm_maintenance_configuration.this.id
-      })
+    myroot = {
+      policy_assignments = {
+        Update-Ring1 = {
+          parameters = jsonencode({
+            maintenanceConfigurationResourceId = local.maintenance_configuration_resource_id
+          })
+        }
+      }
     }
   }
-}
-
-module "alz_archetype_platform" {
-  source             = "../../"
-  id                 = "plat"
-  display_name       = "plat"
-  parent_resource_id = module.alz_archetype_root.management_group_resource_id
-  base_archetype     = "platform"
-  default_location   = "uksouth"
-}
-
-module "alz_archetype_landing_zones" {
-  source             = "../../"
-  id                 = "landing_zones"
-  display_name       = "landing_zones"
-  parent_resource_id = module.alz_archetype_root.management_group_resource_id
-  base_archetype     = "landing_zones"
-  default_location   = "uksouth"
 }

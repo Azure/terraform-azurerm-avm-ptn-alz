@@ -1,17 +1,22 @@
 terraform {
-  required_version = "~> 1.0"
+  required_version = "~> 1.6"
   required_providers {
     alz = {
       source  = "azure/alz"
-      version = "~> 0.11"
+      version = "~> 0.12"
+
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.74"
+      version = "~> 3.107"
     }
   }
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }

@@ -1,24 +1,79 @@
-# Jsondecode the data source but use known (at plan time) map keys from `alz_archetype_keys`
-# and combine with (potentially) known after apply data from the `alz_archetype` data source.
 locals {
-  alz_policy_assignments_decoded     = { for k in data.alz_archetype_keys.this.alz_policy_assignment_keys : k => jsondecode(data.alz_archetype.this.alz_policy_assignments[k]) }
-  alz_policy_definitions_decoded     = { for k in data.alz_archetype_keys.this.alz_policy_definition_keys : k => jsondecode(data.alz_archetype.this.alz_policy_definitions[k]) }
-  alz_policy_set_definitions_decoded = { for k in data.alz_archetype_keys.this.alz_policy_set_definition_keys : k => jsondecode(data.alz_archetype.this.alz_policy_set_definitions[k]) }
-  alz_role_definitions_decoded       = { for k in data.alz_archetype_keys.this.alz_role_definition_keys : k => jsondecode(data.alz_archetype.this.alz_role_definitions[k]) }
+  management_groups = { for v in data.alz_architecture.this.management_groups : v.id => {
+    id           = v.id
+    level        = v.level
+    exists       = v.exists
+    display_name = v.display_name
+    parent_id    = v.parent_id
+  } }
+  management_groups_level_0 = { for k, v in local.management_groups : k => v if v.level == 0 && !v.exists }
+  management_groups_level_1 = { for k, v in local.management_groups : k => v if v.level == 1 && !v.exists }
+  management_groups_level_2 = { for k, v in local.management_groups : k => v if v.level == 2 && !v.exists }
+  management_groups_level_3 = { for k, v in local.management_groups : k => v if v.level == 3 && !v.exists }
+  management_groups_level_4 = { for k, v in local.management_groups : k => v if v.level == 4 && !v.exists }
+  management_groups_level_5 = { for k, v in local.management_groups : k => v if v.level == 5 && !v.exists }
+  management_groups_level_6 = { for k, v in local.management_groups : k => v if v.level == 6 && !v.exists }
 }
 
-# Create a map of role assignment for the scope of the management group
 locals {
-  policy_role_assignments = data.alz_archetype.this.alz_policy_role_assignments != null ? {
-    for pra_key, pra_val in data.alz_archetype.this.alz_policy_role_assignments : pra_key => {
-      scope              = pra_val.scope
-      role_definition_id = pra_val.role_definition_id
-      principal_id       = one(azurerm_management_group_policy_assignment.this[pra_val.assignment_name].identity).principal_id
-    }
+  policy_definitions = {
+    for pdval in flatten([
+      for mg in data.alz_architecture.this.management_groups : [
+        for pdname, pd in mg.policy_definitions : {
+          key        = pdname
+          definition = jsondecode(pd)
+          mg         = mg.id
+        }
+      ]
+  ]) : "${pdval.mg}/${pdval.key}" => pdval }
+}
+
+locals {
+  policy_set_definitions = {
+    for psdval in flatten([
+      for mg in data.alz_architecture.this.management_groups : [
+        for psdname, psd in mg.policy_set_definitions : {
+          key            = psdname
+          set_definition = jsondecode(psd)
+          mg             = mg.id
+        }
+      ]
+  ]) : "${psdval.mg}/${psdval.key}" => psdval }
+}
+
+locals {
+  policy_assignments = {
+    for paval in flatten([
+      for mg in data.alz_architecture.this.management_groups : [
+        for paname, pa in mg.policy_assignments : {
+          key        = paname
+          assignment = jsondecode(pa)
+          mg         = mg.id
+        }
+      ]
+  ]) : "${paval.mg}/${paval.key}" => paval }
+}
+
+locals {
+  policy_role_assignments = data.alz_architecture.this.policy_role_assignments != null ? {
+    for pra in data.alz_architecture.this.policy_role_assignments : uuidv5("url", "${pra.policy_assignment_name}${pra.scope}${pra.management_group_id}${pra.role_definition_id}") => {
+      principal_id       = module.policy_assignment["${pra.management_group_id}/${pra.policy_assignment_name}"].identity.principal_id
+      role_definition_id = startswith(lower(pra.scope), "/subscriptions") ? "/subscriptions/${split("/", pra.scope)[2]}${pra.role_definition_id}" : pra.role_definition_id
+      scope              = pra.scope
+    } if !strcontains(pra.scope, "00000000-0000-0000-0000-000000000000")
   } : {}
 }
 
-# Get parent management group name from the parent_id
 locals {
-  parent_management_group_name = element(split("/", var.parent_resource_id), length(split("/", var.parent_resource_id)) - 1)
+  role_definitions = {
+    for rdval in flatten([
+      for mg in data.alz_architecture.this.management_groups : [
+        for rdname, rd in mg.role_definitions : {
+          key             = rdname
+          role_definition = jsondecode(rd)
+          mg              = mg.id
+        }
+      ]
+    ]) : "${rdval.mg}/${rdval.key}" => rdval
+  }
 }

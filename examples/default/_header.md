@@ -1,3 +1,3 @@
-# Default
+# Deploying the ALZ Reference Architecture
 
-Left deliberately empty for now.
+This example shows how to deploy the ALZ reference architecture.

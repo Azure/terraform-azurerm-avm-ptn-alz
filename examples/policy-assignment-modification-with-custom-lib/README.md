@@ -3,7 +3,7 @@
 
 This example demonstrates some common patterns:
 
-- Deploying a custom management group hierarchy
+- Deploying a custom management group hierarchy defined by an architecture definition file in the local library
 - The use of a custom library, with an archetype override and additional policy assignment
 - Modification of a policy assignment to supply new parameters to an assigned policy
 
@@ -12,22 +12,31 @@ Thanks to [@phx-tim-butters](https://github.com/phx-tim-butters) for this exampl
 ```hcl
 # Include the additional policies and override archetypes
 provider "alz" {
-  lib_urls = ["${path.root}/lib"]
+  library_references = [
+    {
+      path = "platform/alz",
+      ref  = "2024.07.02"
+    },
+    {
+      custom_url = "${path.cwd}/lib"
+    }
+  ]
 }
 
 # This allows us to get the tenant id
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "update_manager" {
-  location = "uksouth"
-  name     = "rg_test"
+  location = "northeurope"
+  name     = local.update_manager_rg_name
 }
 
 resource "azurerm_maintenance_configuration" "this" {
-  location            = azurerm_resource_group.update_manager.location
-  name                = "ring1"
-  resource_group_name = azurerm_resource_group.update_manager.name
-  scope               = "InGuestPatch"
+  location                 = azurerm_resource_group.update_manager.location
+  name                     = local.maintenance_configuration_name
+  resource_group_name      = azurerm_resource_group.update_manager.name
+  scope                    = "InGuestPatch"
+  in_guest_user_patch_mode = "User"
 
   install_patches {
     reboot = "IfRequired"
@@ -44,38 +53,30 @@ resource "azurerm_maintenance_configuration" "this" {
   }
 }
 
-module "alz_archetype_root" {
+# The provider shouldn't have any unknown values passed in, or it will mark
+# all resources as needing replacement.
+locals {
+  maintenance_configuration_name        = "ring1"
+  maintenance_configuration_resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${local.update_manager_rg_name}/providers/Microsoft.Maintenance/maintenanceConfigurations/${local.maintenance_configuration_name}"
+  update_manager_rg_name                = "rg-update-manager"
+}
+
+module "alz" {
   source             = "../../"
-  id                 = "root"
-  display_name       = "root"
-  parent_resource_id = "/providers/Microsoft.Management/managementGroups/${data.azurerm_client_config.current.tenant_id}"
-  base_archetype     = "root_override"
-  default_location   = "uksouth"
+  architecture_name  = "custom"
+  parent_resource_id = data.azurerm_client_config.current.tenant_id
+  location           = "northeurope"
   policy_assignments_to_modify = {
-    Update-Ring1 = {
-      parameters = jsonencode({
-        maintenanceConfigurationResourceId = azurerm_maintenance_configuration.this.id
-      })
+    myroot = {
+      policy_assignments = {
+        Update-Ring1 = {
+          parameters = jsonencode({
+            maintenanceConfigurationResourceId = local.maintenance_configuration_resource_id
+          })
+        }
+      }
     }
   }
-}
-
-module "alz_archetype_platform" {
-  source             = "../../"
-  id                 = "plat"
-  display_name       = "plat"
-  parent_resource_id = module.alz_archetype_root.management_group_resource_id
-  base_archetype     = "platform"
-  default_location   = "uksouth"
-}
-
-module "alz_archetype_landing_zones" {
-  source             = "../../"
-  id                 = "landing_zones"
-  display_name       = "landing_zones"
-  parent_resource_id = module.alz_archetype_root.management_group_resource_id
-  base_archetype     = "landing_zones"
-  default_location   = "uksouth"
 }
 ```
 
@@ -84,17 +85,17 @@ module "alz_archetype_landing_zones" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.11)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.12)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.74)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.107)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 3.74)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 3.107)
 
 ## Resources
 
@@ -121,19 +122,7 @@ No outputs.
 
 The following Modules are called:
 
-### <a name="module_alz_archetype_landing_zones"></a> [alz\_archetype\_landing\_zones](#module\_alz\_archetype\_landing\_zones)
-
-Source: ../../
-
-Version:
-
-### <a name="module_alz_archetype_platform"></a> [alz\_archetype\_platform](#module\_alz\_archetype\_platform)
-
-Source: ../../
-
-Version:
-
-### <a name="module_alz_archetype_root"></a> [alz\_archetype\_root](#module\_alz\_archetype\_root)
+### <a name="module_alz"></a> [alz](#module\_alz)
 
 Source: ../../
 
