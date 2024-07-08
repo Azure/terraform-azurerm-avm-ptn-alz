@@ -8,6 +8,7 @@ DESCRIPTION
 
 variable "location" {
   type        = string
+  nullable    = false
   description = <<DESCRIPTION
 The default location for resources in this management group. Used for policy managed identities.
 DESCRIPTION
@@ -40,57 +41,6 @@ variable "delays" {
   description = <<DESCRIPTION
 A map of delays to apply to the creation and destruction of resources.
 Included to work around some race conditions in Azure.
-DESCRIPTION
-}
-
-variable "timeouts" {
-  type = object({
-    management_group = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
-      }), {}
-    )
-    role_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
-      }), {}
-    )
-    policy_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
-      }), {}
-    )
-    policy_set_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
-      }), {}
-    )
-    policy_assignment = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
-      }), {}
-    )
-    policy_role_assignment = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
-      }), {}
-    )
-  })
-  default     = {}
-  description = <<DESCRIPTION
-A map of timeouts to apply to the creation and destruction of resources.
 DESCRIPTION
 }
 
@@ -153,5 +103,56 @@ The key of this map is the assignment name, and the value is an object with opti
     - `kind` - (Required) The kind of the selector.
     - `in` - (Optional) A set of strings to include in the selector.
     - `not_in` - (Optional) A set of strings to exclude from the selector.
+DESCRIPTION
+}
+
+variable "timeouts" {
+  type = object({
+    management_group = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    role_definition = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    policy_definition = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    policy_set_definition = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    policy_assignment = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    policy_role_assignment = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+  })
+  default     = {}
+  description = <<DESCRIPTION
+A map of timeouts to apply to the creation and destruction of resources.
 DESCRIPTION
 }

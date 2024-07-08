@@ -44,9 +44,9 @@ resource "azurerm_maintenance_configuration" "this" {
 # The provider shouldn't have any unknown values passed in, or it will mark
 # all resources as needing replacement.
 locals {
-  update_manager_rg_name                = "rg-update-manager"
   maintenance_configuration_name        = "ring1"
   maintenance_configuration_resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${local.update_manager_rg_name}/providers/Microsoft.Maintenance/maintenanceConfigurations/${local.maintenance_configuration_name}"
+  update_manager_rg_name                = "rg-update-manager"
 }
 
 module "alz" {

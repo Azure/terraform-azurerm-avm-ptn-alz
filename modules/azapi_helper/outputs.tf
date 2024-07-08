@@ -1,4 +1,4 @@
-output "id" {
+output "resource_id" {
   description = "The Azure resource id of the resource."
   value       = azapi_resource.this.id
 }

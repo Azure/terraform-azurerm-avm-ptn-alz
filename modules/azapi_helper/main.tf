@@ -14,7 +14,6 @@ resource "azapi_resource" "this" {
       identity_ids = identity.value.identity_ids
     }
   }
-
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
