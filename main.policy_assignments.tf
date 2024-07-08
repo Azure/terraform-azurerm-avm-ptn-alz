@@ -32,6 +32,8 @@ module "policy_assignment" {
   parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
   location  = var.location
 
+  timeouts = var.timeouts.policy_assignment
+
   replace_triggered_by = [
     lookup(each.value.assignment.properties, "policyDefinitionId", null),
     var.location,

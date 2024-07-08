@@ -3,10 +3,59 @@
 
 # ALZ Terraform Module
 
-> ⚠️ ***Warning*** ⚠️ This module is still in development but is ready for initial testing and feedback via [GitHub Issues](https://github.com/Azure/terraform-azurerm-avm-ptn-alz/issues).
+> [!WARNING]
+> This module is still in development but is ready for initial testing and feedback via [GitHub Issues](https://github.com/Azure/terraform-azurerm-avm-ptn-alz/issues).
 
 - This repository contains a Terraform module for deploying Azure Landing Zones (ALZs).
 - Make sure to review the examples.
+
+> [!IMPORTANT]
+> Do not pass unknown (computed) values into the properties of the module. Instead use string interpolation and other means to pass the values. Seem below for details.
+
+## Unknown Values
+
+This module uses the ALZ Terraform provider. This uses a data source which **must** be read prior to creating the plan.
+If you pass an unknown/computed value into the module, it will not be able to read the data source until the plan is being applied.
+This may cause resources to be unnecessarily recreated.
+
+Such unknown values include resource ids. For example, if you are creating a resource and passing the id of the resource group to the module, this will cause the issue.
+
+Instead, use string interpolation to pass the values. For example:
+
+### Recommended
+
+This is the recommended way to use this module:
+
+> [!NOTE]
+> We assume that all variable inputs are literals.
+
+```terraform
+
+locals {
+  foo_resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.FooResourceProvider/${var.foo_resource_name}"
+}
+
+module "example" {
+  source = "Azure/terraform-azurerm-avm-ptn-alz/azurerm"
+
+  policy_assignments_to_modify = {
+    alzroot = {
+      policy_assignments = {
+        mypolicy = {
+          parameters = jsonencode({
+            parameterName = local.foo_resource_id
+          })
+        }
+      }
+    }
+  }
+}
+```
+
+### Deferred Actions
+
+We are awaiting the results of the upstream Terraform language experiment *deferred actions*. This may provide a solution to this issue.
+See the release notes [here](https://github.com/hashicorp/terraform/releases/tag/v1.10.0-alpha20240619) for more information.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
@@ -15,7 +64,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.12)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.12, >= 0.12.5)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.14)
 
@@ -27,7 +76,7 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.12)
+- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.12, >= 0.12.5)
 
 - <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.14)
 
@@ -180,6 +229,54 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
+
+Description: A map of timeouts to apply to the creation and destruction of resources.
+
+Type:
+
+```hcl
+object({
+    management_group = optional(object({
+      create  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      update  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      }), {
+    })
+    policy_definition = optional(object({
+      create  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      update  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      }), {
+    })
+    policy_set_definition = optional(object({
+      create  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      update  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      }), {
+    })
+    policy_assignment = optional(object({
+      create  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      update  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      }), {
+    })
+    policy_role_assignment = optional(object({
+      create  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      update  = optional(string, "10m")
+      destroy = optional(string, "10m")
+      }), {
+    })
+  })
+```
+
+Default: `{}`
+
 ## Outputs
 
 The following outputs are exported:
@@ -188,21 +285,29 @@ The following outputs are exported:
 
 Description: n/a
 
+### <a name="output_policy_assignment_identity_ids"></a> [policy\_assignment\_identity\_ids](#output\_policy\_assignment\_identity\_ids)
+
+Description: A map of policy assignment names to their identity ids.
+
 ### <a name="output_policy_assignment_resource_ids"></a> [policy\_assignment\_resource\_ids](#output\_policy\_assignment\_resource\_ids)
 
-Description: n/a
+Description: A map of policy assignment names to their resource ids.
 
 ### <a name="output_policy_definition_resource_ids"></a> [policy\_definition\_resource\_ids](#output\_policy\_definition\_resource\_ids)
 
-Description: n/a
+Description: A map of policy definition names to their resource ids.
 
 ### <a name="output_policy_role_assignment_resource_ids"></a> [policy\_role\_assignment\_resource\_ids](#output\_policy\_role\_assignment\_resource\_ids)
 
-Description: n/a
+Description: A map of policy role assignments to their resource ids.
 
 ### <a name="output_policy_set_definition_resource_ids"></a> [policy\_set\_definition\_resource\_ids](#output\_policy\_set\_definition\_resource\_ids)
 
-Description: n/a
+Description: A map of policy set definition names to their resource ids.
+
+### <a name="output_role_definition_resource_ids"></a> [role\_definition\_resource\_ids](#output\_role\_definition\_resource\_ids)
+
+Description: A map of role definition names to their resource ids.
 
 ## Modules
 

@@ -7,6 +7,9 @@ module "policy_definitions" {
   body = {
     properties = each.value.definition.properties
   }
+
+  timeouts = var.timeouts.policy_definition
+
   depends_on = [
     time_sleep.after_management_groups
   ]

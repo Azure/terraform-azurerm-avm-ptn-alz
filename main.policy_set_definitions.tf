@@ -11,6 +11,8 @@ module "policy_set_definitions" {
     time_sleep.after_policy_definitions
   ]
 
+  timeouts = var.timeouts.policy_set_definition
+
   replace_triggered_by = [
     lookup(each.value.set_definition.properties, "policyType", null),
   ]

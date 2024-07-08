@@ -43,6 +43,57 @@ Included to work around some race conditions in Azure.
 DESCRIPTION
 }
 
+variable "timeouts" {
+  type = object({
+    management_group = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    role_definition = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    policy_definition = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    policy_set_definition = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    policy_assignment = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+    policy_role_assignment = optional(object({
+      create = optional(string, "10m")
+      delete = optional(string, "10m")
+      update = optional(string, "10m")
+      read   = optional(string, "10m")
+      }), {}
+    )
+  })
+  default     = {}
+  description = <<DESCRIPTION
+A map of timeouts to apply to the creation and destruction of resources.
+DESCRIPTION
+}
+
 variable "policy_assignments_to_modify" {
   type = map(object({
     policy_assignments = map(object({

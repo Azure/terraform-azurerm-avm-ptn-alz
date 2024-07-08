@@ -5,5 +5,5 @@ management_groups:
       - root-custom
     display_name: ALZ root
     exists: false
-    id: alzoot
+    id: myroot
     parent_id: null

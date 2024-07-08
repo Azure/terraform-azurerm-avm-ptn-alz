@@ -15,6 +15,8 @@ module "management_groups_level_0" {
     }
   }
 
+  timeouts = var.timeouts.management_group
+
   replace_triggered_by = [
     each.value.parent_id,
   ]
@@ -35,6 +37,8 @@ module "management_groups_level_1" {
       displayName = each.value.display_name
     }
   }
+
+  timeouts = var.timeouts.management_group
 
   replace_triggered_by = [
     each.value.parent_id,
@@ -60,6 +64,8 @@ module "management_groups_level_2" {
     }
   }
 
+  timeouts = var.timeouts.management_group
+
   replace_triggered_by = [
     each.value.parent_id,
   ]
@@ -83,6 +89,8 @@ module "management_groups_level_3" {
       displayName = each.value.display_name
     }
   }
+
+  timeouts = var.timeouts.management_group
 
   replace_triggered_by = [
     each.value.parent_id,
@@ -108,6 +116,8 @@ module "management_groups_level_4" {
     }
   }
 
+  timeouts = var.timeouts.management_group
+
   replace_triggered_by = [
     each.value.parent_id,
   ]
@@ -132,6 +142,8 @@ module "management_groups_level_5" {
     }
   }
 
+  timeouts = var.timeouts.management_group
+
   replace_triggered_by = [
     each.value.parent_id,
   ]
@@ -155,6 +167,8 @@ module "management_groups_level_6" {
       displayName = each.value.display_name
     }
   }
+
+  timeouts = var.timeouts.management_group
 
   replace_triggered_by = [
     each.value.parent_id,

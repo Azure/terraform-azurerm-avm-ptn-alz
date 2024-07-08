@@ -67,3 +67,21 @@ variable "response_export_values" {
   default     = null
   description = "List of values to export from the response, made available in the output."
 }
+
+variable "timeouts" {
+  type = object({
+    create = string
+    delete = string
+    update = string
+    read   = string
+  })
+  default = {
+    create = "10m"
+    delete = "10m"
+    update = "10m"
+    read   = "10m"
+  }
+  description = <<DESCRIPTION
+  A map of timeouts to apply to the creation and destruction of the resource.
+  DESCRIPTION
+}

@@ -31,6 +31,13 @@ resource "azapi_resource" "this" {
     }
   }
 
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
+
   lifecycle {
     ignore_changes = [
       body.properties.metadata.createdBy,
@@ -56,13 +63,13 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.13, != 1.13.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.14)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.13, != 1.13.0)
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.14)
 
 - <a name="provider_terraform"></a> [terraform](#provider\_terraform)
 
@@ -155,6 +162,32 @@ Description: List of values to export from the response, made available in the o
 Type: `set(string)`
 
 Default: `null`
+
+### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
+
+Description:   A map of timeouts to apply to the creation and destruction of the resource.
+
+Type:
+
+```hcl
+object({
+    create = string
+    delete = string
+    update = string
+    read   = string
+  })
+```
+
+Default:
+
+```json
+{
+  "create": "10m",
+  "delete": "10m",
+  "read": "10m",
+  "update": "10m"
+}
+```
 
 ## Outputs
 

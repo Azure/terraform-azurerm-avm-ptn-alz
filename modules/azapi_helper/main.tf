@@ -15,6 +15,13 @@ resource "azapi_resource" "this" {
     }
   }
 
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
+
   lifecycle {
     ignore_changes = [
       body.properties.metadata.createdBy,

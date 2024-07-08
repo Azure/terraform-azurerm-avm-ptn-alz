@@ -13,6 +13,9 @@ module "role_definitions" {
       type             = each.value.role_definition.properties.type
     }
   }
+
+  timeouts = var.timeouts.role_definition
+
   depends_on = [
     time_sleep.after_management_groups
   ]

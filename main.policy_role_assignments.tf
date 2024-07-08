@@ -13,6 +13,8 @@ module "policy_role_assignments" {
     }
   }
 
+  timeouts = var.timeouts.policy_role_assignment
+
   replace_triggered_by = [
     each.value.principal_id,
     each.value.role_definition_id,

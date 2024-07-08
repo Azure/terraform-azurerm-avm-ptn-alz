@@ -3,7 +3,7 @@ provider "alz" {
   library_references = [
     {
       path = "platform/alz",
-      ref  = "2024.07.01"
+      ref  = "2024.07.02"
     },
     {
       custom_url = "${path.cwd}/lib"
@@ -15,15 +15,16 @@ provider "alz" {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "update_manager" {
-  location = "uksouth"
-  name     = "rg_test"
+  location = "northeurope"
+  name     = local.update_manager_rg_name
 }
 
 resource "azurerm_maintenance_configuration" "this" {
-  location            = azurerm_resource_group.update_manager.location
-  name                = "ring1"
-  resource_group_name = azurerm_resource_group.update_manager.name
-  scope               = "InGuestPatch"
+  location                 = azurerm_resource_group.update_manager.location
+  name                     = local.maintenance_configuration_name
+  resource_group_name      = azurerm_resource_group.update_manager.name
+  scope                    = "InGuestPatch"
+  in_guest_user_patch_mode = "User"
 
   install_patches {
     reboot = "IfRequired"
@@ -40,17 +41,25 @@ resource "azurerm_maintenance_configuration" "this" {
   }
 }
 
+# The provider shouldn't have any unknown values passed in, or it will mark
+# all resources as needing replacement.
+locals {
+  update_manager_rg_name                = "rg-update-manager"
+  maintenance_configuration_name        = "ring1"
+  maintenance_configuration_resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${local.update_manager_rg_name}/providers/Microsoft.Maintenance/maintenanceConfigurations/${local.maintenance_configuration_name}"
+}
+
 module "alz" {
   source             = "../../"
   architecture_name  = "custom"
   parent_resource_id = data.azurerm_client_config.current.tenant_id
   location           = "northeurope"
   policy_assignments_to_modify = {
-    alzroot = {
+    myroot = {
       policy_assignments = {
         Update-Ring1 = {
           parameters = jsonencode({
-            maintenanceConfigurationResourceId = azurerm_maintenance_configuration.this.id
+            maintenanceConfigurationResourceId = local.maintenance_configuration_resource_id
           })
         }
       }
