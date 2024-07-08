@@ -19,6 +19,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.14)
 
+- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
+
 - <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
 ## Providers
@@ -27,16 +29,26 @@ The following providers are used by this module:
 
 - <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.12)
 
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.14)
+
+- <a name="provider_modtm"></a> [modtm](#provider\_modtm) (~> 0.3)
+
+- <a name="provider_random"></a> [random](#provider\_random)
+
 - <a name="provider_time"></a> [time](#provider\_time) (~> 0.9)
 
 ## Resources
 
 The following resources are used by this module:
 
+- [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
+- [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
 - [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
+- [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -87,10 +99,6 @@ object({
       create  = optional(string, "30s")
       destroy = optional(string, "0s")
     }), {})
-    after_policy_assignments = optional(object({
-      create  = optional(string, "30s")
-      destroy = optional(string, "0s")
-    }), {})
   })
 ```
 
@@ -108,7 +116,7 @@ Default: `true`
 
 ### <a name="input_policy_assignments_to_modify"></a> [policy\_assignments\_to\_modify](#input\_policy\_assignments\_to\_modify)
 
-Description: A map of policy assignment objects to modify the ALZ archetype with.  
+Description: A map of policy assignment objects to modify the ALZ architecture with.  
 You only need to specify the properties you want to change.
 
 The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.  
@@ -171,14 +179,6 @@ map(object({
 ```
 
 Default: `{}`
-
-### <a name="input_subscription_ids"></a> [subscription\_ids](#input\_subscription\_ids)
-
-Description: A set of subscription ids to move under this management group.
-
-Type: `set(string)`
-
-Default: `[]`
 
 ## Outputs
 

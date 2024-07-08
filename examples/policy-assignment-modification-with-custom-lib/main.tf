@@ -1,12 +1,12 @@
 # Include the additional policies and override archetypes
 provider "alz" {
-  alz_library_references = [
+  library_references = [
     {
       path = "platform/alz",
       ref  = "2024.07.01"
     },
     {
-      custom_url = "${path.root}/lib"
+      custom_url = "${path.cwd}/lib"
     }
   ]
 }
@@ -42,15 +42,17 @@ resource "azurerm_maintenance_configuration" "this" {
 
 module "alz" {
   source             = "../../"
-  architecture_name  = "alz-custom"
+  architecture_name  = "custom"
   parent_resource_id = data.azurerm_client_config.current.tenant_id
   location           = "northeurope"
   policy_assignments_to_modify = {
-    landing_zones = {
-      Update-Ring1 = {
-        parameters = jsonencode({
-          maintenanceConfigurationResourceId = azurerm_maintenance_configuration.this.id
-        })
+    alzroot = {
+      policy_assignments = {
+        Update-Ring1 = {
+          parameters = jsonencode({
+            maintenanceConfigurationResourceId = azurerm_maintenance_configuration.this.id
+          })
+        }
       }
     }
   }
