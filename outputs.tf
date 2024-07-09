@@ -7,7 +7,7 @@ output "management_group_resource_ids" {
     module.management_groups_level_4,
     module.management_groups_level_5,
     module.management_groups_level_6,
-  ) : k => v.id }
+  ) : k => v.resource_id }
 }
 
 output "policy_assignment_identity_ids" {

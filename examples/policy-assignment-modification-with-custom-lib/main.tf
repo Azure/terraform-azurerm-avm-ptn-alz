@@ -54,13 +54,16 @@ module "alz" {
   architecture_name  = "custom"
   parent_resource_id = data.azurerm_client_config.current.tenant_id
   location           = "northeurope"
+  policy_default_values = {
+    log_analytics = jsonencode({ value = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-la" })
+  }
   policy_assignments_to_modify = {
     myroot = {
       policy_assignments = {
         Update-Ring1 = {
-          parameters = jsonencode({
-            maintenanceConfigurationResourceId = local.maintenance_configuration_resource_id
-          })
+          parameters = {
+            maintenanceConfigurationResourceId = jsonencode({ value = local.maintenance_configuration_resource_id })
+          }
         }
       }
     }

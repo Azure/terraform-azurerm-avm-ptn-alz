@@ -1,0 +1,6 @@
+---
+name: log_analytics
+policy_assignments:
+  - policy_assignment_name: Deploy-AzActivity-Log
+    parameter_names:
+      - logAnalytics

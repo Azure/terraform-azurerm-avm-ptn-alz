@@ -3,4 +3,5 @@ data "alz_architecture" "this" {
   root_management_group_id     = var.parent_resource_id
   location                     = var.location
   policy_assignments_to_modify = var.policy_assignments_to_modify
+  policy_default_values        = var.policy_default_values
 }
