@@ -1,4 +1,5 @@
 output "management_group_resource_ids" {
+  description = "A map of management group names to their resource ids."
   value = { for k, v in merge(
     module.management_groups_level_0,
     module.management_groups_level_1,
