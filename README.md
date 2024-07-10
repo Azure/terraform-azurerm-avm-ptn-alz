@@ -64,7 +64,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.12, >= 0.12.5)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.13)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.14)
 
@@ -78,7 +78,7 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.12, >= 0.12.5)
+- <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.13)
 
 - <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.14)
 
@@ -180,7 +180,7 @@ The key of this map is the assignment name, and the value is an object with opti
 - `non_compliance_message` - (Optional) A set of non compliance message objects to use for the policy assignment. Each object has the following properties:
   - `message` - (Required) The non compliance message.
   - `policy_definition_reference_id` - (Optional) The reference id of the policy definition to use for the non compliance message.
-- `parameters` - (Optional) A JSON string of parameters to use for the policy assignment. E.g. `jsonencode({"param1": "value1", "param2": 2})`.
+- `parameters` - (Optional) The parameters to use for the policy assignment. The map key is the parameter name and the value is an JSON object containing a single `Value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({Value = \"value\"}) }`.
 - `resource_selectors` - (Optional) A list of resource selector objects to use for the policy assignment. Each object has the following properties:
   - `name` - (Required) The name of the resource selector.
   - `selectors` - (Optional) A list of selector objects to use for the resource selector. Each object has the following properties:
@@ -203,7 +203,7 @@ map(object({
       enforcement_mode = optional(string, null)
       identity         = optional(string, null)
       identity_ids     = optional(list(string), null)
-      parameters       = optional(string, null)
+      parameters       = optional(map(string), null)
       non_compliance_message = optional(set(object({
         message                        = string
         policy_definition_reference_id = optional(string, null)
@@ -230,6 +230,14 @@ map(object({
 ```
 
 Default: `{}`
+
+### <a name="input_policy_default_values"></a> [policy\_default\_values](#input\_policy\_default\_values)
+
+Description: A map of default values to apply to policy assignments. The key is the default name as defined in the library, and the value is an JSON object containing a single `value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({ value = \"value\"}) }`
+
+Type: `map(string)`
+
+Default: `null`
 
 ### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
 

@@ -106,6 +106,14 @@ The key of this map is the assignment name, and the value is an object with opti
 DESCRIPTION
 }
 
+variable "policy_default_values" {
+  type        = map(string)
+  default     = null
+  description = <<DESCRIPTION
+A map of default values to apply to policy assignments. The key is the default name as defined in the library, and the value is an JSON object containing a single `value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({ value = \"value\"}) }`
+DESCRIPTION
+}
+
 variable "timeouts" {
   type = object({
     management_group = optional(object({
@@ -154,13 +162,5 @@ variable "timeouts" {
   default     = {}
   description = <<DESCRIPTION
 A map of timeouts to apply to the creation and destruction of resources.
-DESCRIPTION
-}
-
-variable "policy_default_values" {
-  type        = map(string)
-  default     = null
-  description = <<DESCRIPTION
-A map of default values to apply to policy assignments. The key is the default name as defined in the library, and the value is an JSON object containing a single `value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({ value = \"value\"}) }`
 DESCRIPTION
 }

@@ -18,7 +18,7 @@ provider "alz" {
       ref  = "2024.07.02"
     },
     {
-      custom_url = "${path.cwd}/lib"
+      custom_url = "${path.root}/lib"
     }
   ]
 }
@@ -70,9 +70,9 @@ module "alz" {
     myroot = {
       policy_assignments = {
         Update-Ring1 = {
-          parameters = jsonencode({
-            maintenanceConfigurationResourceId = local.maintenance_configuration_resource_id
-          })
+          parameters = {
+            maintenanceConfigurationResourceId = jsonencode({ value = local.maintenance_configuration_resource_id })
+          }
         }
       }
     }
@@ -87,7 +87,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.12)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.13)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.107)
 
