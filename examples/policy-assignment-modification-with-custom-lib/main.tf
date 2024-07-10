@@ -6,7 +6,7 @@ provider "alz" {
       ref  = "2024.07.02"
     },
     {
-      custom_url = "${path.cwd}/lib"
+      custom_url = "${path.root}/lib"
     }
   ]
 }
@@ -58,9 +58,9 @@ module "alz" {
     myroot = {
       policy_assignments = {
         Update-Ring1 = {
-          parameters = jsonencode({
-            maintenanceConfigurationResourceId = local.maintenance_configuration_resource_id
-          })
+          parameters = {
+            maintenanceConfigurationResourceId = jsonencode({ value = local.maintenance_configuration_resource_id })
+          }
         }
       }
     }

@@ -50,7 +50,7 @@ variable "policy_assignments_to_modify" {
       enforcement_mode = optional(string, null)
       identity         = optional(string, null)
       identity_ids     = optional(list(string), null)
-      parameters       = optional(string, null)
+      parameters       = optional(map(string), null)
       non_compliance_message = optional(set(object({
         message                        = string
         policy_definition_reference_id = optional(string, null)
@@ -89,7 +89,7 @@ The key of this map is the assignment name, and the value is an object with opti
 - `non_compliance_message` - (Optional) A set of non compliance message objects to use for the policy assignment. Each object has the following properties:
   - `message` - (Required) The non compliance message.
   - `policy_definition_reference_id` - (Optional) The reference id of the policy definition to use for the non compliance message.
-- `parameters` - (Optional) A JSON string of parameters to use for the policy assignment. E.g. `jsonencode({"param1": "value1", "param2": 2})`.
+- `parameters` - (Optional) The parameters to use for the policy assignment. The map key is the parameter name and the value is an JSON object containing a single `Value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({Value = \"value\"}) }`.
 - `resource_selectors` - (Optional) A list of resource selector objects to use for the policy assignment. Each object has the following properties:
   - `name` - (Required) The name of the resource selector.
   - `selectors` - (Optional) A list of selector objects to use for the resource selector. Each object has the following properties:
@@ -103,6 +103,14 @@ The key of this map is the assignment name, and the value is an object with opti
     - `kind` - (Required) The kind of the selector.
     - `in` - (Optional) A set of strings to include in the selector.
     - `not_in` - (Optional) A set of strings to exclude from the selector.
+DESCRIPTION
+}
+
+variable "policy_default_values" {
+  type        = map(string)
+  default     = null
+  description = <<DESCRIPTION
+A map of default values to apply to policy assignments. The key is the default name as defined in the library, and the value is an JSON object containing a single `value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({ value = \"value\"}) }`
 DESCRIPTION
 }
 
