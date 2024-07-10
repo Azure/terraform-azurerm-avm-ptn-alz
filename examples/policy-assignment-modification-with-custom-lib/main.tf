@@ -6,7 +6,7 @@ provider "alz" {
       ref  = "2024.07.02"
     },
     {
-      custom_url = "${path.cwd}/lib"
+      custom_url = "${path.root}/lib"
     }
   ]
 }
@@ -54,9 +54,6 @@ module "alz" {
   architecture_name  = "custom"
   parent_resource_id = data.azurerm_client_config.current.tenant_id
   location           = "northeurope"
-  policy_default_values = {
-    log_analytics = jsonencode({ value = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-la" })
-  }
   policy_assignments_to_modify = {
     myroot = {
       policy_assignments = {
