@@ -300,7 +300,7 @@ The following outputs are exported:
 
 ### <a name="output_management_group_resource_ids"></a> [management\_group\_resource\_ids](#output\_management\_group\_resource\_ids)
 
-Description: n/a
+Description: A map of management group names to their resource ids.
 
 ### <a name="output_policy_assignment_identity_ids"></a> [policy\_assignment\_identity\_ids](#output\_policy\_assignment\_identity\_ids)
 
