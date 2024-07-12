@@ -27,7 +27,6 @@ body:
         - ""
         - "Feature Request"
         - "Bug"
-        - "Security Bug"
         - "I'm not sure"
     validations:
       required: true
