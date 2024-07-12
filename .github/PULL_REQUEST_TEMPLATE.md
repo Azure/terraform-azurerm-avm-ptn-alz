@@ -16,11 +16,11 @@ Closes #456
 
 - [ ] Non-module change (e.g. CI/CD, documentation, etc.)
 - [ ] Azure Verified Module updates:
-  - [ ] Bugfix containing backwards compatible bug fixes, and I have NOT bumped the MAJOR or MINOR version in `locals.version.tf.json`:
+  - [ ] Bugfix containing backwards compatible bug fixes
     - [ ] Someone has opened a bug report issue, and I have included "Closes #{bug_report_issue_number}" in the PR description.
     - [ ] The bug was found by the module author, and no one has opened an issue to report it yet.
-  - [ ] Feature update backwards compatible feature updates, and I have bumped the MINOR version in `locals.version.tf.json`.
-  - [ ] Breaking changes and I have bumped the MAJOR version in `locals.version.tf.json`.
+  - [ ] Feature update backwards compatible feature updates.
+  - [ ] Breaking changes.
   - [ ] Update to documentation
 
 # Checklist
