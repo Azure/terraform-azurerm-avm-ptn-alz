@@ -23,8 +23,6 @@ content: |-
   <!-- markdownlint-disable MD033 -->
   {{ .Requirements }}
 
-  {{ .Providers }}
-
   {{ .Resources }}
 
   <!-- markdownlint-disable MD013 -->
