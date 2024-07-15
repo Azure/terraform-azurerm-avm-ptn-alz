@@ -10,12 +10,12 @@
 - Make sure to review the examples.
 
 > [!IMPORTANT]
-> Do not pass unknown (computed) values into the properties of the module. Instead use string interpolation and other means to pass the values. Seem below for details.
+> Make sure to add `.alzlib` to your `.gitignore` file to avoid committing the downloaded ALZ library to your repository.
 
 ## Unknown Values
 
 This module uses the ALZ Terraform provider. This uses a data source which **must** be read prior to creating the plan.
-If you pass an unknown/computed value into the module, it will not be able to read the data source until the plan is being applied.
+If you pass an unknown (known after apply) value into the module, it will not be able to read the data source until the plan is being applied.
 This may cause resources to be unnecessarily recreated.
 
 Such unknown values include resource ids. For example, if you are creating a resource and passing the id of the resource group to the module, this will cause the issue.
@@ -42,9 +42,9 @@ module "example" {
     alzroot = {
       policy_assignments = {
         mypolicy = {
-          parameters = {
-            parameterName = jsonencode({ value = local.foo_resource_id })
-          }
+          parameters = jsonencode({
+            parameterName = local.foo_resource_id
+          })
         }
       }
     }
@@ -80,7 +80,7 @@ The following providers are used by this module:
 
 - <a name="provider_alz"></a> [alz](#provider\_alz) (~> 0.13)
 
-- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 1.14)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm)
 
 - <a name="provider_modtm"></a> [modtm](#provider\_modtm) (~> 0.3)
 
@@ -98,7 +98,7 @@ The following resources are used by this module:
 - [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
-- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
+- [azurerm_client_config.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->

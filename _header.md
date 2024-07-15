@@ -9,12 +9,12 @@
 - Make sure to review the examples.
 
 > [!IMPORTANT]
-> Do not pass unknown (computed) values into the properties of the module. Instead use string interpolation and other means to pass the values. Seem below for details.
+> Make sure to add `.alzlib` to your `.gitignore` file to avoid committing the downloaded ALZ library to your repository.
 
 ## Unknown Values
 
 This module uses the ALZ Terraform provider. This uses a data source which **must** be read prior to creating the plan.
-If you pass an unknown/computed value into the module, it will not be able to read the data source until the plan is being applied.
+If you pass an unknown (known after apply) value into the module, it will not be able to read the data source until the plan is being applied.
 This may cause resources to be unnecessarily recreated.
 
 Such unknown values include resource ids. For example, if you are creating a resource and passing the id of the resource group to the module, this will cause the issue.
