@@ -42,9 +42,9 @@ module "example" {
     alzroot = {
       policy_assignments = {
         mypolicy = {
-          parameters = jsonencode({
-            parameterName = local.foo_resource_id
-          })
+          parameters = {
+            parameterName = jsonencode({ value = local.foo_resource_id })
+          }
         }
       }
     }
