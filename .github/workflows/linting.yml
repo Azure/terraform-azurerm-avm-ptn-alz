@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
 
       - name: check docs
         uses: Azure/terraform-azurerm-avm-template/.github/actions/docs-check@main
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
 
       - name: lint terraform
         uses: Azure/terraform-azurerm-avm-template/.github/actions/linting@main
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 #v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
 
       - name: avmfix
         uses: Azure/terraform-azurerm-avm-template/.github/actions/avmfix@main
