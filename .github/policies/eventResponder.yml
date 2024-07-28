@@ -17,13 +17,6 @@ configuration:
         then:
           - addLabel:
               label: "Needs: Triage :mag:"
-          - addReply:
-              reply: |
-                > [!IMPORTANT]
-                > **The "Needs: Triage :mag:" label must be removed once the triage process is complete!**
-
-                > [!TIP]
-                > For additional guidance on how to triage this issue/PR, see the [TF Issue Triage](https://azure.github.io/Azure-Verified-Modules/help-support/issue-triage/tf-issue-triage/) documentation.
 
       - description: 'ITA09 - When #RR is used in an issue, add the "Needs: Author Feedback :ear:" label'
         if:
@@ -96,8 +89,6 @@ configuration:
                   label: "Type: New Module Proposal :bulb:"
               - hasLabel:
                   label: "Type: Question/Feedback :raising_hand:"
-              - hasLabel:
-                  label: "Type: Security Bug :lock:"
           - isAssignedToSomeone
         then:
           - removeLabel:
@@ -136,23 +127,6 @@ configuration:
         then:
           - addLabel:
               label: "Type: Bug :bug:"
-
-      - description: 'ITA22 - If the type is security bug, add the "Type: Security Bug :lock:" label on the issue'
-        if:
-          - payloadType: Issues
-          - isAction:
-              action: Opened
-          - bodyContains:
-              pattern: |
-                ### Issue Type?
-
-                Security Bug
-          - not:
-              hasLabel:
-                label: "Type: Security Bug :lock:"
-        then:
-          - addLabel:
-              label: "Type: Security Bug :lock:"
 
       - description: 'ITA23 - Remove the "Status: In PR" label from an issue when it''s closed.'
         if:
