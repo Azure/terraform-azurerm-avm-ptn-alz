@@ -44,6 +44,22 @@ Included to work around some race conditions in Azure.
 DESCRIPTION
 }
 
+variable "management_group_hierarchy_settings" {
+  type = object({
+    default_management_group_name            = string
+    require_authorization_for_group_creation = optional(bool, true)
+    update_existing                          = optional(bool, false)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Set this value to configure the hierarchy settings. Options are:
+
+- `default_management_group_name` - (Required) The name of the default management group.
+- `require_authorization_for_group_creation` - (Optional) By default, all Entra security principals can create new management groups. When enabled, security principals must have management group write access to create new management groups. Defaults to `true`.
+- `update_existing` - (Optional) Update existing hierarchy settings rather than create new. Defaults to `false`.
+DESCRIPTION
+}
+
 variable "policy_assignments_to_modify" {
   type = map(object({
     policy_assignments = map(object({
