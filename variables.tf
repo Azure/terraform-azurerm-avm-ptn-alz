@@ -51,7 +51,7 @@ variable "policy_assignments_to_modify" {
       identity         = optional(string, null)
       identity_ids     = optional(list(string), null)
       parameters       = optional(map(string), null)
-      non_compliance_message = optional(set(object({
+      non_compliance_messages = optional(set(object({
         message                        = string
         policy_definition_reference_id = optional(string, null)
       })), null)
