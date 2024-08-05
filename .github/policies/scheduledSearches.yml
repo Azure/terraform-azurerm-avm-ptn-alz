@@ -198,12 +198,6 @@ configuration:
                 > [!IMPORTANT]
                 > @${issueAuthor}, this issue has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **4 days**. It will be closed if no further activity occurs **within 3 days of this comment**.
 
-                > [!TIP]
-                > To prevent further actions to take effect, one of the following conditions must be met:
-                >   - The author must respond in a comment within 3 days of this comment.
-                >   - The "Status: No Recent Activity :zzz:" label must be removed.
-                >   - If applicable, the "Status: Long Term :hourglass_flowing_sand:" or the "Needs: Module Owner :mega:" label must be added.
-
       - description: 'ITA05A - Close issues that have been marked as requiring author feedback but have not had any activity for 3 days, unless it''s been marked with the "Status long term" label.'
         frequencies:
           - hourly:
@@ -224,9 +218,6 @@ configuration:
               reply: |
                 > [!WARNING]
                 > @${issueAuthor}, this issue will now be closed, as it has been marked as requiring author feedback but has not had any activity for **7 days**.
-
-                > [!TIP]
-                > In case this issue needs to be reopened (e.g., the author responds after the issue was closed), the "Status: No Recent Activity :zzz:" label must be removed.
           - closeIssue
 
       - description: 'ITA05B - Close issues that have been marked as requiring author feedback but have not had any activity for 3 days, unless it''s been marked with the "Status long term" label.'
@@ -249,7 +240,4 @@ configuration:
               reply: |
                 > [!WARNING]
                 > @${issueAuthor}, this issue will now be closed, as it has been marked as requiring author feedback but has not had any activity for **7 days**.
-
-                > [!TIP]
-                > In case this issue needs to be reopened (e.g., the author responds after the issue was closed), the "Status: No Recent Activity :zzz:" label must be removed.
           - closeIssue
