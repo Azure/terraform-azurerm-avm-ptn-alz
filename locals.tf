@@ -81,5 +81,5 @@ locals {
 # Hierarchy settings locals
 locals {
   management_group_resource_provider_prefix = "/providers/Microsoft.Management/managementGroups/"
-  tenant_root_group_resource_id             = "${local.management_group_resource_provider_prefix}${data.azapi_client_config.hierarchysettings.tenant_id}"
+  tenant_root_group_resource_id             = "${local.management_group_resource_provider_prefix}${data.azapi_client_config.hierarchy_settings.tenant_id}"
 }
