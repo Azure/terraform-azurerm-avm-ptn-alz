@@ -130,6 +130,26 @@ A map of default values to apply to policy assignments. The key is the default n
 DESCRIPTION
 }
 
+variable "subscription_placement" {
+  type = map(object({
+    subscription_id       = string
+    management_group_name = string
+  }))
+  default     = {}
+  description = <<DESCRIPTION
+A map of subscriptions to place into management groups. The key is deliberately arbitrary to avoid issues with known after apply values. The value is an object:
+
+- `subscription_id` - (Required) The id of the subscription to place in the management group.
+- `management_group_name` - (Required) The name of the management group to place the subscription in.
+DESCRIPTION
+  nullable    = false
+
+  validation {
+    error_message = "All subscription ids must be valud UUIDs."
+    condition     = alltrue([for v in var.subscription_placement : can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", v.subscription_id))])
+  }
+}
+
 variable "timeouts" {
   type = object({
     management_group = optional(object({

@@ -1,6 +1,6 @@
-data "azapi_client_config" "hierarchysettings" {}
+data "azapi_client_config" "hierarchy_settings" {}
 
-resource "azapi_resource" "hierarchysettings" {
+resource "azapi_resource" "hierarchy_settings" {
   count = var.management_group_hierarchy_settings != null && !try(var.management_group_hierarchy_settings.update_existing, true) ? 1 : 0
 
   type = "Microsoft.Management/managementGroups/settings@2023-04-01"
@@ -14,7 +14,7 @@ resource "azapi_resource" "hierarchysettings" {
   parent_id = local.tenant_root_group_resource_id
 }
 
-resource "azapi_update_resource" "hierarchysettings" {
+resource "azapi_update_resource" "hierarchy_settings" {
   count = var.management_group_hierarchy_settings != null && try(var.management_group_hierarchy_settings.update_existing, false) ? 1 : 0
 
   type = "Microsoft.Management/managementGroups/settings@2023-04-01"
