@@ -12,6 +12,20 @@
 > [!IMPORTANT]
 > Make sure to add `.alzlib` to your `.gitignore` file to avoid committing the downloaded ALZ library to your repository.
 
+## Features
+
+- Deploy management groups according to the supplied architecture (defaut is ALZ)
+- Deploy policy assets (definitions, assignments, and initiatives) according to the supplied architecture ands associated archetyes
+- Modify policy assignments:
+  - Enforcement mode
+  - Identity
+  - Non-compliance messages
+  - Overrides
+  - Parameters
+  - Resource selectors
+- Create the required role assignments for Azure Policy, including support for the **assign permissions** metadata tag, just like the Azuure Portal
+- Deploy custom role definitions
+
 ## Unknown Values
 
 This module uses the ALZ Terraform provider. This uses a data source which **must** be read prior to creating the plan.
@@ -78,13 +92,16 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
+- [azapi_resource.hierarchysettings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_update_resource.hierarchysettings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
 - [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
-- [azurerm_client_config.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
+- [azapi_client_config.hierarchysettings](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -150,6 +167,26 @@ If it is set to false, then no telemetry will be collected.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_management_group_hierarchy_settings"></a> [management\_group\_hierarchy\_settings](#input\_management\_group\_hierarchy\_settings)
+
+Description: Set this value to configure the hierarchy settings. Options are:
+
+- `default_management_group_name` - (Required) The name of the default management group.
+- `require_authorization_for_group_creation` - (Optional) By default, all Entra security principals can create new management groups. When enabled, security principals must have management group write access to create new management groups. Defaults to `true`.
+- `update_existing` - (Optional) Update existing hierarchy settings rather than create new. Defaults to `false`.
+
+Type:
+
+```hcl
+object({
+    default_management_group_name            = string
+    require_authorization_for_group_creation = optional(bool, true)
+    update_existing                          = optional(bool, false)
+  })
+```
+
+Default: `null`
 
 ### <a name="input_policy_assignments_to_modify"></a> [policy\_assignments\_to\_modify](#input\_policy\_assignments\_to\_modify)
 

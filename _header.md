@@ -11,6 +11,20 @@
 > [!IMPORTANT]
 > Make sure to add `.alzlib` to your `.gitignore` file to avoid committing the downloaded ALZ library to your repository.
 
+## Features
+
+- Deploy management groups according to the supplied architecture (defaut is ALZ)
+- Deploy policy assets (definitions, assignments, and initiatives) according to the supplied architecture ands associated archetyes
+- Modify policy assignments:
+  - Enforcement mode
+  - Identity
+  - Non-compliance messages
+  - Overrides
+  - Parameters
+  - Resource selectors
+- Create the required role assignments for Azure Policy, including support for the **assign permissions** metadata tag, just like the Azuure Portal
+- Deploy custom role definitions
+
 ## Unknown Values
 
 This module uses the ALZ Terraform provider. This uses a data source which **must** be read prior to creating the plan.
