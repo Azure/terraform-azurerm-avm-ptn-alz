@@ -1,0 +1,3 @@
+rule "location" {
+  enabled = false
+}
