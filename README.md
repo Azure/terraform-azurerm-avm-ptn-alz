@@ -23,7 +23,7 @@
   - Overrides
   - Parameters
   - Resource selectors
-- Create the required role assignments for Azure Policy, including support for the **assign permissions** metadata tag, just like the Azuure Portal
+- Create the required role assignments for Azure Policy, including support for the **assign permissions** metadata tag, just like the Azure Portal
 - Deploy custom role definitions
 
 ## Unknown Values
