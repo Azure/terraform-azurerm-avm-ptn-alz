@@ -7,12 +7,12 @@ resource "azapi_resource" "policy_definitions" {
   }
   name      = each.value.definition.name
   parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
-  retry = length(var.retry.policy_definitions.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.policy_definitions.error_message_regex
-    interval_seconds     = var.retry.policy_definitions.interval_seconds
-    max_interval_seconds = var.retry.policy_definitions.max_interval_seconds
-    multiplier           = var.retry.policy_definitions.multiplier
-    randomization_factor = var.retry.policy_definitions.randomization_factor
+  retry = var.retries.policy_definitions.error_message_regex != null ? {
+    error_message_regex  = var.retries.policy_definitions.error_message_regex
+    interval_seconds     = lookup(var.retries.policy_definitions, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.policy_definitions, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.policy_definitions, "multiplier", null)
+    randomization_factor = lookup(var.retries.policy_definitions, "randomization_factor", null)
   } : null
 
   timeouts {

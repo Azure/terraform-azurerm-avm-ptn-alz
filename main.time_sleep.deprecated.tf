@@ -6,13 +6,13 @@ resource "time_sleep" "after_management_groups" {
   }
 
   depends_on = [
-    module.management_groups_level_0,
-    module.management_groups_level_1,
-    module.management_groups_level_2,
-    module.management_groups_level_3,
-    module.management_groups_level_4,
-    module.management_groups_level_5,
-    module.management_groups_level_6,
+    azapi_resource.management_groups_level_0,
+    azapi_resource.management_groups_level_1,
+    azapi_resource.management_groups_level_2,
+    azapi_resource.management_groups_level_3,
+    azapi_resource.management_groups_level_4,
+    azapi_resource.management_groups_level_5,
+    azapi_resource.management_groups_level_6,
   ]
 }
 
@@ -24,7 +24,7 @@ resource "time_sleep" "after_policy_definitions" {
   }
 
   depends_on = [
-    module.policy_definitions
+    azapi_resource.policy_definitions
   ]
 }
 
@@ -36,6 +36,6 @@ resource "time_sleep" "after_policy_set_definitions" {
   }
 
   depends_on = [
-    module.policy_set_definitions
+    azapi_resource.policy_set_definitions
   ]
 }

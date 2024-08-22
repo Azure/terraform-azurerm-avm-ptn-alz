@@ -53,7 +53,7 @@ DESCRIPTION
 
   validation {
     error_message = "The partner id must be in the format <PARTNER_ID_UUID>:<PARTNER_DATA_UUID>."
-    condition     = can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}:[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", var.partner_id))
+    condition     = var.partner_id == null ? true : can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}:[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", var.partner_id))
   }
 }
 
@@ -127,7 +127,7 @@ A map of default values to apply to policy assignments. The key is the default n
 DESCRIPTION
 }
 
-variable "retrys" {
+variable "retries" {
   type = object({
     management_groups = optional(object({
       error_message_regex = optional(list(string), [
@@ -223,45 +223,45 @@ DESCRIPTION
 variable "timeouts" {
   type = object({
     management_group = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "2m")
+      delete = optional(string, "2m")
+      update = optional(string, "2m")
+      read   = optional(string, "2m")
       }), {}
     )
     role_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "2m")
+      delete = optional(string, "2m")
+      update = optional(string, "2m")
+      read   = optional(string, "2m")
       }), {}
     )
     policy_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_set_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_assignment = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_role_assignment = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "2m")
+      delete = optional(string, "2m")
+      update = optional(string, "2m")
+      read   = optional(string, "2m")
       }), {}
     )
   })

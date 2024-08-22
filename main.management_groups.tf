@@ -17,12 +17,12 @@ resource "azapi_resource" "management_groups_level_0" {
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
-  retry = length(var.retry.management_groups.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.management_groups.error_message_regex
-    interval_seconds     = var.retry.management_groups.interval_seconds
-    max_interval_seconds = var.retry.management_groups.max_interval_seconds
-    multiplier           = var.retry.management_groups.multiplier
-    randomization_factor = var.retry.management_groups.randomization_factor
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
 
   timeouts {
@@ -52,12 +52,12 @@ resource "azapi_resource" "management_groups_level_1" {
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
-  retry = length(var.retry.management_groups.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.management_groups.error_message_regex
-    interval_seconds     = var.retry.management_groups.interval_seconds
-    max_interval_seconds = var.retry.management_groups.max_interval_seconds
-    multiplier           = var.retry.management_groups.multiplier
-    randomization_factor = var.retry.management_groups.randomization_factor
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
 
   timeouts {
@@ -89,12 +89,12 @@ resource "azapi_resource" "management_groups_level_2" {
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
-  retry = length(var.retry.management_groups.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.management_groups.error_message_regex
-    interval_seconds     = var.retry.management_groups.interval_seconds
-    max_interval_seconds = var.retry.management_groups.max_interval_seconds
-    multiplier           = var.retry.management_groups.multiplier
-    randomization_factor = var.retry.management_groups.randomization_factor
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
 
   timeouts {
@@ -126,12 +126,12 @@ resource "azapi_resource" "management_groups_level_3" {
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
-  retry = length(var.retry.management_groups.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.management_groups.error_message_regex
-    interval_seconds     = var.retry.management_groups.interval_seconds
-    max_interval_seconds = var.retry.management_groups.max_interval_seconds
-    multiplier           = var.retry.management_groups.multiplier
-    randomization_factor = var.retry.management_groups.randomization_factor
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
 
   timeouts {
@@ -163,12 +163,12 @@ resource "azapi_resource" "management_groups_level_4" {
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
-  retry = length(var.retry.management_groups.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.management_groups.error_message_regex
-    interval_seconds     = var.retry.management_groups.interval_seconds
-    max_interval_seconds = var.retry.management_groups.max_interval_seconds
-    multiplier           = var.retry.management_groups.multiplier
-    randomization_factor = var.retry.management_groups.randomization_factor
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
 
   timeouts {
@@ -200,12 +200,12 @@ resource "azapi_resource" "management_groups_level_5" {
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
-  retry = length(var.retry.management_groups.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.management_groups.error_message_regex
-    interval_seconds     = var.retry.management_groups.interval_seconds
-    max_interval_seconds = var.retry.management_groups.max_interval_seconds
-    multiplier           = var.retry.management_groups.multiplier
-    randomization_factor = var.retry.management_groups.randomization_factor
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
 
   timeouts {
@@ -237,12 +237,12 @@ resource "azapi_resource" "management_groups_level_6" {
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
-  retry = length(var.retry.management_groups.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.management_groups.error_message_regex
-    interval_seconds     = var.retry.management_groups.interval_seconds
-    max_interval_seconds = var.retry.management_groups.max_interval_seconds
-    multiplier           = var.retry.management_groups.multiplier
-    randomization_factor = var.retry.management_groups.randomization_factor
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
 
   timeouts {

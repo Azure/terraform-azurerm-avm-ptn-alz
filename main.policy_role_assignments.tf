@@ -12,16 +12,16 @@ resource "azapi_resource" "policy_role_assignments" {
   }
   name      = each.key
   parent_id = each.value.scope
-  replace_triggered_by = [
+  replace_triggers_external_values = [
     each.value.principal_id,
     each.value.role_definition_id,
   ]
-  retry = length(var.retry.policy_role_assignments.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.policy_role_assignments.error_message_regex
-    interval_seconds     = var.retry.policy_role_assignments.interval_seconds
-    max_interval_seconds = var.retry.policy_role_assignments.max_interval_seconds
-    multiplier           = var.retry.policy_role_assignments.multiplier
-    randomization_factor = var.retry.policy_role_assignments.randomization_factor
+  retry = var.retries.policy_role_assignments.error_message_regex != null ? {
+    error_message_regex  = var.retries.policy_role_assignments.error_message_regex
+    interval_seconds     = lookup(var.retries.policy_role_assignments, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.policy_role_assignments, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.policy_role_assignments, "multiplier", null)
+    randomization_factor = lookup(var.retries.policy_role_assignments, "randomization_factor", null)
   } : null
 
   timeouts {

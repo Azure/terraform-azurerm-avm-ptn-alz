@@ -1,7 +1,11 @@
 resource "azapi_resource" "policy_assignments" {
   for_each = local.policy_assignments
 
-  type = "Microsoft.Authorization/policyAssignments@2024-04-01"
+  type      = "Microsoft.Authorization/policyAssignments@2024-04-01"
+  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
+  name      = each.value.assignment.name
+  location  = var.location
+
   body = {
     properties = {
       description     = lookup(each.value.assignment.properties, "description", null)
@@ -22,28 +26,28 @@ resource "azapi_resource" "policy_assignments" {
     }
   }
   ignore_missing_property = true
-  location                = var.location
-  name                    = each.value.assignment.name
-  parent_id               = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
-  replace_triggeres_external_values = [
+
+  replace_triggers_external_values = [
     lookup(each.value.assignment.properties, "policyDefinitionId", null),
     var.location,
   ]
-  retry = length(var.retry.policy_assignments.error_message_regex) > 0 ? {
-    error_message_regex  = var.retry.policy_assignments.error_message_regex
-    interval_seconds     = var.retry.policy_assignments.interval_seconds
-    max_interval_seconds = var.retry.policy_assignments.max_interval_seconds
-    multiplier           = var.retry.policy_assignments.multiplier
-    randomization_factor = var.retry.policy_assignments.randomization_factor
+
+  retry = var.retries.policy_assignments.error_message_regex != null ? {
+    error_message_regex  = var.retries.policy_assignments.error_message_regex
+    interval_seconds     = lookup(var.retries.policy_assignments, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.policy_assignments, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.policy_assignments, "multiplier", null)
+    randomization_factor = lookup(var.retries.policy_assignments, "randomization_factor", null)
   } : null
 
   dynamic "identity" {
     for_each = lookup(each.value.assignment, "identity", null) != null ? [each.value.assignment.identity] : []
     content {
       type         = identity.value.type
-      identity_ids = identity.value.identity_ids
+      identity_ids = lookup(identity.value, "identity_ids", null)
     }
   }
+
   timeouts {
     create = var.timeouts.policy_assignment.create
     delete = var.timeouts.policy_assignment.delete
