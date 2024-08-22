@@ -1,7 +1,10 @@
 resource "azapi_resource" "policy_role_assignments" {
   for_each = local.policy_role_assignments
 
-  type = "Microsoft.Authorization/roleAssignments@2022-04-01"
+  type      = "Microsoft.Authorization/roleAssignments@2022-04-01"
+  name      = each.key
+  parent_id = each.value.scope
+
   body = {
     properties = {
       principalId      = each.value.principal_id
@@ -10,12 +13,12 @@ resource "azapi_resource" "policy_role_assignments" {
       principalType    = "ServicePrincipal"
     }
   }
-  name      = each.key
-  parent_id = each.value.scope
+
   replace_triggers_external_values = [
     each.value.principal_id,
     each.value.role_definition_id,
   ]
+
   retry = var.retries.policy_role_assignments.error_message_regex != null ? {
     error_message_regex  = var.retries.policy_role_assignments.error_message_regex
     interval_seconds     = lookup(var.retries.policy_role_assignments, "interval_seconds", null)

@@ -11,12 +11,15 @@ resource "azapi_resource" "policy_assignments" {
       description     = lookup(each.value.assignment.properties, "description", null)
       displayName     = lookup(each.value.assignment.properties, "displayName", null)
       enforcementMode = lookup(each.value.assignment.properties, "enforcementMode", null)
-      metadata = lookup(each.value.assignment.properties, "metadata", {
-        createdBy = ""
-        createdOn = ""
-        updatedBy = ""
-        updatedOn = ""
-      })
+      metadata = merge(
+        lookup(each.value.assignment.properties, "metadata", {}),
+        {
+          createdBy = ""
+          createdOn = ""
+          updatedBy = ""
+          updatedOn = ""
+        }
+      )
       nonComplianceMessages = lookup(each.value.assignment.properties, "nonComplianceMessages", null)
       notScopes             = lookup(each.value.assignment.properties, "notScopes", null)
       overrides             = lookup(each.value.assignment.properties, "overrides", null)
@@ -58,4 +61,13 @@ resource "azapi_resource" "policy_assignments" {
   depends_on = [
     time_sleep.after_policy_set_definitions
   ]
+
+  lifecycle {
+    ignore_changes = [
+      body.properties.metadata.createdBy,
+      body.properties.metadata.createdOn,
+      body.properties.metadata.updatedBy,
+      body.properties.metadata.updatedOn,
+    ]
+  }
 }

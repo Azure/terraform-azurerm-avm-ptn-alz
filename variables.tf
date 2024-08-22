@@ -163,9 +163,7 @@ variable "retries" {
       randomization_factor = optional(number, null)
     }), {})
     policy_role_assignments = optional(object({
-      error_message_regex = optional(list(string), [
-        "RoleAssignmentNotFound"
-      ])
+      error_message_regex  = optional(list(string), null)
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
@@ -190,11 +188,11 @@ variable "retries" {
   description = <<DESCRIPTION
 The retry settings to apply to the CRUD operations. Value is a nested object, the top level keys are the resources and the values are an object with the following attributes:
 
-- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`.
-- `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null`.
-- `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null`.
-- `multiplier` - (Optional) The multiplier to apply to the interval between retries. Defaults to `null`.
-- `randomization_factor` - (Optional) The randomization factor to apply to the interval between retries. Defaults to `null`.
+- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`, which will will disable retries. Specify a value to enable.
+- `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
+- `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
+- `multiplier` - (Optional) The multiplier to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value.
+- `randomization_factor` - (Optional) The randomization factor to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value.
 
 For more information please see the provider documentation here: <https://registry.terraform.io/providers/Azure/azapi/azurerm/latest/docs/resources/resource#nestedatt--retry>
 DESCRIPTION
