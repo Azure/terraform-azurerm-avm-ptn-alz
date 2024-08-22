@@ -80,7 +80,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.13)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 1.14)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
@@ -93,6 +93,18 @@ The following requirements are needed by this module:
 The following resources are used by this module:
 
 - [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.role_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.subscription_placement](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
@@ -135,7 +147,9 @@ The following input variables are optional (have default values):
 
 ### <a name="input_delays"></a> [delays](#input\_delays)
 
-Description: A map of delays to apply to the creation and destruction of resources.  
+Description: DEPRECATED: Please use the new `retry` variable instead to allow the provider to retry on certain errors.
+
+A map of delays to apply to the creation and destruction of resources.  
 Included to work around some race conditions in Azure.
 
 Type:
@@ -186,6 +200,20 @@ object({
     update_existing                          = optional(bool, false)
   })
 ```
+
+Default: `null`
+
+### <a name="input_partner_id"></a> [partner\_id](#input\_partner\_id)
+
+Description: A value to be included in the telemetry tag. Requires the `enable_telemetry` variable to be set to `true`. The must be in the following format:
+
+`<PARTNER_ID_UUID>:<PARTNER_DATA_UUID>`
+
+e.g.
+
+`00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000`
+
+Type: `string`
 
 Default: `null`
 
@@ -262,6 +290,83 @@ Description: A map of default values to apply to policy assignments. The key is 
 Type: `map(string)`
 
 Default: `null`
+
+### <a name="input_retrys"></a> [retrys](#input\_retrys)
+
+Description: The retry settings to apply to the CRUD operations. Value is a nested object, the top level keys are the resources and the values are an object with the following attributes:
+
+- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`.
+- `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null`.
+- `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null`.
+- `multiplier` - (Optional) The multiplier to apply to the interval between retries. Defaults to `null`.
+- `randomization_factor` - (Optional) The randomization factor to apply to the interval between retries. Defaults to `null`.
+
+For more information please see the provider documentation here: <https://registry.terraform.io/providers/Azure/azapi/azurerm/latest/docs/resources/resource#nestedatt--retry>
+
+Type:
+
+```hcl
+object({
+    management_groups = optional(object({
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed"
+      ])
+    }), {})
+    role_definitions = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    policy_definitions = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    policy_set_definitions = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    policy_assignments = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    policy_role_assignments = optional(object({
+      error_message_regex = optional(list(string), [
+        "RoleAssignmentNotFound"
+      ])
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    hierarchy_settings = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    subscription_placement = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+  })
+```
+
+Default: `{}`
 
 ### <a name="input_subscription_placement"></a> [subscription\_placement](#input\_subscription\_placement)
 
@@ -370,79 +475,7 @@ Description: A map of role definition names to their resource ids.
 
 ## Modules
 
-The following Modules are called:
-
-### <a name="module_management_groups_level_0"></a> [management\_groups\_level\_0](#module\_management\_groups\_level\_0)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_management_groups_level_1"></a> [management\_groups\_level\_1](#module\_management\_groups\_level\_1)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_management_groups_level_2"></a> [management\_groups\_level\_2](#module\_management\_groups\_level\_2)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_management_groups_level_3"></a> [management\_groups\_level\_3](#module\_management\_groups\_level\_3)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_management_groups_level_4"></a> [management\_groups\_level\_4](#module\_management\_groups\_level\_4)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_management_groups_level_5"></a> [management\_groups\_level\_5](#module\_management\_groups\_level\_5)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_management_groups_level_6"></a> [management\_groups\_level\_6](#module\_management\_groups\_level\_6)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_policy_assignment"></a> [policy\_assignment](#module\_policy\_assignment)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_policy_definitions"></a> [policy\_definitions](#module\_policy\_definitions)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_policy_role_assignments"></a> [policy\_role\_assignments](#module\_policy\_role\_assignments)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_policy_set_definitions"></a> [policy\_set\_definitions](#module\_policy\_set\_definitions)
-
-Source: ./modules/azapi_helper
-
-Version:
-
-### <a name="module_role_definitions"></a> [role\_definitions](#module\_role\_definitions)
-
-Source: ./modules/azapi_helper
-
-Version:
+No modules.
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

@@ -7,7 +7,7 @@ terraform {
     }
     azapi = {
       source  = "azure/azapi"
-      version = "~> 1.14"
+      version = "~> 2.0"
     }
     modtm = {
       source  = "azure/modtm"

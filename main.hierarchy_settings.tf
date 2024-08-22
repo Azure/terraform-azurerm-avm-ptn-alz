@@ -12,6 +12,13 @@ resource "azapi_resource" "hierarchy_settings" {
   }
   name      = "default"
   parent_id = local.tenant_root_group_resource_id
+  retry = length(var.retry.hierarchy_settings.error_message_regex) > 0 ? {
+    error_message_regex  = var.retry.hierarchy_settings.error_message_regex
+    interval_seconds     = var.retry.hierarchy_settings.interval_seconds
+    max_interval_seconds = var.retry.hierarchy_settings.max_interval_seconds
+    multiplier           = var.retry.hierarchy_settings.multiplier
+    randomization_factor = var.retry.hierarchy_settings.randomization_factor
+  } : null
 }
 
 resource "azapi_update_resource" "hierarchy_settings" {
@@ -26,4 +33,11 @@ resource "azapi_update_resource" "hierarchy_settings" {
   }
   name      = "default"
   parent_id = local.tenant_root_group_resource_id
+  retry = length(var.retry.hierarchy_settings.error_message_regex) > 0 ? {
+    error_message_regex  = var.retry.hierarchy_settings.error_message_regex
+    interval_seconds     = var.retry.hierarchy_settings.interval_seconds
+    max_interval_seconds = var.retry.hierarchy_settings.max_interval_seconds
+    multiplier           = var.retry.hierarchy_settings.multiplier
+    randomization_factor = var.retry.hierarchy_settings.randomization_factor
+  } : null
 }
