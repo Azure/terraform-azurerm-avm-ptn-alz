@@ -147,7 +147,7 @@ The following input variables are optional (have default values):
 
 ### <a name="input_delays"></a> [delays](#input\_delays)
 
-Description: DEPRECATED: Please use the new `retry` variable instead to allow the provider to retry on certain errors.
+Description: DEPRECATED: Please use the new `retries` variable instead to allow the provider to retry on certain errors.
 
 A map of delays to apply to the creation and destruction of resources.  
 Included to work around some race conditions in Azure.
@@ -157,15 +157,15 @@ Type:
 ```hcl
 object({
     after_management_group = optional(object({
-      create  = optional(string, "30s")
+      create  = optional(string, "0s")
       destroy = optional(string, "0s")
     }), {})
     after_policy_definitions = optional(object({
-      create  = optional(string, "30s")
+      create  = optional(string, "0s")
       destroy = optional(string, "0s")
     }), {})
     after_policy_set_definitions = optional(object({
-      create  = optional(string, "30s")
+      create  = optional(string, "0s")
       destroy = optional(string, "0s")
     }), {})
   })
@@ -291,15 +291,15 @@ Type: `map(string)`
 
 Default: `null`
 
-### <a name="input_retrys"></a> [retrys](#input\_retrys)
+### <a name="input_retries"></a> [retries](#input\_retries)
 
 Description: The retry settings to apply to the CRUD operations. Value is a nested object, the top level keys are the resources and the values are an object with the following attributes:
 
-- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`.
-- `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null`.
-- `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null`.
-- `multiplier` - (Optional) The multiplier to apply to the interval between retries. Defaults to `null`.
-- `randomization_factor` - (Optional) The randomization factor to apply to the interval between retries. Defaults to `null`.
+- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`, which will will disable retries. Specify a value to enable.
+- `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
+- `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
+- `multiplier` - (Optional) The multiplier to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value.
+- `randomization_factor` - (Optional) The randomization factor to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value.
 
 For more information please see the provider documentation here: <https://registry.terraform.io/providers/Azure/azapi/azurerm/latest/docs/resources/resource#nestedatt--retry>
 
@@ -309,7 +309,7 @@ Type:
 object({
     management_groups = optional(object({
       error_message_regex = optional(list(string), [
-        "AuthorizationFailed"
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
       ])
     }), {})
     role_definitions = optional(object({
@@ -342,7 +342,7 @@ object({
     }), {})
     policy_role_assignments = optional(object({
       error_message_regex = optional(list(string), [
-        "RoleAssignmentNotFound"
+        "RoleAssignmentNotFound" # Added to fix an eventual consistency error with a GET following soon after a PUT
       ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
@@ -395,45 +395,45 @@ Type:
 ```hcl
 object({
     management_group = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "2m")
+      delete = optional(string, "2m")
+      update = optional(string, "2m")
+      read   = optional(string, "2m")
       }), {}
     )
     role_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "2m")
+      delete = optional(string, "2m")
+      update = optional(string, "2m")
+      read   = optional(string, "2m")
       }), {}
     )
     policy_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_set_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_assignment = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_role_assignment = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "2m")
+      delete = optional(string, "2m")
+      update = optional(string, "2m")
+      read   = optional(string, "2m")
       }), {}
     )
   })

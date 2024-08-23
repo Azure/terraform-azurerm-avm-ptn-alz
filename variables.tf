@@ -52,7 +52,7 @@ e.g.
 DESCRIPTION
 
   validation {
-    error_message = "The partner id must be in the format <PARTNER_ID_UUID>:<PARTNER_DATA_UUID>."
+    error_message = "The partner id must be in the format <PARTNER_ID_UUID>:<PARTNER_DATA_UUID>. All letters must be lowercase"
     condition     = var.partner_id == null ? true : can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}:[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", var.partner_id))
   }
 }
@@ -131,7 +131,7 @@ variable "retries" {
   type = object({
     management_groups = optional(object({
       error_message_regex = optional(list(string), [
-        "AuthorizationFailed"
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
       ])
     }), {})
     role_definitions = optional(object({
@@ -163,7 +163,9 @@ variable "retries" {
       randomization_factor = optional(number, null)
     }), {})
     policy_role_assignments = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "RoleAssignmentNotFound" # Added to fix an eventual consistency error with a GET following soon after a PUT
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)

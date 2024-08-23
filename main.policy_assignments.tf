@@ -1,11 +1,7 @@
 resource "azapi_resource" "policy_assignments" {
   for_each = local.policy_assignments
 
-  type      = "Microsoft.Authorization/policyAssignments@2024-04-01"
-  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
-  name      = each.value.assignment.name
-  location  = var.location
-
+  type = "Microsoft.Authorization/policyAssignments@2024-04-01"
   body = {
     properties = {
       description     = lookup(each.value.assignment.properties, "description", null)
@@ -29,12 +25,13 @@ resource "azapi_resource" "policy_assignments" {
     }
   }
   ignore_missing_property = true
-
+  location                = var.location
+  name                    = each.value.assignment.name
+  parent_id               = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
   replace_triggers_external_values = [
     lookup(each.value.assignment.properties, "policyDefinitionId", null),
     var.location,
   ]
-
   retry = var.retries.policy_assignments.error_message_regex != null ? {
     error_message_regex  = var.retries.policy_assignments.error_message_regex
     interval_seconds     = lookup(var.retries.policy_assignments, "interval_seconds", null)
@@ -50,7 +47,6 @@ resource "azapi_resource" "policy_assignments" {
       identity_ids = lookup(identity.value, "identity_ids", null)
     }
   }
-
   timeouts {
     create = var.timeouts.policy_assignment.create
     delete = var.timeouts.policy_assignment.delete
