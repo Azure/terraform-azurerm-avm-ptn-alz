@@ -225,17 +225,17 @@ DESCRIPTION
 variable "timeouts" {
   type = object({
     management_group = optional(object({
-      create = optional(string, "2m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     role_definition = optional(object({
-      create = optional(string, "2m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_definition = optional(object({
@@ -253,17 +253,17 @@ variable "timeouts" {
       }), {}
     )
     policy_assignment = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m") # Set high to allow consolidation of policy definitions coming into scope
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_role_assignment = optional(object({
-      create = optional(string, "2m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
   })
