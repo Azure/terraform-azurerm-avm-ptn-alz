@@ -76,11 +76,9 @@ See the release notes [here](https://github.com/hashicorp/terraform/releases/tag
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9)
 
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.13)
-
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
@@ -334,9 +332,11 @@ object({
       randomization_factor = optional(number, null)
     }), {})
     policy_assignments = optional(object({
-      error_message_regex  = optional(list(string), null)
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
+      error_message_regex = optional(list(string), [
+        "The policy definition specified in policy assignment '.+' is out of scope" # If assignment is created soon after a policy definition has been created then the assignment will fail with this error.
+      ])
+      interval_seconds     = optional(number, 5)
+      max_interval_seconds = optional(number, 30)
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})

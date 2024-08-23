@@ -156,9 +156,11 @@ variable "retries" {
       randomization_factor = optional(number, null)
     }), {})
     policy_assignments = optional(object({
-      error_message_regex  = optional(list(string), null)
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
+      error_message_regex = optional(list(string), [
+        "The policy definition specified in policy assignment '.+' is out of scope" # If assignment is created soon after a policy definition has been created then the assignment will fail with this error.
+      ])
+      interval_seconds     = optional(number, 5)
+      max_interval_seconds = optional(number, 30)
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
