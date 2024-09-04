@@ -133,6 +133,10 @@ variable "retries" {
       error_message_regex = optional(list(string), [
         "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
       ])
+      interval_seconds     = optional(number, 5)
+      max_interval_seconds = optional(number, 30)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
     }), {})
     role_definitions = optional(object({
       error_message_regex  = optional(list(string), null)
