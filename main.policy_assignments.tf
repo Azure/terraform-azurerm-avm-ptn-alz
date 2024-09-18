@@ -1,26 +1,21 @@
-module "policy_assignment" {
-  source   = "./modules/azapi_helper"
+resource "azapi_resource" "policy_assignments" {
   for_each = local.policy_assignments
 
-  name                    = each.value.assignment.name
-  type                    = "Microsoft.Authorization/policyAssignments@2024-04-01"
-  ignore_missing_property = true
-  identity = lookup(each.value.assignment, "identity", null) != null ? {
-    type         = each.value.assignment.identity.type
-    identity_ids = lookup(each.value.assignment.identity, "identity_ids", null)
-  } : null
-
+  type = "Microsoft.Authorization/policyAssignments@2024-04-01"
   body = {
     properties = {
       description     = lookup(each.value.assignment.properties, "description", null)
       displayName     = lookup(each.value.assignment.properties, "displayName", null)
       enforcementMode = lookup(each.value.assignment.properties, "enforcementMode", null)
-      metadata = lookup(each.value.assignment.properties, "metadata", {
-        createdBy = ""
-        createdOn = ""
-        updatedBy = ""
-        updatedOn = ""
-      })
+      metadata = merge(
+        lookup(each.value.assignment.properties, "metadata", {}),
+        {
+          createdBy = ""
+          createdOn = ""
+          updatedBy = ""
+          updatedOn = ""
+        }
+      )
       nonComplianceMessages = lookup(each.value.assignment.properties, "nonComplianceMessages", null)
       notScopes             = lookup(each.value.assignment.properties, "notScopes", null)
       overrides             = lookup(each.value.assignment.properties, "overrides", null)
@@ -29,17 +24,47 @@ module "policy_assignment" {
       resourceSelectors     = lookup(each.value.assignment.properties, "resourceSelectors", null)
     }
   }
-  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
-  location  = var.location
-
-  timeouts = var.timeouts.policy_assignment
-
-  replace_triggered_by = [
+  ignore_missing_property = true
+  location                = var.location
+  name                    = each.value.assignment.name
+  parent_id               = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
+  replace_triggers_external_values = [
     lookup(each.value.assignment.properties, "policyDefinitionId", null),
     var.location,
   ]
+  retry = var.retries.policy_assignments.error_message_regex != null ? {
+    error_message_regex  = var.retries.policy_assignments.error_message_regex
+    interval_seconds     = lookup(var.retries.policy_assignments, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.policy_assignments, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.policy_assignments, "multiplier", null)
+    randomization_factor = lookup(var.retries.policy_assignments, "randomization_factor", null)
+  } : null
+
+  dynamic "identity" {
+    for_each = lookup(each.value.assignment, "identity", null) != null ? [each.value.assignment.identity] : []
+
+    content {
+      type         = identity.value.type
+      identity_ids = lookup(identity.value, "identity_ids", null)
+    }
+  }
+  timeouts {
+    create = var.timeouts.policy_assignment.create
+    delete = var.timeouts.policy_assignment.delete
+    read   = var.timeouts.policy_assignment.read
+    update = var.timeouts.policy_assignment.update
+  }
 
   depends_on = [
     time_sleep.after_policy_set_definitions
   ]
+
+  lifecycle {
+    ignore_changes = [
+      body.properties.metadata.createdBy,
+      body.properties.metadata.createdOn,
+      body.properties.metadata.updatedBy,
+      body.properties.metadata.updatedOn,
+    ]
+  }
 }

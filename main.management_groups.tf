@@ -1,9 +1,7 @@
-module "management_groups_level_0" {
-  source    = "./modules/azapi_helper"
-  for_each  = local.management_groups_level_0
-  name      = each.value.id
-  type      = "Microsoft.Management/managementGroups@2023-04-01"
-  parent_id = "/"
+resource "azapi_resource" "management_groups_level_0" {
+  for_each = local.management_groups_level_0
+
+  type = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -14,45 +12,31 @@ module "management_groups_level_0" {
       displayName = each.value.display_name
     }
   }
-
-  timeouts = var.timeouts.management_group
-
-  replace_triggered_by = [
-    each.value.parent_id,
-  ]
-}
-module "management_groups_level_1" {
-  source    = "./modules/azapi_helper"
-  for_each  = local.management_groups_level_1
   name      = each.value.id
-  type      = "Microsoft.Management/managementGroups@2023-04-01"
   parent_id = "/"
-  body = {
-    properties = {
-      details = {
-        parent = {
-          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
-        }
-      }
-      displayName = each.value.display_name
-    }
-  }
-
-  timeouts = var.timeouts.management_group
-
-  replace_triggered_by = [
+  replace_triggers_external_values = [
     each.value.parent_id,
   ]
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
+  } : null
 
-  depends_on = [module.management_groups_level_0]
+  timeouts {
+    create = var.timeouts.management_group.create
+    delete = var.timeouts.management_group.delete
+    read   = var.timeouts.management_group.read
+    update = var.timeouts.management_group.update
+  }
 }
 
-module "management_groups_level_2" {
-  source    = "./modules/azapi_helper"
-  for_each  = local.management_groups_level_2
-  name      = each.value.id
-  type      = "Microsoft.Management/managementGroups@2023-04-01"
-  parent_id = "/"
+resource "azapi_resource" "management_groups_level_1" {
+  for_each = local.management_groups_level_1
+
+  type = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -63,22 +47,33 @@ module "management_groups_level_2" {
       displayName = each.value.display_name
     }
   }
-
-  timeouts = var.timeouts.management_group
-
-  replace_triggered_by = [
+  name      = each.value.id
+  parent_id = "/"
+  replace_triggers_external_values = [
     each.value.parent_id,
   ]
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
+  } : null
 
-  depends_on = [module.management_groups_level_1]
+  timeouts {
+    create = var.timeouts.management_group.create
+    delete = var.timeouts.management_group.delete
+    read   = var.timeouts.management_group.read
+    update = var.timeouts.management_group.update
+  }
+
+  depends_on = [azapi_resource.management_groups_level_0]
 }
 
-module "management_groups_level_3" {
-  source    = "./modules/azapi_helper"
-  for_each  = local.management_groups_level_3
-  name      = each.value.id
-  type      = "Microsoft.Management/managementGroups@2023-04-01"
-  parent_id = "/"
+resource "azapi_resource" "management_groups_level_2" {
+  for_each = local.management_groups_level_2
+
+  type = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -89,22 +84,33 @@ module "management_groups_level_3" {
       displayName = each.value.display_name
     }
   }
-
-  timeouts = var.timeouts.management_group
-
-  replace_triggered_by = [
+  name      = each.value.id
+  parent_id = "/"
+  replace_triggers_external_values = [
     each.value.parent_id,
   ]
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
+  } : null
 
-  depends_on = [module.management_groups_level_2]
+  timeouts {
+    create = var.timeouts.management_group.create
+    delete = var.timeouts.management_group.delete
+    read   = var.timeouts.management_group.read
+    update = var.timeouts.management_group.update
+  }
+
+  depends_on = [azapi_resource.management_groups_level_1]
 }
 
-module "management_groups_level_4" {
-  source    = "./modules/azapi_helper"
-  for_each  = local.management_groups_level_4
-  name      = each.value.id
-  type      = "Microsoft.Management/managementGroups@2023-04-01"
-  parent_id = "/"
+resource "azapi_resource" "management_groups_level_3" {
+  for_each = local.management_groups_level_3
+
+  type = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -115,22 +121,33 @@ module "management_groups_level_4" {
       displayName = each.value.display_name
     }
   }
-
-  timeouts = var.timeouts.management_group
-
-  replace_triggered_by = [
+  name      = each.value.id
+  parent_id = "/"
+  replace_triggers_external_values = [
     each.value.parent_id,
   ]
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
+  } : null
 
-  depends_on = [module.management_groups_level_3]
+  timeouts {
+    create = var.timeouts.management_group.create
+    delete = var.timeouts.management_group.delete
+    read   = var.timeouts.management_group.read
+    update = var.timeouts.management_group.update
+  }
+
+  depends_on = [azapi_resource.management_groups_level_2]
 }
 
-module "management_groups_level_5" {
-  source    = "./modules/azapi_helper"
-  for_each  = local.management_groups_level_5
-  name      = each.value.id
-  type      = "Microsoft.Management/managementGroups@2023-04-01"
-  parent_id = "/"
+resource "azapi_resource" "management_groups_level_4" {
+  for_each = local.management_groups_level_4
+
+  type = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -141,22 +158,33 @@ module "management_groups_level_5" {
       displayName = each.value.display_name
     }
   }
-
-  timeouts = var.timeouts.management_group
-
-  replace_triggered_by = [
+  name      = each.value.id
+  parent_id = "/"
+  replace_triggers_external_values = [
     each.value.parent_id,
   ]
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
+  } : null
 
-  depends_on = [module.management_groups_level_4]
+  timeouts {
+    create = var.timeouts.management_group.create
+    delete = var.timeouts.management_group.delete
+    read   = var.timeouts.management_group.read
+    update = var.timeouts.management_group.update
+  }
+
+  depends_on = [azapi_resource.management_groups_level_3]
 }
 
-module "management_groups_level_6" {
-  source    = "./modules/azapi_helper"
-  for_each  = local.management_groups_level_6
-  type      = "Microsoft.Management/managementGroups@2023-04-01"
-  name      = each.value.id
-  parent_id = "/"
+resource "azapi_resource" "management_groups_level_5" {
+  for_each = local.management_groups_level_5
+
+  type = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -167,12 +195,62 @@ module "management_groups_level_6" {
       displayName = each.value.display_name
     }
   }
-
-  timeouts = var.timeouts.management_group
-
-  replace_triggered_by = [
+  name      = each.value.id
+  parent_id = "/"
+  replace_triggers_external_values = [
     each.value.parent_id,
   ]
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
+  } : null
 
-  depends_on = [module.management_groups_level_5]
+  timeouts {
+    create = var.timeouts.management_group.create
+    delete = var.timeouts.management_group.delete
+    read   = var.timeouts.management_group.read
+    update = var.timeouts.management_group.update
+  }
+
+  depends_on = [azapi_resource.management_groups_level_4]
+}
+
+resource "azapi_resource" "management_groups_level_6" {
+  for_each = local.management_groups_level_6
+
+  type = "Microsoft.Management/managementGroups@2023-04-01"
+  body = {
+    properties = {
+      details = {
+        parent = {
+          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
+        }
+      }
+      displayName = each.value.display_name
+    }
+  }
+  name      = each.value.id
+  parent_id = "/"
+  replace_triggers_external_values = [
+    each.value.parent_id,
+  ]
+  retry = var.retries.management_groups.error_message_regex != null ? {
+    error_message_regex  = var.retries.management_groups.error_message_regex
+    interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.management_groups, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.management_groups, "multiplier", null)
+    randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
+  } : null
+
+  timeouts {
+    create = var.timeouts.management_group.create
+    delete = var.timeouts.management_group.delete
+    read   = var.timeouts.management_group.read
+    update = var.timeouts.management_group.update
+  }
+
+  depends_on = [azapi_resource.management_groups_level_5]
 }

@@ -22,28 +22,6 @@ The `azurerm_client_config`/`azapi_client_config` data sources are able to retri
 DESCRIPTION
 }
 
-variable "delays" {
-  type = object({
-    after_management_group = optional(object({
-      create  = optional(string, "30s")
-      destroy = optional(string, "0s")
-    }), {})
-    after_policy_definitions = optional(object({
-      create  = optional(string, "30s")
-      destroy = optional(string, "0s")
-    }), {})
-    after_policy_set_definitions = optional(object({
-      create  = optional(string, "30s")
-      destroy = optional(string, "0s")
-    }), {})
-  })
-  default     = {}
-  description = <<DESCRIPTION
-A map of delays to apply to the creation and destruction of resources.
-Included to work around some race conditions in Azure.
-DESCRIPTION
-}
-
 variable "management_group_hierarchy_settings" {
   type = object({
     default_management_group_name            = string
@@ -58,6 +36,25 @@ Set this value to configure the hierarchy settings. Options are:
 - `require_authorization_for_group_creation` - (Optional) By default, all Entra security principals can create new management groups. When enabled, security principals must have management group write access to create new management groups. Defaults to `true`.
 - `update_existing` - (Optional) Update existing hierarchy settings rather than create new. Defaults to `false`.
 DESCRIPTION
+}
+
+variable "partner_id" {
+  type        = string
+  default     = null
+  description = <<DESCRIPTION
+A value to be included in the telemetry tag. Requires the `enable_telemetry` variable to be set to `true`. The must be in the following format:
+
+`<PARTNER_ID_UUID>:<PARTNER_DATA_UUID>`
+
+e.g.
+
+`00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000`
+DESCRIPTION
+
+  validation {
+    error_message = "The partner id must be in the format <PARTNER_ID_UUID>:<PARTNER_DATA_UUID>. All letters must be lowercase"
+    condition     = var.partner_id == null ? true : can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}:[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", var.partner_id))
+  }
 }
 
 variable "policy_assignments_to_modify" {
@@ -130,6 +127,85 @@ A map of default values to apply to policy assignments. The key is the default n
 DESCRIPTION
 }
 
+variable "retries" {
+  type = object({
+    management_groups = optional(object({
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    role_definitions = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    policy_definitions = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    policy_set_definitions = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    policy_assignments = optional(object({
+      error_message_regex = optional(list(string), [
+        "The policy definition specified in policy assignment '.+' is out of scope" # If assignment is created soon after a policy definition has been created then the assignment will fail with this error.
+      ])
+      interval_seconds     = optional(number, 5)
+      max_interval_seconds = optional(number, 30)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    policy_role_assignments = optional(object({
+      error_message_regex = optional(list(string), [
+        "RoleAssignmentNotFound" # Added to fix an eventual consistency error with a GET following soon after a PUT
+      ])
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    hierarchy_settings = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+    subscription_placement = optional(object({
+      error_message_regex  = optional(list(string), null)
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
+  })
+  default     = {}
+  description = <<DESCRIPTION
+The retry settings to apply to the CRUD operations. Value is a nested object, the top level keys are the resources and the values are an object with the following attributes:
+
+- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`, which will will disable retries. Specify a value to enable.
+- `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
+- `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
+- `multiplier` - (Optional) The multiplier to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value.
+- `randomization_factor` - (Optional) The randomization factor to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value.
+
+For more information please see the provider documentation here: <https://registry.terraform.io/providers/Azure/azapi/azurerm/latest/docs/resources/resource#nestedatt--retry>
+DESCRIPTION
+}
+
 variable "subscription_placement" {
   type = map(object({
     subscription_id       = string
@@ -153,45 +229,45 @@ DESCRIPTION
 variable "timeouts" {
   type = object({
     management_group = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     role_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_set_definition = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_assignment = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "15m") # Set high to allow consolidation of policy definitions coming into scope
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_role_assignment = optional(object({
-      create = optional(string, "10m")
-      delete = optional(string, "10m")
-      update = optional(string, "10m")
-      read   = optional(string, "10m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
   })

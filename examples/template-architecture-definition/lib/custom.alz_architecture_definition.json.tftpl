@@ -1,0 +1,87 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/architecture_definition.json",
+  "name": "custom",
+  "management_groups": [
+    {
+      "archetypes": [
+        "root"
+      ],
+      "display_name": "${prefix} ALZ root",
+      "exists": false,
+      "id": "${prefix}-alzroot",
+      "parent_id": null
+    },
+    {
+      "archetypes": [
+        "landing_zones"
+      ],
+      "display_name": "${prefix} Landing zones",
+      "exists": false,
+      "id": "${prefix}-landingzones",
+      "parent_id": "${prefix}-alzroot"
+    },
+    {
+      "archetypes": [
+        "corp"
+      ],
+      "display_name": "${prefix} Corp",
+      "exists": false,
+      "id": "${prefix}-corp",
+      "parent_id": "${prefix}-landingzones"
+    },
+    {
+      "archetypes": [
+        "online"
+      ],
+      "display_name": "${prefix} Online",
+      "exists": false,
+      "id": "${prefix}-online",
+      "parent_id": "${prefix}-landingzones"
+    },
+    {
+      "archetypes": [
+        "platform"
+      ],
+      "display_name": "${prefix} Platform",
+      "exists": false,
+      "id": "${prefix}-platform",
+      "parent_id": "${prefix}-alzroot"
+    },
+    {
+      "archetypes": [
+        "sandboxes"
+      ],
+      "display_name": "${prefix} Sandboxes",
+      "exists": false,
+      "id": "${prefix}-sandboxes",
+      "parent_id": "${prefix}-alzroot"
+    },
+    {
+      "archetypes": [
+        "management"
+      ],
+      "display_name": "${prefix} Management",
+      "exists": false,
+      "id": "${prefix}-management",
+      "parent_id": "${prefix}-platform"
+    },
+    {
+      "archetypes": [
+        "connectivity"
+      ],
+      "display_name": "${prefix} Connectivity",
+      "exists": false,
+      "id": "${prefix}-connectivity",
+      "parent_id": "${prefix}-platform"
+    },
+    {
+      "archetypes": [
+        "identity"
+      ],
+      "display_name": "${prefix} Identity",
+      "exists": false,
+      "id": "${prefix}-identity",
+      "parent_id": "${prefix}-platform"
+    }
+  ]
+}

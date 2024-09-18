@@ -12,6 +12,13 @@ resource "azapi_resource" "hierarchy_settings" {
   }
   name      = "default"
   parent_id = local.tenant_root_group_resource_id
+  retry = var.retries.hierarchy_settings.error_message_regex != null ? {
+    error_message_regex  = var.retries.hierarchy_settings.error_message_regex
+    interval_seconds     = lookup(var.retries.hierarchy_settings, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.hierarchy_settings, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.hierarchy_settings, "multiplier", null)
+    randomization_factor = lookup(var.retries.hierarchy_settings, "randomization_factor", null)
+  } : null
 }
 
 resource "azapi_update_resource" "hierarchy_settings" {
@@ -26,4 +33,11 @@ resource "azapi_update_resource" "hierarchy_settings" {
   }
   name      = "default"
   parent_id = local.tenant_root_group_resource_id
+  retry = var.retries.hierarchy_settings.error_message_regex != null ? {
+    error_message_regex  = var.retries.hierarchy_settings.error_message_regex
+    interval_seconds     = lookup(var.retries.hierarchy_settings, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.hierarchy_settings, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.hierarchy_settings, "multiplier", null)
+    randomization_factor = lookup(var.retries.hierarchy_settings, "randomization_factor", null)
+  } : null
 }

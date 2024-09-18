@@ -57,7 +57,7 @@ locals {
 locals {
   policy_role_assignments = data.alz_architecture.this.policy_role_assignments != null ? {
     for pra in data.alz_architecture.this.policy_role_assignments : uuidv5("url", "${pra.policy_assignment_name}${pra.scope}${pra.management_group_id}${pra.role_definition_id}") => {
-      principal_id       = module.policy_assignment["${pra.management_group_id}/${pra.policy_assignment_name}"].identity.principal_id
+      principal_id       = local.policy_assignment_identities["${pra.management_group_id}/${pra.policy_assignment_name}"].principal_id
       role_definition_id = startswith(lower(pra.scope), "/subscriptions") ? "/subscriptions/${split("/", pra.scope)[2]}${pra.role_definition_id}" : pra.role_definition_id
       scope              = pra.scope
     } if !strcontains(pra.scope, "00000000-0000-0000-0000-000000000000")
@@ -82,4 +82,10 @@ locals {
 locals {
   management_group_resource_provider_prefix = "/providers/Microsoft.Management/managementGroups/"
   tenant_root_group_resource_id             = "${local.management_group_resource_provider_prefix}${data.azapi_client_config.hierarchy_settings.tenant_id}"
+}
+
+locals {
+  policy_assignment_identities = {
+    for k, v in azapi_resource.policy_assignments : k => try(v.identity[0], null)
+  }
 }

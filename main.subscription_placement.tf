@@ -4,4 +4,11 @@ resource "azapi_resource" "subscription_placement" {
   type      = "Microsoft.Management/managementGroups/subscriptions@2023-04-01"
   name      = each.value.subscription_id
   parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}"
+  retry = var.retries.subscription_placement.error_message_regex != null ? {
+    error_message_regex  = var.retries.subscription_placement.error_message_regex
+    interval_seconds     = lookup(var.retries.subscription_placement, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.subscription_placement, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.subscription_placement, "multiplier", null)
+    randomization_factor = lookup(var.retries.subscription_placement, "randomization_factor", null)
+  } : null
 }
