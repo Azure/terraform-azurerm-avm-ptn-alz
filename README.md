@@ -3,9 +3,6 @@
 
 # ALZ Terraform Module
 
-> [!WARNING]
-> This module is still in development but is ready for initial testing and feedback via [GitHub Issues](https://github.com/Azure/terraform-azurerm-avm-ptn-alz/issues).
-
 - This repository contains a Terraform module for deploying Azure Landing Zones (ALZs).
 - Make sure to review the examples.
 
@@ -78,23 +75,13 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9)
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.14)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.13)
-
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.13)
-
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
-
-- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (2.0.0-beta)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
-
-- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
-
-- <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
 - <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
@@ -102,29 +89,29 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
-- [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.role_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.subscription_placement](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
+- [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.policy_assignments](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.role_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_resource.subscription_placement](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
+- [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/update_resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
 - [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
-- [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
-- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
+- [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/data-sources/client_config) (data source)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/data-sources/client_config) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -321,6 +308,10 @@ object({
       error_message_regex = optional(list(string), [
         "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
       ])
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
     }), {})
     role_definitions = optional(object({
       error_message_regex  = optional(list(string), null)
@@ -407,45 +398,45 @@ Type:
 ```hcl
 object({
     management_group = optional(object({
-      create = optional(string, "2m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     role_definition = optional(object({
-      create = optional(string, "2m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_definition = optional(object({
-      create = optional(string, "2m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_set_definition = optional(object({
-      create = optional(string, "2m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_assignment = optional(object({
-      create = optional(string, "15m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "15m") # Set high to allow consolidation of policy definitions coming into scope
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
     policy_role_assignment = optional(object({
-      create = optional(string, "2m")
-      delete = optional(string, "2m")
-      update = optional(string, "2m")
-      read   = optional(string, "2m")
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
       }), {}
     )
   })
