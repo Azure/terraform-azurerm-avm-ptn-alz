@@ -42,6 +42,7 @@ resource "azapi_resource" "policy_assignments" {
 
   dynamic "identity" {
     for_each = lookup(each.value.assignment, "identity", null) != null ? [each.value.assignment.identity] : []
+
     content {
       type         = identity.value.type
       identity_ids = lookup(identity.value, "identity_ids", null)
