@@ -17,8 +17,9 @@ DESCRIPTION
 variable "parent_resource_id" {
   type        = string
   description = <<DESCRIPTION
-The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.
+The resource name of the parent management group. Use the tenant id to create a child of the tenant root group.
 The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.
+Do not include the `/providers/Microsoft.Management/managementGroups/` prefix.
 DESCRIPTION
 }
 
