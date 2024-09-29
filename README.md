@@ -133,8 +133,9 @@ Type: `string`
 
 ### <a name="input_parent_resource_id"></a> [parent\_resource\_id](#input\_parent\_resource\_id)
 
-Description: The resource id of the parent management group. Use the tenant id to create a child of the tenant root group.  
-The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.
+Description: The resource name of the parent management group. Use the tenant id to create a child of the tenant root group.  
+The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.  
+Do not include the `/providers/Microsoft.Management/managementGroups/` prefix.
 
 Type: `string`
 
