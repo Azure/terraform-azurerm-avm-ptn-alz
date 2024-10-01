@@ -1,70 +1,29 @@
 ---
-name: e2e test
+  name: test examples
+  on:
+    pull_request:
+      types: ['opened', 'reopened', 'synchronize']
+    merge_group:
+    workflow_dispatch:
+  
+  jobs:
+    check:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checking for Fork
+          shell: pwsh
+          run: |
+            $isFork = "${{ github.event.pull_request.head.repo.fork }}"
+            if($isFork -eq "true") {
+              echo "### WARNING: This workflow is disabled for forked repositories. Please follow the [release branch process](https://azure.github.io/Azure-Verified-Modules/contributing/terraform/terraform-contribution-flow/#5-create-a-pull-request-to-the-upstream-repository) if end to end tests are required." >> $env:GITHUB_STEP_SUMMARY
+            }
 
-on:
-  pull_request:
-    branches: [ main ]
-    types: ['opened', 'reopened', 'synchronize','labeled']
-  merge_group:
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  getexamples:
-    if: github.event.repository.name != 'terraform-azurerm-avm-template'
-    runs-on: ubuntu-latest
-    outputs:
-      examples: ${{ steps.getexamples.outputs.examples }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: get examples
-        id: getexamples
-        uses: Azure/terraform-azurerm-avm-template/.github/actions/e2e-getexamples@main
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  testexamples:
-    if: "${{ github.repository == 'Azure/terraform-azurerm-avm-ptn-alz' && (contains(github.event.pull_request.labels.*.name, 'PR: Safe to test 🧪') || github.event_name == 'workflow_dispatch') }}"
-    runs-on: ubuntu-latest
-    needs: getexamples
-    environment: test
-    env:
-      TF_IN_AUTOMATION: 1
-      TF_VAR_enable_telemetry: false
-    strategy:
-      matrix:
-        example: ${{ fromJson(needs.getexamples.outputs.examples) }}
-      max-parallel: 5
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Test example
-        shell: bash
-        run: |
-          set -e
-
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src -w /src --network=host \
-            -e TF_IN_AUTOMATION \
-            -e TF_VAR_enable_telemetry \
-            -e AVM_MOD_PATH=/src \
-            -e AVM_EXAMPLE=${{ matrix.example }} \
-            -e ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }} \
-            -e ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }} \
-            -e ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }} \
-            -e ARM_OIDC_REQUEST_TOKEN=$ACTIONS_ID_TOKEN_REQUEST_TOKEN \
-            -e ARM_OIDC_REQUEST_URL=$ACTIONS_ID_TOKEN_REQUEST_URL \
-            -e ARM_USE_OIDC=true \
-            mcr.microsoft.com/azterraform:latest \
-            make test-example
-
-  # This job is only run when all the previous jobs are successful.
-  # We can use it for PR validation to ensure all examples have completed.
-  testexamplescomplete:
-    runs-on: ubuntu-latest
-    needs: testexamples
-    steps:
-      - run: echo "All tests passed"
+    run-e2e-tests:
+      if: github.event.repository.name != 'terraform-azurerm-avm-template' && github.event.pull_request.head.repo.fork == false
+      uses: Azure/terraform-azurerm-avm-template/.github/workflows/test-examples-template.yml@main
+      name: end to end
+      secrets: inherit
+      permissions:
+        id-token: write
+        contents: read
+  

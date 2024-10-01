@@ -1,0 +1,8 @@
+management_groups:
+  - archetypes:
+      - empty
+    display_name: this mg exists
+    exists: true
+    parent_id: null
+    id: exists
+name: existingmg

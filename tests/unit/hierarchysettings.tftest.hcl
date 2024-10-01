@@ -21,12 +21,12 @@ run "default" {
   }
 
   assert {
-    condition     = length(azapi_resource.hierarchysettings) == 0
+    condition     = length(azapi_resource.hierarchy_settings) == 0
     error_message = "The hierarchy settings resource should not be created."
   }
 
   assert {
-    condition     = length(azapi_update_resource.hierarchysettings) == 0
+    condition     = length(azapi_update_resource.hierarchy_settings) == 0
     error_message = "The hierarchy settings update resource should not be created."
   }
 }
@@ -35,17 +35,17 @@ run "creation" {
   command = plan
 
   assert {
-    condition     = length(azapi_resource.hierarchysettings) == 1
+    condition     = length(azapi_resource.hierarchy_settings) == 1
     error_message = "The hierarchy settings resource should be created."
   }
 
   assert {
-    condition     = azapi_resource.hierarchysettings[0].body.properties.defaultManagementGroup == "/providers/Microsoft.Management/managementGroups/test"
+    condition     = azapi_resource.hierarchy_settings[0].body.properties.defaultManagementGroup == "test"
     error_message = "The default management group is not correct."
   }
 
   assert {
-    condition     = length(azapi_update_resource.hierarchysettings) == 0
+    condition     = length(azapi_update_resource.hierarchy_settings) == 0
     error_message = "The hierarchy settings update resource should not be created."
   }
 }
@@ -62,17 +62,17 @@ run "update" {
   }
 
   assert {
-    condition     = length(azapi_resource.hierarchysettings) == 0
+    condition     = length(azapi_resource.hierarchy_settings) == 0
     error_message = "The hierarchy settings resource should not be created."
   }
 
   assert {
-    condition     = azapi_update_resource.hierarchysettings[0].body.properties.defaultManagementGroup == "/providers/Microsoft.Management/managementGroups/test"
+    condition     = azapi_update_resource.hierarchy_settings[0].body.properties.defaultManagementGroup == "test"
     error_message = "The default management group is not correct."
   }
 
   assert {
-    condition     = length(azapi_update_resource.hierarchysettings) == 1
+    condition     = length(azapi_update_resource.hierarchy_settings) == 1
     error_message = "The hierarchy settings update resource should be created."
   }
 }
