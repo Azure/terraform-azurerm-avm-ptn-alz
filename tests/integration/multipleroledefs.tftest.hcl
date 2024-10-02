@@ -5,7 +5,7 @@ provider "alz" {
 }
 
 variables {
-  location = "swedencentral"
+  location          = "swedencentral"
   architecture_name = "test"
 }
 
