@@ -29,8 +29,7 @@ If you pass an unknown (known after apply) value into the module, it will not be
 This may cause resources to be unnecessarily recreated.
 
 Such unknown values include resource ids. For example, if you are creating a resource and passing the id of the resource group to the module, this will cause the issue.
-
-Instead, use string interpolation to pass the values. For example:
+Instead, use string interpolation or provider functions to pass the values. For example:
 
 ### Recommended
 
@@ -40,11 +39,18 @@ This is the recommended way to use this module:
 > We assume that all variable inputs are literals.
 
 ```terraform
-
 locals {
-  foo_resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${var.resource_group_name}/providers/Microsoft.FooResourceProvider/${var.foo_resource_name}"
+  subscription_id     = data.azapi_client_config.current.subscription_id
+  resource_group_name = "rg1"
+  resource_type       = "Microsoft.Network/virtualNetworks"
+  resource_names      = ["vnet1"]
+  my_resource_id = provider::azapi::resource_group_resource_id(
+    data.azapi_client_config.current.subscription_id,
+    local.resource_group_name,
+    local.resource_type,
+    local.resource_names
+  )
 }
-
 
 module "example" {
   source = "Azure/terraform-azurerm-avm-ptn-alz/azurerm"
@@ -54,7 +60,7 @@ module "example" {
       policy_assignments = {
         mypolicy = {
           parameters = {
-            parameterName = jsonencode({ value = local.foo_resource_id })
+            parameterName = jsonencode({ value = local.my_resource_id })
           }
         }
       }
