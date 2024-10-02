@@ -16,11 +16,22 @@ DESCRIPTION
 
 variable "parent_resource_id" {
   type        = string
+  nullable    = false
   description = <<DESCRIPTION
 The resource name of the parent management group. Use the tenant id to create a child of the tenant root group.
 The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.
 Do not include the `/providers/Microsoft.Management/managementGroups/` prefix.
 DESCRIPTION
+
+  validation {
+    condition     = !strcontains(var.parent_resource_id, "/")
+    error_message = "The parent resource id must be the name of the parent management group and should not contain `/`."
+  }
+
+  validation {
+    condition     = length(var.parent_resource_id) > 0
+    error_message = "The parent resource id must not be an empty string."
+  }
 }
 
 variable "management_group_hierarchy_settings" {

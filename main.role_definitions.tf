@@ -7,7 +7,7 @@ resource "azapi_resource" "role_definitions" {
       assignableScopes = each.value.role_definition.properties.assignableScopes
       description      = each.value.role_definition.properties.description
       permissions      = each.value.role_definition.properties.permissions
-      roleName         = "${each.value.role_definition.properties.roleName} (${each.value.mg})"
+      roleName         = each.value.role_definition.properties.roleName
       type             = each.value.role_definition.properties.type
     }
   }
