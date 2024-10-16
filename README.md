@@ -82,9 +82,9 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (>= 0.15.1, < 1.0.0)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (>= 0.15.2, < 1.0.0)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (2.0.0-beta)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0, >= 2.0.1)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
@@ -96,21 +96,21 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
-- [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.policy_assignments](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.role_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.subscription_placement](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/update_resource) (resource)
+- [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.role_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.subscription_placement](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
 - [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
@@ -118,8 +118,8 @@ The following resources are used by this module:
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
 - [alz_metadata.telemetry](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/metadata) (data source)
-- [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/data-sources/client_config) (data source)
-- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/data-sources/client_config) (data source)
+- [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
