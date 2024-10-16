@@ -31,6 +31,7 @@ module "alz" {
     ama_mdfc_sql_data_collection_rule_id        = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-slkfglknr", "Microsoft.Insights/dataCollectionRules", ["dcr-defender-sql"]) })
     ama_vm_insights_data_collection_rule_id     = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-slkfglknr", "Microsoft.Insights/dataCollectionRules", ["dcr-vm-insights"]) })
     ama_user_assigned_managed_identity_id       = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-slkfglknr", "Microsoft.ManagedIdentity/userAssignedIdentities", ["uami-ama"]) })
+    ama_user_assigned_managed_identity_name     = "uami-ama"
     log_analytics_workspace_id                  = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-slkfglknr", "Microsoft.OperationalInsights/workspaces", ["law-terraform-slkfglknr"]) })
   }
   policy_assignments_to_modify = {
