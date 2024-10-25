@@ -268,7 +268,7 @@ map(object({
       })), null)
       resource_selectors = optional(list(object({
         name = string
-        selectors = optional(list(object({
+        resource_selector_selectors = optional(list(object({
           kind   = string
           in     = optional(set(string), null)
           not_in = optional(set(string), null)
@@ -277,7 +277,7 @@ map(object({
       overrides = optional(list(object({
         kind  = string
         value = string
-        selectors = optional(list(object({
+        override_selectors = optional(list(object({
           kind   = string
           in     = optional(set(string), null)
           not_in = optional(set(string), null)
