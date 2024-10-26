@@ -19,7 +19,7 @@ data "azapi_client_config" "current" {}
 
 module "management" {
   source  = "Azure/avm-ptn-alz-management/azurerm"
-  version = "0.3.0"
+  version = "0.4.0"
 
   automation_account_name      = "aa-terraform-${var.random_suffix}"
   location                     = "swedencentral"
