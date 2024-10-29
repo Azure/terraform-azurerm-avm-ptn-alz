@@ -10,8 +10,8 @@
 
 ## Features
 
-- Deploy management groups according to the supplied architecture (defaut is ALZ)
-- Deploy policy assets (definitions, assignments, and initiatives) according to the supplied architecture ands associated archetyes
+- Deploy management groups according to the supplied architecture (default is ALZ)
+- Deploy policy assets (definitions, assignments, and initiatives) according to the supplied architecture ands associated archetypes
 - Modify policy assignments:
   - Enforcement mode
   - Identity
@@ -21,6 +21,11 @@
   - Resource selectors
 - Create the required role assignments for Azure Policy, including support for the **assign permissions** metadata tag, just like the Azure Portal
 - Deploy custom role definitions
+
+## AzAPI Provider
+
+We use the AzAPI provider to interact with the Azure APIs.
+The new features allow us to be more efficient and reliable, with orders of magnitude speed improvements and retry logic for transient errors.
 
 ## Unknown Values
 
@@ -33,7 +38,7 @@ Instead, use string interpolation or provider functions to pass the values. For 
 
 ### Recommended
 
-This is the recommended way to use this module:
+Either: Use known values as inputs, or use Terraform Stacks.
 
 > [!NOTE]
 > We assume that all variable inputs are literals.
@@ -71,5 +76,5 @@ module "example" {
 
 ### Deferred Actions
 
-We are awaiting the results of the upstream Terraform language experiment *deferred actions*. This may provide a solution to this issue.
-See the release notes [here](https://github.com/hashicorp/terraform/releases/tag/v1.10.0-alpha20240619) for more information.
+We are awaiting the results of the upstream Terraform language experiment *deferred actions*. This will provide a solution to this issue.
+See the release notes [here](https://github.com/hashicorp/terraform/releases/tag/v1.10.0-alpha20241023) for more information.
