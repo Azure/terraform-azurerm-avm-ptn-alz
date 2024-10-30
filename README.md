@@ -117,7 +117,6 @@ The following resources are used by this module:
 - [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
-- [alz_metadata.telemetry](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/metadata) (data source)
 - [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/data-sources/client_config) (data source)
 - [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/data-sources/client_config) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
