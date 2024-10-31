@@ -3,7 +3,7 @@ terraform {
   required_providers {
     alz = {
       source  = "Azure/alz"
-      version = ">= 0.15.3, < 1.0.0"
+      version = "~> 0.16"
     }
     azapi = {
       source  = "Azure/azapi"
