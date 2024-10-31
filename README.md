@@ -11,8 +11,8 @@
 
 ## Features
 
-- Deploy management groups according to the supplied architecture (defaut is ALZ)
-- Deploy policy assets (definitions, assignments, and initiatives) according to the supplied architecture ands associated archetyes
+- Deploy management groups according to the supplied architecture (default is ALZ)
+- Deploy policy assets (definitions, assignments, and initiatives) according to the supplied architecture ands associated archetypes
 - Modify policy assignments:
   - Enforcement mode
   - Identity
@@ -22,6 +22,11 @@
   - Resource selectors
 - Create the required role assignments for Azure Policy, including support for the **assign permissions** metadata tag, just like the Azure Portal
 - Deploy custom role definitions
+
+## AzAPI Provider
+
+We use the AzAPI provider to interact with the Azure APIs.
+The new features allow us to be more efficient and reliable, with orders of magnitude speed improvements and retry logic for transient errors.
 
 ## Unknown Values
 
@@ -34,7 +39,7 @@ Instead, use string interpolation or provider functions to pass the values. For 
 
 ### Recommended
 
-This is the recommended way to use this module:
+Either: Use known values as inputs, or use Terraform Stacks.
 
 > [!NOTE]
 > We assume that all variable inputs are literals.
@@ -72,8 +77,8 @@ module "example" {
 
 ### Deferred Actions
 
-We are awaiting the results of the upstream Terraform language experiment *deferred actions*. This may provide a solution to this issue.
-See the release notes [here](https://github.com/hashicorp/terraform/releases/tag/v1.10.0-alpha20240619) for more information.
+We are awaiting the results of the upstream Terraform language experiment *deferred actions*. This will provide a solution to this issue.
+See the release notes [here](https://github.com/hashicorp/terraform/releases/tag/v1.10.0-alpha20241023) for more information.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
@@ -82,9 +87,9 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (>= 0.15.1, < 1.0.0)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.16)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (2.0.0-beta)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0, >= 2.0.1)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
@@ -96,21 +101,21 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
-- [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.policy_assignments](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.role_definitions](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_resource.subscription_placement](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/resource) (resource)
-- [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/resources/update_resource) (resource)
+- [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.role_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.subscription_placement](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
 - [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
@@ -118,8 +123,8 @@ The following resources are used by this module:
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
 - [alz_metadata.telemetry](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/metadata) (data source)
-- [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/data-sources/client_config) (data source)
-- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/2.0.0-beta/docs/data-sources/client_config) (data source)
+- [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -268,7 +273,7 @@ map(object({
       })), null)
       resource_selectors = optional(list(object({
         name = string
-        selectors = optional(list(object({
+        resource_selector_selectors = optional(list(object({
           kind   = string
           in     = optional(set(string), null)
           not_in = optional(set(string), null)
@@ -277,7 +282,7 @@ map(object({
       overrides = optional(list(object({
         kind  = string
         value = string
-        selectors = optional(list(object({
+        override_selectors = optional(list(object({
           kind   = string
           in     = optional(set(string), null)
           not_in = optional(set(string), null)
