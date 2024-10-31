@@ -19,9 +19,9 @@ data "azapi_client_config" "current" {}
 
 locals {
   automation_account_name      = "aa-${var.random_suffix}"
-  resource_group_name          = "rg-alz-management-${var.random_suffix}"
-  log_analytics_workspace_name = "law-${var.random_suffix}"
   location                     = "swedencentral"
+  log_analytics_workspace_name = "law-${var.random_suffix}"
+  resource_group_name          = "rg-alz-management-${var.random_suffix}"
   uami_name                    = "uami-ama"
 }
 

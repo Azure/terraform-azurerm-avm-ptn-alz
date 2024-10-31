@@ -15,7 +15,7 @@ provider "alz" {
   library_references = [
     {
       path = "platform/alz",
-      ref  = "2024.07.02"
+      ref  = "2024.10.1"
     },
     {
       custom_url = "${path.root}/lib"
@@ -27,7 +27,7 @@ provider "alz" {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "update_manager" {
-  location = "northeurope"
+  location = local.location
   name     = local.update_manager_rg_name
 }
 
@@ -56,8 +56,9 @@ resource "azurerm_maintenance_configuration" "this" {
 # The provider shouldn't have any unknown values passed in, or it will mark
 # all resources as needing replacement.
 locals {
+  location                              = "swedencentral"
   maintenance_configuration_name        = "ring1"
-  maintenance_configuration_resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourceGroups/${local.update_manager_rg_name}/providers/Microsoft.Maintenance/maintenanceConfigurations/${local.maintenance_configuration_name}"
+  maintenance_configuration_resource_id = provider::azapi::resource_group_resource_id(data.azurerm_client_config.current.subscription_id, local.update_manager_rg_name, "Microsoft.Maintenance/maintenanceConfigurations", [local.maintenance_configuration_name])
   update_manager_rg_name                = "rg-update-manager"
 }
 
@@ -65,7 +66,7 @@ module "alz" {
   source             = "../../"
   architecture_name  = "custom"
   parent_resource_id = data.azurerm_client_config.current.tenant_id
-  location           = "northeurope"
+  location           = local.location
   policy_assignments_to_modify = {
     myroot = {
       policy_assignments = {
@@ -88,6 +89,8 @@ The following requirements are needed by this module:
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.16)
+
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.107)
 
