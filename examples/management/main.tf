@@ -30,7 +30,7 @@ module "management" {
   version = "0.4.0"
 
   automation_account_name      = local.automation_account_name
-  location                     = "swedencentral"
+  location                     = local.location
   log_analytics_workspace_name = local.log_analytics_workspace_name
   resource_group_name          = local.resource_group_name
 }
@@ -39,7 +39,7 @@ module "alz" {
   source             = "../../"
   architecture_name  = "alz"
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  location           = "swedencentral"
+  location           = local.location
   policy_default_values = {
     ama_change_tracking_data_collection_rule_id = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-change-tracking"]) })
     ama_mdfc_sql_data_collection_rule_id        = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-defender-sql"]) })
