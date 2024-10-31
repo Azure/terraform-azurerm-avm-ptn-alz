@@ -1,7 +1,7 @@
 provider "alz" {
   library_references = [{
     path = "platform/alz"
-    ref  = "2024.10.0"
+    ref  = "2024.10.1"
   }]
 }
 
@@ -17,14 +17,22 @@ variable "random_suffix" {
 
 data "azapi_client_config" "current" {}
 
+locals {
+  automation_account_name      = "aa-${var.random_suffix}"
+  resource_group_name          = "rg-alz-management-${var.random_suffix}"
+  log_analytics_workspace_name = "law-${var.random_suffix}"
+  location                     = "swedencentral"
+  uami_name                    = "uami-ama"
+}
+
 module "management" {
   source  = "Azure/avm-ptn-alz-management/azurerm"
   version = "0.4.0"
 
-  automation_account_name      = "aa-terraform-${var.random_suffix}"
+  automation_account_name      = local.automation_account_name
   location                     = "swedencentral"
-  log_analytics_workspace_name = "law-terraform-${var.random_suffix}"
-  resource_group_name          = "rg-terraform-${var.random_suffix}"
+  log_analytics_workspace_name = local.log_analytics_workspace_name
+  resource_group_name          = local.resource_group_name
 }
 
 module "alz" {
@@ -33,12 +41,12 @@ module "alz" {
   parent_resource_id = data.azapi_client_config.current.tenant_id
   location           = "swedencentral"
   policy_default_values = {
-    ama_change_tracking_data_collection_rule_id = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-${var.random_suffix}", "Microsoft.Insights/dataCollectionRules", ["dcr-change-tracking"]) })
-    ama_mdfc_sql_data_collection_rule_id        = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-${var.random_suffix}", "Microsoft.Insights/dataCollectionRules", ["dcr-defender-sql"]) })
-    ama_vm_insights_data_collection_rule_id     = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-${var.random_suffix}", "Microsoft.Insights/dataCollectionRules", ["dcr-vm-insights"]) })
-    ama_user_assigned_managed_identity_id       = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-${var.random_suffix}", "Microsoft.ManagedIdentity/userAssignedIdentities", ["uami-ama"]) })
-    ama_user_assigned_managed_identity_name     = "uami-ama"
-    log_analytics_workspace_id                  = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, "rg-terraform-${var.random_suffix}", "Microsoft.OperationalInsights/workspaces", ["law-terraform-${var.random_suffix}"]) })
+    ama_change_tracking_data_collection_rule_id = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-change-tracking"]) })
+    ama_mdfc_sql_data_collection_rule_id        = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-defender-sql"]) })
+    ama_vm_insights_data_collection_rule_id     = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-vm-insights"]) })
+    ama_user_assigned_managed_identity_id       = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.ManagedIdentity/userAssignedIdentities", [local.uami_name]) })
+    ama_user_assigned_managed_identity_name     = jsonencode({ value = local.uami_name })
+    log_analytics_workspace_id                  = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.OperationalInsights/workspaces", [local.log_analytics_workspace_name]) })
   }
   policy_assignments_to_modify = {
     connectivity = {
