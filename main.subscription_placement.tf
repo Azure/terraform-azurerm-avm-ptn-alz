@@ -11,6 +11,7 @@ resource "azapi_resource" "subscription_placement" {
     multiplier           = lookup(var.retries.subscription_placement, "multiplier", null)
     randomization_factor = lookup(var.retries.subscription_placement, "randomization_factor", null)
   } : null
+
   depends_on = [
     azapi_resource.management_groups_level_0,
     azapi_resource.management_groups_level_1,
