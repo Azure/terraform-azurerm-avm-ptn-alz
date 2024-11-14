@@ -47,7 +47,7 @@ Secondly, for values that are passed into the module, use string interpolation o
 ### Using `var.dependencies`
 
 This variable is used as a workaround for the lack of support for `depends_on` in the ALZ provider.
-Place values into this variable to ensure that policies and policy role assignments do nto get created until dependent resources are available.
+Place values into this variable to ensure that policies and policy role assignments do not get created until dependent resources are available.
 See the variable documentation and the examples (private DNS and management) for more information.
 
 ### Using Provider Functions
