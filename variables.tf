@@ -43,8 +43,8 @@ variable "dependencies" {
 Place dependent values into this variable to ensure that resources are created in the correct order.
 Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
 
-This is necessary as the `depends_on` attribute is not supported bu this module as we use the alz provider.
-<https://registry.terraform.io/providers/Azure/alz/latest/docs/data-sources/architecture#unknown-values>
+This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.
+See the "Unknown Values & Depends On" section above for more information.
 
 e.g.
 
