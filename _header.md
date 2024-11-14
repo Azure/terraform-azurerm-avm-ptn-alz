@@ -27,6 +27,14 @@
 We use the AzAPI provider to interact with the Azure APIs.
 The new features allow us to be more efficient and reliable, with orders of magnitude speed improvements and retry logic for transient errors.
 
+## Depends On
+
+The `depends_on` feature is not supported in the ALZ provider.
+Please do not add a `depends_on` attribute to the module resources.
+To work around this, we have introduced a `dependencies` variable.
+
+Please also see unknown values below.
+
 ## Unknown Values
 
 This module uses the ALZ Terraform provider. This uses a data source which **must** be read prior to creating the plan.

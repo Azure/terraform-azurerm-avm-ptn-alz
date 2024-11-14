@@ -20,7 +20,6 @@ data "azapi_client_config" "current" {}
 locals {
   location            = "swedencentral"
   resource_group_name = "rg-private-dns-${var.random_suffix}"
-  uami_name           = "uami-ama"
 }
 
 module "private_dns_zones" {
