@@ -75,6 +75,12 @@ module "example" {
 }
 ```
 
+### `var.dependencies`
+
+This variable is used as a workaround for the lack of support for `depends_on` in the ALZ provider.
+Place values into this variable to ensure that policies and policy role assignmetns do nto get created until dependent resources are available.
+See the variable documentation and the examples (private DNS and management) for more information.
+
 ### Deferred Actions
 
 We are awaiting the results of the upstream Terraform language experiment *deferred actions*. This will provide a solution to this issue.
