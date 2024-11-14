@@ -33,6 +33,33 @@ DESCRIPTION
   }
 }
 
+variable "dependencies" {
+  type = object({
+    policy_role_assignments = optional(any, null)
+    policy_assignments      = optional(any, null)
+  })
+  default     = {}
+  description = <<DESCRIPTION
+Place dependent values into this variable to ensure that resources are created in the correct order.
+Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
+
+This is necessary as the `depends_on` attribute is not supported bu this module as we use the alz provider.
+<https://registry.terraform.io/providers/Azure/alz/latest/docs/data-sources/architecture#unknown-values>
+
+e.g.
+
+```hcl
+dependencies = {
+  policy_role_assignments = [
+    module.dependency_example1.output,
+    module.dependency_example2.output,
+  ]
+}
+```
+DESCRIPTION
+  nullable    = false
+}
+
 variable "management_group_hierarchy_settings" {
   type = object({
     default_management_group_name            = string
@@ -181,7 +208,7 @@ variable "retries" {
     }), {})
     policy_role_assignments = optional(object({
       error_message_regex = optional(list(string), [
-        "RoleAssignmentNotFound" # Added to fix an eventual consistency error with a GET following soon after a PUT
+        "ResourceNotFound", # If the resource has just been created, retry until it is available.
       ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)

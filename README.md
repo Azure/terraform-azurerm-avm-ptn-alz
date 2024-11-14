@@ -118,6 +118,8 @@ The following resources are used by this module:
 - [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
+- [terraform_data.policy_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [terraform_data.policy_role_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
@@ -179,6 +181,36 @@ object({
       create  = optional(string, "0s")
       destroy = optional(string, "0s")
     }), {})
+  })
+```
+
+Default: `{}`
+
+### <a name="input_dependencies"></a> [dependencies](#input\_dependencies)
+
+Description: Place dependent values into this variable to ensure that resources are created in the correct order.  
+Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
+
+This is necessary as the `depends_on` attribute is not supported bu this module as we use the alz provider.
+<https://registry.terraform.io/providers/Azure/alz/latest/docs/data-sources/architecture#unknown-values>
+
+e.g.
+
+```hcl
+dependencies = {
+  policy_role_assignments = [
+    module.dependency_example1.output,
+    module.dependency_example2.output,
+  ]
+}
+```
+
+Type:
+
+```hcl
+object({
+    policy_role_assignments = optional(any, null)
+    policy_assignments      = optional(any, null)
   })
 ```
 
@@ -359,7 +391,7 @@ object({
     }), {})
     policy_role_assignments = optional(object({
       error_message_regex = optional(list(string), [
-        "RoleAssignmentNotFound" # Added to fix an eventual consistency error with a GET following soon after a PUT
+        "ResourceNotFound", # If the resource has just been created, retry until it is available.
       ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
