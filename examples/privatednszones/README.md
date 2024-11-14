@@ -17,7 +17,7 @@ provider "azurerm" {
 
 variable "random_suffix" {
   type        = string
-  default     = "sdjfnbf"
+  default     = "fgcsnm"
   description = "Change me to something unique"
 }
 
@@ -30,8 +30,8 @@ locals {
 }
 
 module "private_dns_zones" {
-  source = "/Users/matt/code/terraform-azurerm-avm-ptn-network-private-link-private-dns-zones"
-  # version             = "0.5.0"
+  source              = "Azure/avm-ptn-network-private-link-private-dns-zones/azurerm"
+  version             = "0.6.0"
   location            = local.location
   resource_group_name = local.resource_group_name
 }
@@ -99,7 +99,7 @@ Description: Change me to something unique
 
 Type: `string`
 
-Default: `"sdjfnbf"`
+Default: `"fgcsnm"`
 
 ## Outputs
 
@@ -117,8 +117,8 @@ Version:
 
 ### <a name="module_private_dns_zones"></a> [private\_dns\_zones](#module\_private\_dns\_zones)
 
-Source: /Users/matt/code/terraform-azurerm-avm-ptn-network-private-link-private-dns-zones
+Source: Azure/avm-ptn-network-private-link-private-dns-zones/azurerm
 
-Version:
+Version: 0.6.0
 
 <!-- END_TF_DOCS -->
