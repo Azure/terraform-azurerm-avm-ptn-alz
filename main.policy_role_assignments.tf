@@ -1,3 +1,7 @@
+resource "terraform_data" "policy_role_assignments_dependencies" {
+  input = sha256(jsonencode(var.dependencies.policy_role_assignments))
+}
+
 resource "azapi_resource" "policy_role_assignments" {
   for_each = local.policy_role_assignments
 
@@ -29,5 +33,12 @@ resource "azapi_resource" "policy_role_assignments" {
     delete = var.timeouts.policy_role_assignment.delete
     read   = var.timeouts.policy_role_assignment.read
     update = var.timeouts.policy_role_assignment.update
+  }
+
+  depends_on = [terraform_data.policy_role_assignments_dependencies]
+
+  lifecycle {
+    # https://github.com/Azure/terraform-provider-azapi/issues/671
+    ignore_changes = [output.properties.updatedOn]
   }
 }

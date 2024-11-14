@@ -54,6 +54,13 @@ module "alz" {
     ama_user_assigned_managed_identity_name     = jsonencode({ value = local.uami_name })
     log_analytics_workspace_id                  = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.OperationalInsights/workspaces", [local.log_analytics_workspace_name]) })
   }
+  dependencies = {
+    policy_assignments = [
+      module.management.data_collection_rule_ids,
+      module.management.resource_id,
+      module.management.user_assigned_identity_ids,
+    ]
+  }
   policy_assignments_to_modify = {
     connectivity = {
       policy_assignments = {

@@ -1,3 +1,7 @@
+resource "terraform_data" "policy_assignments_dependencies" {
+  input = sha256(jsonencode(var.dependencies.policy_assignments))
+}
+
 resource "azapi_resource" "policy_assignments" {
   for_each = local.policy_assignments
 
@@ -56,7 +60,8 @@ resource "azapi_resource" "policy_assignments" {
   }
 
   depends_on = [
-    time_sleep.after_policy_set_definitions
+    time_sleep.after_policy_set_definitions,
+    terraform_data.policy_assignments_dependencies,
   ]
 
   lifecycle {
