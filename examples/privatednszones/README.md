@@ -30,7 +30,7 @@ locals {
 
 module "private_dns_zones" {
   source              = "Azure/avm-ptn-network-private-link-private-dns-zones/azurerm"
-  version             = "0.6.0"
+  version             = "0.7.0"
   location            = local.location
   resource_group_name = local.resource_group_name
 }
@@ -75,7 +75,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0, >= 2.0.1)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.100)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
 ## Resources
 
@@ -118,6 +118,6 @@ Version:
 
 Source: Azure/avm-ptn-network-private-link-private-dns-zones/azurerm
 
-Version: 0.6.0
+Version: 0.7.0
 
 <!-- END_TF_DOCS -->
