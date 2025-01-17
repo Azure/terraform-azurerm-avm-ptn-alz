@@ -24,7 +24,7 @@ locals {
 
 module "private_dns_zones" {
   source              = "Azure/avm-ptn-network-private-link-private-dns-zones/azurerm"
-  version             = "0.6.0"
+  version             = "0.7.0"
   location            = local.location
   resource_group_name = local.resource_group_name
 }
