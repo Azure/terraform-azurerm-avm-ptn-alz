@@ -179,14 +179,6 @@ variable "override_policy_definition_parameter_assign_permissions_set" {
       "parameter_name"  = "userAssignedIdentityResourceId"
     },
     {
-      "definition_name" = "Deploy-Sql-vulnerabilityAssessments",
-      "parameter_name"  = "vulnerabilityAssessmentsStorageID"
-    },
-    {
-      "definition_name" = "Deploy-Sql-vulnerabilityAssessments_20230706",
-      "parameter_name"  = "vulnerabilityAssessmentsStorageID"
-    },
-    {
       "definition_name" = "a63cc0bd-cda4-4178-b705-37dc439d3e0f",
       "parameter_name"  = "privateDnsZoneId"
     },
