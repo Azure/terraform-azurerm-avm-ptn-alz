@@ -101,7 +101,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.16, >= 0.16.2)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.17)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0, >= 2.2)
 
@@ -375,14 +375,6 @@ Default:
   {
     "definition_name": "98569e20-8f32-4f31-bf34-0e91590ae9d3",
     "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "Deploy-Sql-vulnerabilityAssessments",
-    "parameter_name": "vulnerabilityAssessmentsStorageID"
-  },
-  {
-    "definition_name": "Deploy-Sql-vulnerabilityAssessments_20230706",
-    "parameter_name": "vulnerabilityAssessmentsStorageID"
   },
   {
     "definition_name": "a63cc0bd-cda4-4178-b705-37dc439d3e0f",
