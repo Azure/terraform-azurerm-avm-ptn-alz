@@ -103,7 +103,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.17)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0, >= 2.2)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.2)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
@@ -593,21 +593,27 @@ object({
       randomization_factor = optional(number, null)
     }), {})
     role_definitions = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
     policy_definitions = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
     policy_set_definitions = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
