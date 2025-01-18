@@ -384,21 +384,27 @@ variable "retries" {
       randomization_factor = optional(number, null)
     }), {})
     role_definitions = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
     policy_definitions = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
     policy_set_definitions = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
