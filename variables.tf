@@ -267,6 +267,11 @@ variable "override_policy_definition_parameter_assign_permissions_set" {
 This list of objects allows you to set the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.
 This allows you to correct policies that haven't been authored correctly and means that the provider can generate the correct policy role assignments.
 
+The value is a list of objects with the following attributes:
+
+- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this us a UUID***.
+- `parameter_name` - (Required) The name of the parameter to set the assignPermissions property for.
+
 The default value has been populated with the Azure Landing Zones policies that are assigned by default, but do not have the correct parameter metadata.
 DESCRIPTION
 }
@@ -280,6 +285,11 @@ variable "override_policy_definition_parameter_assign_permissions_unset" {
   description = <<DESCRIPTION
 This list of objects allows you to unset the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.
 This allows you to correct policies that haven't been authored correctly, or prevent permissions being assigned for policies that are disabled in a policy set. The provider can then generate the correct policy role assignments.
+
+The value is a list of objects with the following attributes:
+
+- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this us a UUID***.
+- `parameter_name` - (Required) The name of the parameter to unset the assignPermissions property for.
 DESCRIPTION
 }
 
@@ -376,7 +386,8 @@ variable "retries" {
   type = object({
     management_groups = optional(object({
       error_message_regex = optional(list(string), [
-        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+        "Permission to Microsoft.Management/managementGroups on resources of type 'Write' is required on the management group or its ancestors."
       ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
@@ -412,6 +423,7 @@ variable "retries" {
     }), {})
     policy_assignments = optional(object({
       error_message_regex = optional(list(string), [
+        "AuthorizationFailed",                                                      # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
         "The policy definition specified in policy assignment '.+' is out of scope" # If assignment is created soon after a policy definition has been created then the assignment will fail with this error.
       ])
       interval_seconds     = optional(number, 5)
@@ -421,7 +433,8 @@ variable "retries" {
     }), {})
     policy_role_assignments = optional(object({
       error_message_regex = optional(list(string), [
-        "ResourceNotFound", # If the resource has just been created, retry until it is available.
+        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+        "ResourceNotFound",    # If the resource has just been created, retry until it is available.
       ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
@@ -436,7 +449,9 @@ variable "retries" {
       randomization_factor = optional(number, null)
     }), {})
     subscription_placement = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
