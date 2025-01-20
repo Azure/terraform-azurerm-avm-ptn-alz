@@ -2,10 +2,6 @@ data "azapi_client_config" "telemetry" {
   count = var.enable_telemetry ? 1 : 0
 }
 
-data "alz_metadata" "telemetry" {
-  count = var.enable_telemetry ? 1 : 0
-}
-
 data "modtm_module_source" "telemetry" {
   count = var.enable_telemetry ? 1 : 0
 

@@ -269,7 +269,7 @@ This allows you to correct policies that haven't been authored correctly and mea
 
 The value is a list of objects with the following attributes:
 
-- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this us a UUID***.
+- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this is a UUID***.
 - `parameter_name` - (Required) The name of the parameter to set the assignPermissions property for.
 
 The default value has been populated with the Azure Landing Zones policies that are assigned by default, but do not have the correct parameter metadata.
@@ -288,7 +288,7 @@ This allows you to correct policies that haven't been authored correctly, or pre
 
 The value is a list of objects with the following attributes:
 
-- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this us a UUID***.
+- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this is a UUID***.
 - `parameter_name` - (Required) The name of the parameter to unset the assignPermissions property for.
 DESCRIPTION
 }
