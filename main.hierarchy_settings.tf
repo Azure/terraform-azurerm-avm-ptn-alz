@@ -6,7 +6,7 @@ resource "azapi_resource" "hierarchy_settings" {
   type = "Microsoft.Management/managementGroups/settings@2023-04-01"
   body = {
     properties = {
-      defaultManagementGroup               = var.management_group_hierarchy_settings.default_management_group_name
+      defaultManagementGroup               = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_hierarchy_settings.default_management_group_name])
       requireAuthorizationForGroupCreation = var.management_group_hierarchy_settings.require_authorization_for_group_creation
     }
   }
@@ -27,7 +27,7 @@ resource "azapi_update_resource" "hierarchy_settings" {
   type = "Microsoft.Management/managementGroups/settings@2023-04-01"
   body = {
     properties = {
-      defaultManagementGroup               = var.management_group_hierarchy_settings.default_management_group_name
+      defaultManagementGroup               = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_hierarchy_settings.default_management_group_name])
       requireAuthorizationForGroupCreation = var.management_group_hierarchy_settings.require_authorization_for_group_creation
     }
   }
