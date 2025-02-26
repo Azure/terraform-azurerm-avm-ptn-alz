@@ -420,6 +420,15 @@ variable "retries" {
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
+    role_assignments = optional(object({
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
     policy_definitions = optional(object({
       error_message_regex = optional(list(string), [
         "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
@@ -519,6 +528,13 @@ variable "timeouts" {
       }), {}
     )
     role_definition = optional(object({
+      create = optional(string, "5m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
+      }), {}
+    )
+    role_assignment = optional(object({
       create = optional(string, "5m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
