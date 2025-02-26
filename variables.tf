@@ -79,17 +79,14 @@ DESCRIPTION
     condition     = var.management_group_hierarchy_settings == null ? true : var.management_group_hierarchy_settings.default_management_group_name != ""
     error_message = "The default management group name must not be an empty string."
   }
-
   validation {
     condition     = var.management_group_hierarchy_settings == null ? true : var.management_group_hierarchy_settings.default_management_group_name != null
     error_message = "The default management group name must not be null."
   }
-
   validation {
     condition     = var.management_group_hierarchy_settings == null ? true : can(regex("^[a-zA-Z0-9_.()\\-]{1,90}$", var.management_group_hierarchy_settings.default_management_group_name))
     error_message = "Mangement group name must be between 1-90 characters. It must start with a letter or a number, and consist only of alphanumerics, hyphens, underscores, periods, and parentheses."
   }
-
   validation {
     error_message = "The management group name must not end with a period."
     condition     = var.management_group_hierarchy_settings == null ? true : !can(regex("\\.$", var.management_group_hierarchy_settings.default_management_group_name))
