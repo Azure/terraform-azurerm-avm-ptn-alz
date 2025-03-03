@@ -430,6 +430,92 @@ A map of default values to apply to policy assignments. The key is the default n
 DESCRIPTION
 }
 
+variable "policy_exemptions" {
+  type = map(object({
+    name                        = string
+    exemption_category          = string
+    exemption_scope             = string
+    assignment_key              = optional(string, null)
+    assignment_resource_id      = optional(string, null)
+    assignment_scope_validation = optional(string, "Default")
+    definition_reference_ids    = optional(set(string), null)
+    description                 = optional(string, null)
+    display_name                = optional(string, null)
+    expires_on                  = optional(string, null)
+    metadata                    = optional(any, null)
+    tags                        = optional(map(string), null)
+    resource_selectors = optional(list(object({
+      name = string
+      resource_selector_selectors = optional(list(object({
+        kind   = string
+        in     = optional(set(string), null)
+        not_in = optional(set(string), null)
+      })), [])
+    })), [])
+  }))
+  default     = {}
+  description = <<DESCRIPTION
+A map of policy exemptions to apply to the ALZ architecture. The key is arbitrary. The value is an object with the following attributes:
+
+- `name` - (Required) The name of the policy exemption.
+- `exemption_category` - (Required) The category of the policy exemption. Possible values are `Waiver`, `Mitigated`.
+- `exemption_scope` - (Required) The scope of the policy exemption. The value must be a valid Azure resource id.
+- `assignment_key` - (Optional) The map key of the resource to assign the policy exemption to, this is in the format of: `MgName/PolicyAssignmentName`.
+- `assignment_resource_id` - (Optional) The id of the resource to assign the policy exemption to.
+- `assignment_scope_validation` - (Optional) The scope validation of the policy exemption. Possible values are `Default`, `DoNotValidate`.
+- `definition_reference_ids` - (Optional) If exempting a policy initiative, you can supply a set of policy definition reference ids to apply the policy exemption to.
+- `description` - (Optional) The description of the policy exemption.
+- `display_name` - (Optional) The display name of the policy exemption.
+- `expires_on` - (Optional) The date the policy exemption expires in UTC ISO 8601 format `yyyy-MM-ddTHH:mm:ssZ`.
+- `metadata` - (Optional) The metadata of the policy exemption.
+- `tags` - (Optional) The tags of the policy exemption.
+- `resource_selectors` - (Optional) A list of resource selector objects to use for the policy exemption. Each object has the following properties:
+  - `name` - (Required) The name of the resource selector.
+  - `selectors` - (Optional) A list of selector objects to use for the resource selector. Each object has the following properties:
+    - `kind` - (Required) The kind of the selector. Allowed values are: `policyDefinitionReferenceId`, `resourceLocation`, `resourceType`, `resourceWithoutLocation`. `resourceWithoutLocation` cannot be used in the same resource selector as `resourceLocation`.
+    - `in` - (Optional) A set of strings to include in the selector.
+    - `not_in` - (Optional) A set of strings to exclude from the selector.
+DESCRIPTION
+  nullable    = false
+
+  validation {
+    error_message = "Name must be between 1-64 characters.and must not use `#<>%&:\\?/` or whitespace characters"
+    condition     = alltrue([for v in var.policy_exemptions : can(regex("^[^#<>%&:\\?/\\s]{1,64}$", v.name))])
+  }
+  validation {
+    error_message = "Exemption category must be either Waiver or Mitigated."
+    condition     = alltrue([for v in var.policy_exemptions : contains(["Waiver", "Mitigated"], v.exemption_category)])
+  }
+  validation {
+    error_message = "Exemption scope must not be empty."
+    condition     = alltrue([for v in var.policy_exemptions : length(v.exemption_scope) > 0])
+  }
+  validation {
+    error_message = "Assignment resource id must be a valid Azure policy assignment resource id"
+    condition     = alltrue([for v in var.policy_exemptions : can(provider::azapi::parse_resource_id("Microsoft.Authorization/policyAssignments", v.assignment_resource_id))])
+  }
+  validation {
+    error_message = "Resource selector kind must be one of policyDefinitionReferenceId, resourceLocation, resourceType, resourceWithoutLocation."
+    condition     = alltrue(flatten([for v in var.policy_exemptions : alltrue([for rs in v.resource_selectors : contains(["policyDefinitionReferenceId", "resourceLocation", "resourceType", "resourceWithoutLocation"], rs.kind)])]))
+  }
+  validation {
+    error_message = "Resource selector selectors must contain only in or not_in, but not both."
+    condition     = alltrue(flatten([for v in var.policy_exemptions : alltrue([for rs in v.resource_selectors : alltrue([for s in rs.resource_selector_selectors : length(s.in) > 0 != length(s.not_in) > 0])])]))
+  }
+  validation {
+    error_message = "Either assignment_resource_id or assignment_key should be set, but not both."
+    condition     = alltrue([for v in var.policy_exemptions : length(v.assignment_resource_id) > 0 != length(v.assignment_key) > 0])
+  }
+  validation {
+    error_message = "Assignment scope validation must be either `Default` or `DoNotValidate`."
+    condition     = alltrue([for v in var.policy_exemptions : contains(["Default", "DoNotValidate"], v.assignment_scope_validation)])
+  }
+  validation {
+    error_message = "Expires on must be in ISO 8601 format `yyyy-MM-ddTHH:mm:ssZ`."
+    condition     = alltrue([for v in var.policy_exemptions : can(regex("^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d(?:[+-][0-2]\\d:[0-5]\\d|Z)$", v.expires_on))])
+  }
+}
+
 variable "retries" {
   type = object({
     management_groups = optional(object({

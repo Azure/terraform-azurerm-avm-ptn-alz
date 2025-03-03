@@ -126,6 +126,7 @@ The following resources are used by this module:
 - [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.policy_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.policy_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.policy_exemptions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.role_definitions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
@@ -649,6 +650,58 @@ Description: A map of default values to apply to policy assignments. The key is 
 Type: `map(string)`
 
 Default: `null`
+
+### <a name="input_policy_exemptions"></a> [policy\_exemptions](#input\_policy\_exemptions)
+
+Description: A map of policy exemptions to apply to the ALZ architecture. The key is arbitrary. The value is an object with the following attributes:
+
+- `name` - (Required) The name of the policy exemption.
+- `exemption_category` - (Required) The category of the policy exemption. Possible values are `Waiver`, `Mitigated`.
+- `exemption_scope` - (Required) The scope of the policy exemption. The value must be a valid Azure resource id.
+- `assignment_key` - (Optional) The map key of the resource to assign the policy exemption to, this is in the format of: `MgName/PolicyAssignmentName`.
+- `assignment_resource_id` - (Optional) The id of the resource to assign the policy exemption to.
+- `assignment_scope_validation` - (Optional) The scope validation of the policy exemption. Possible values are `Default`, `DoNotValidate`.
+- `definition_reference_ids` - (Optional) If exempting a policy initiative, you can supply a set of policy definition reference ids to apply the policy exemption to.
+- `description` - (Optional) The description of the policy exemption.
+- `display_name` - (Optional) The display name of the policy exemption.
+- `expires_on` - (Optional) The date the policy exemption expires in UTC ISO 8601 format `yyyy-MM-ddTHH:mm:ssZ`.
+- `metadata` - (Optional) The metadata of the policy exemption.
+- `tags` - (Optional) The tags of the policy exemption.
+- `resource_selectors` - (Optional) A list of resource selector objects to use for the policy exemption. Each object has the following properties:
+  - `name` - (Required) The name of the resource selector.
+  - `selectors` - (Optional) A list of selector objects to use for the resource selector. Each object has the following properties:
+    - `kind` - (Required) The kind of the selector. Allowed values are: `policyDefinitionReferenceId`, `resourceLocation`, `resourceType`, `resourceWithoutLocation`. `resourceWithoutLocation` cannot be used in the same resource selector as `resourceLocation`.
+    - `in` - (Optional) A set of strings to include in the selector.
+    - `not_in` - (Optional) A set of strings to exclude from the selector.
+
+Type:
+
+```hcl
+map(object({
+    name                        = string
+    exemption_category          = string
+    exemption_scope             = string
+    assignment_key              = optional(string, null)
+    assignment_resource_id      = optional(string, null)
+    assignment_scope_validation = optional(string, "Default")
+    definition_reference_ids    = optional(set(string), null)
+    description                 = optional(string, null)
+    display_name                = optional(string, null)
+    expires_on                  = optional(string, null)
+    metadata                    = optional(any, null)
+    tags                        = optional(map(string), null)
+    resource_selectors = optional(list(object({
+      name = string
+      resource_selector_selectors = optional(list(object({
+        kind   = string
+        in     = optional(set(string), null)
+        not_in = optional(set(string), null)
+      })), [])
+    })), [])
+  }))
+```
+
+Default: `{}`
 
 ### <a name="input_retries"></a> [retries](#input\_retries)
 
