@@ -460,7 +460,7 @@ A map of policy exemptions to apply to the ALZ architecture. The key is arbitrar
 - `name` - (Required) The name of the policy exemption.
 - `exemption_category` - (Required) The category of the policy exemption. Possible values are `Waiver`, `Mitigated`.
 - `exemption_scope` - (Required) The scope of the policy exemption. The value must be a valid Azure resource id.
-- `assignment_key` - (Optional) The map key of the resource to assign the policy exemption to, this is in the format of: `MgName/PolicyAssignmentName`.
+- `assignment_key` - (Optional) The map key of the resource to assign the policy exemption to, this is in the format of: `MgName/PolicyAssignmentName` and is case sensitive.
 - `assignment_resource_id` - (Optional) The id of the resource to assign the policy exemption to.
 - `assignment_scope_validation` - (Optional) The scope validation of the policy exemption. Possible values are `Default`, `DoNotValidate`.
 - `definition_reference_ids` - (Optional) If exempting a policy initiative, you can supply a set of policy definition reference ids to apply the policy exemption to.
