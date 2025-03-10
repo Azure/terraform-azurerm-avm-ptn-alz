@@ -1,7 +1,9 @@
 <!-- BEGIN_TF_DOCS -->
-# Deploying the ALZ Reference Architecture
+# role-assignments
 
-This example shows how to deploy the ALZ reference architecture.
+This simplified example shows how to assign roles, both built-in and custom.
+
+Make sure to run the `pre.sh` script before running this example.
 
 ```hcl
 # This allows us to get the tenant id
@@ -9,12 +11,7 @@ data "azapi_client_config" "current" {}
 
 # Include the additional policies and override archetypes
 provider "alz" {
-  library_overwrite_enabled = true
   library_references = [
-    {
-      path = "platform/alz",
-      ref  = "2025.02.0"
-    },
     {
       custom_url = "${path.root}/lib"
     }
@@ -23,9 +20,23 @@ provider "alz" {
 
 module "alz_architecture" {
   source             = "../../"
-  architecture_name  = "alz"
+  architecture_name  = "test"
   parent_resource_id = data.azapi_client_config.current.tenant_id
   location           = "northeurope"
+  management_group_role_assignments = {
+    test1 = {
+      principal_type             = var.principal_type
+      role_definition_id_or_name = "Storage Blob Data Contributor"
+      principal_id               = data.azapi_client_config.current.object_id
+      management_group_name      = "${var.prefix}test1"
+    }
+    test2 = {
+      principal_type             = var.principal_type
+      role_definition_id_or_name = "Security-Operations (${var.prefix}test2)"
+      principal_id               = data.azapi_client_config.current.object_id
+      management_group_name      = "${var.prefix}test2"
+    }
+  }
 }
 ```
 
@@ -53,7 +64,23 @@ No required inputs.
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_prefix"></a> [prefix](#input\_prefix)
+
+Description: Management group prefix
+
+Type: `string`
+
+Default: `""`
+
+### <a name="input_principal_type"></a> [principal\_type](#input\_principal\_type)
+
+Description: The principal type to use for the role assignment.
+
+Type: `string`
+
+Default: `"ServicePrincipal"`
 
 ## Outputs
 
