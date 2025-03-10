@@ -3,6 +3,8 @@
 
 This simplified example shows how to assign roles, both built-in and custom.
 
+Make sure to run the `pre.sh` script before running this example.
+
 ```hcl
 # This allows us to get the tenant id
 data "azapi_client_config" "current" {}
@@ -23,16 +25,16 @@ module "alz_architecture" {
   location           = "northeurope"
   management_group_role_assignments = {
     test1 = {
-      principal_type             = "User"
+      principal_type             = "ServicePrincipal"
       role_definition_id_or_name = "Storage Blob Data Contributor"
       principal_id               = data.azapi_client_config.current.object_id
-      management_group_name      = "test123"
+      management_group_name      = "${var.prefix}test1"
     }
     test2 = {
-      principal_type             = "User"
-      role_definition_id_or_name = "Security-Operations (test456)"
+      principal_type             = "ServicePrincipal"
+      role_definition_id_or_name = "Security-Operations (${var.prefix}test2)"
       principal_id               = data.azapi_client_config.current.object_id
-      management_group_name      = "test456"
+      management_group_name      = "${var.prefix}test2"
     }
   }
 }
@@ -62,7 +64,15 @@ No required inputs.
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_prefix"></a> [prefix](#input\_prefix)
+
+Description: Management group prefix
+
+Type: `string`
+
+Default: `""`
 
 ## Outputs
 
