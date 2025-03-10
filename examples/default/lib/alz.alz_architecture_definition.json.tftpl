@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/architecture_definition.json",
-  "name": "custom",
+  "name": "alz",
   "management_groups": [
     {
       "archetypes": [
@@ -18,7 +18,7 @@
       "display_name": "${prefix} Landing zones",
       "exists": false,
       "id": "${prefix}-landingzones",
-      "parent_id": "${prefix}-alzroot"
+      "parent_id": "${prefix}-alz"
     },
     {
       "archetypes": [
@@ -45,7 +45,7 @@
       "display_name": "${prefix} Platform",
       "exists": false,
       "id": "${prefix}-platform",
-      "parent_id": "${prefix}-alzroot"
+      "parent_id": "${prefix}-alz"
     },
     {
       "archetypes": [
@@ -54,7 +54,7 @@
       "display_name": "${prefix} Sandbox",
       "exists": false,
       "id": "${prefix}-sandbox",
-      "parent_id": "${prefix}-alzroot"
+      "parent_id": "${prefix}-alz"
     },
     {
       "archetypes": [
