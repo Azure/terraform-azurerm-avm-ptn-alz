@@ -263,7 +263,7 @@ Default: `null`
 
 ### <a name="input_management_group_role_assignments"></a> [management\_group\_role\_assignments](#input\_management\_group\_role\_assignments)
 
-Description:   A map of role assignments to create. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+Description:   A map of role assignments to create. The map key is deliberately arbitrary to avoid issues where map keys might be unknown at plan time.
 
   - `management_group_name` - The name of the management group to assign the role to.
   - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
