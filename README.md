@@ -852,7 +852,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version:
+Version: 0.2.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
