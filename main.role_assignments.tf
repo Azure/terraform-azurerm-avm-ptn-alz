@@ -16,7 +16,8 @@ module "avm_interfaces" {
       principal_type                         = each.value.principal_type
     }
   }
-  depends_on = [azapi_resource.role_definitions]
+  depends_on       = [azapi_resource.role_definitions]
+  enable_telemetry = var.enable_telemetry
 }
 
 resource "azapi_resource" "management_group_role_assignments" {
