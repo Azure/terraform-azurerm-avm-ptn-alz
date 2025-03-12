@@ -37,6 +37,7 @@ module "alz_architecture" {
       management_group_name      = "${var.prefix}test2"
     }
   }
+  enable_telemetry = var.enable_telemetry
 }
 ```
 
@@ -65,6 +66,14 @@ No required inputs.
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: Enable telemetry for the module.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_prefix"></a> [prefix](#input\_prefix)
 

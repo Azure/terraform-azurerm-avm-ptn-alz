@@ -29,4 +29,5 @@ module "alz_architecture" {
       management_group_name      = "${var.prefix}test2"
     }
   }
+  enable_telemetry = var.enable_telemetry
 }

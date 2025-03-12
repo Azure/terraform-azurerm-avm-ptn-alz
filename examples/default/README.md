@@ -26,6 +26,7 @@ module "alz_architecture" {
   architecture_name  = "alz"
   parent_resource_id = data.azapi_client_config.current.tenant_id
   location           = "northeurope"
+  enable_telemetry   = var.enable_telemetry
 }
 ```
 
@@ -53,7 +54,15 @@ No required inputs.
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: Enable telemetry for the module.
+
+Type: `bool`
+
+Default: `true`
 
 ## Outputs
 
