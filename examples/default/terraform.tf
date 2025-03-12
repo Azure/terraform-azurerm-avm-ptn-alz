@@ -11,10 +11,3 @@ terraform {
     }
   }
 }
-
-provider "alz" {
-  library_references = [{
-    path = "platform/alz"
-    ref  = "2025.01.0"
-  }]
-}

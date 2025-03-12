@@ -1,5 +1,5 @@
 locals {
-  architecture_definition_filename          = "custom.alz_architecture_definition.json"
+  architecture_definition_filename          = "alz.alz_architecture_definition.json"
   architecture_definition_template_filename = "${local.architecture_definition_filename}.tftpl"
 }
 

@@ -420,6 +420,15 @@ variable "retries" {
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
+    role_assignments = optional(object({
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
     policy_definitions = optional(object({
       error_message_regex = optional(list(string), [
         "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
@@ -450,8 +459,9 @@ variable "retries" {
     }), {})
     policy_role_assignments = optional(object({
       error_message_regex = optional(list(string), [
-        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-        "ResourceNotFound",    # If the resource has just been created, retry until it is available.
+        "AuthorizationFailed",    # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+        "ResourceNotFound",       # If the resource has just been created, retry until it is available.
+        "RoleAssignmentNotFound", # If the resource has just been created, retry until it is available.
       ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
@@ -504,7 +514,7 @@ DESCRIPTION
   nullable    = false
 
   validation {
-    error_message = "All subscription ids must be valud UUIDs."
+    error_message = "All subscription ids must be valid UUIDs."
     condition     = alltrue([for v in var.subscription_placement : can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", v.subscription_id))])
   }
 }
@@ -512,42 +522,49 @@ DESCRIPTION
 variable "timeouts" {
   type = object({
     management_group = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     role_definition = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
+      }), {}
+    )
+    role_assignment = optional(object({
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_definition = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_set_definition = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_assignment = optional(object({
-      create = optional(string, "15m") # Set high to allow consolidation of policy definitions coming into scope
+      create = optional(string, "20m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_role_assignment = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
@@ -561,7 +578,7 @@ If using retry, the maximum elapsed retry time is governed by this value.
 
 The object has attributes for each resource type, with the following optional attributes:
 
-- `create` - (Optional) The timeout for creating the resource. Defaults to `5m` apart from policy assignments, where this is set to `15m`.
+- `create` - (Optional) The timeout for creating the resource. Defaults to `15m` apart from policy assignments, where this is set to `20m`.
 - `delete` - (Optional) The timeout for deleting the resource. Defaults to `5m`.
 - `update` - (Optional) The timeout for updating the resource. Defaults to `5m`.
 - `read` - (Optional) The timeout for reading the resource. Defaults to `5m`.

@@ -116,6 +116,7 @@ The following requirements are needed by this module:
 The following resources are used by this module:
 
 - [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.management_group_role_assignments](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
@@ -259,6 +260,44 @@ object({
 ```
 
 Default: `null`
+
+### <a name="input_management_group_role_assignments"></a> [management\_group\_role\_assignments](#input\_management\_group\_role\_assignments)
+
+Description:   A map of role assignments to create. The map key is deliberately arbitrary to avoid issues where map keys might be unknown at plan time.
+
+  - `management_group_name` - The name of the management group to assign the role to.
+  - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
+  - `principal_id` - The ID of the principal to assign the role to.
+  - `description` - (Optional) The description of the role assignment.
+  - `skip_service_principal_aad_check` - (Optional) No effect when using AzAPI.
+  - `condition` - (Optional) The condition which will be used to scope the role assignment.
+  - `condition_version` - (Optional) The version of the condition syntax. Leave as `null` if you are not using a condition, if you are then valid values are '2.0'.
+  - `delegated_managed_identity_resource_id` - (Optional) The delegated Azure Resource Id which contains a Managed Identity. Changing this forces a new resource to be created. This field is only used in cross-tenant scenario.
+  - `principal_type` - (Optional) The type of the `principal_id`. Possible values are `User`, `Group` and `ServicePrincipal`. It is necessary to explicitly set this attribute when creating role assignments if the principal creating the assignment is constrained by ABAC rules that filters on the PrincipalType attribute.
+
+We recommend using role assignment conditions to restrict privileged assignments. A sensible default is to use the `condition` attribute to restrict the roles that can be assigned. The following example will restrict the role assignment to prevent the `Owner`, `Role Based Access Control Administrator`, and `User Access Administrator` roles being assigned:
+
+```text
+"((!(ActionMatches{'Microsoft.Authorization/roleAssignments/write'}))OR(@Request[Microsoft.Authorization/roleAssignments:RoleDefinitionId]ForAnyOfAllValues:GuidNotEquals{8e3af657-a8ff-443c-a75c-2fe8c4bcb635, 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9, f58310d9-a9f6-439a-9e8d-f62e7b41a168}))AND((!(ActionMatches{'Microsoft.Authorization/roleAssignments/delete'}))OR(@Resource[Microsoft.Authorization/roleAssignments:RoleDefinitionId]ForAnyOfAllValues:GuidNotEquals{8e3af657-a8ff-443c-a75c-2fe8c4bcb635, 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9, f58310d9-a9f6-439a-9e8d-f62e7b41a168}))"
+```
+
+Type:
+
+```hcl
+map(object({
+    management_group_name                  = string
+    role_definition_id_or_name             = string
+    principal_id                           = string
+    description                            = optional(string, null)
+    skip_service_principal_aad_check       = optional(bool, false)
+    condition                              = optional(string, null)
+    condition_version                      = optional(string, null)
+    delegated_managed_identity_resource_id = optional(string, null)
+    principal_type                         = optional(string, null)
+  }))
+```
+
+Default: `{}`
 
 ### <a name="input_override_policy_definition_parameter_assign_permissions_set"></a> [override\_policy\_definition\_parameter\_assign\_permissions\_set](#input\_override\_policy\_definition\_parameter\_assign\_permissions\_set)
 
@@ -612,6 +651,15 @@ object({
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
+    role_assignments = optional(object({
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
     policy_definitions = optional(object({
       error_message_regex = optional(list(string), [
         "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
@@ -642,8 +690,9 @@ object({
     }), {})
     policy_role_assignments = optional(object({
       error_message_regex = optional(list(string), [
-        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-        "ResourceNotFound",    # If the resource has just been created, retry until it is available.
+        "AuthorizationFailed",    # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+        "ResourceNotFound",       # If the resource has just been created, retry until it is available.
+        "RoleAssignmentNotFound", # If the resource has just been created, retry until it is available.
       ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
@@ -671,6 +720,15 @@ object({
 
 Default: `{}`
 
+### <a name="input_role_assignment_definition_lookup_enabled"></a> [role\_assignment\_definition\_lookup\_enabled](#input\_role\_assignment\_definition\_lookup\_enabled)
+
+Description: A control to disable the lookup of role definitions when creating role assignments.  
+If you disable this then all role assignments must be supplied with a `role_definition_id_or_name` that is a valid role definition ID.
+
+Type: `bool`
+
+Default: `true`
+
 ### <a name="input_subscription_placement"></a> [subscription\_placement](#input\_subscription\_placement)
 
 Description: A map of subscriptions to place into management groups. The key is deliberately arbitrary to avoid issues with known after apply values. The value is an object:
@@ -696,7 +754,7 @@ If using retry, the maximum elapsed retry time is governed by this value.
 
 The object has attributes for each resource type, with the following optional attributes:
 
-- `create` - (Optional) The timeout for creating the resource. Defaults to `5m` apart from policy assignments, where this is set to `15m`.
+- `create` - (Optional) The timeout for creating the resource. Defaults to `15m` apart from policy assignments, where this is set to `20m`.
 - `delete` - (Optional) The timeout for deleting the resource. Defaults to `5m`.
 - `update` - (Optional) The timeout for updating the resource. Defaults to `5m`.
 - `read` - (Optional) The timeout for reading the resource. Defaults to `5m`.
@@ -708,42 +766,49 @@ Type:
 ```hcl
 object({
     management_group = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     role_definition = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
+      }), {}
+    )
+    role_assignment = optional(object({
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_definition = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_set_definition = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_assignment = optional(object({
-      create = optional(string, "15m") # Set high to allow consolidation of policy definitions coming into scope
+      create = optional(string, "20m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
       }), {}
     )
     policy_role_assignment = optional(object({
-      create = optional(string, "5m")
+      create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
       read   = optional(string, "5m")
@@ -788,7 +853,13 @@ Description: A map of role definition names to their resource ids.
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_avm_interfaces"></a> [avm\_interfaces](#module\_avm\_interfaces)
+
+Source: Azure/avm-utl-interfaces/azure
+
+Version: 0.2.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
