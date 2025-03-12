@@ -578,7 +578,7 @@ If using retry, the maximum elapsed retry time is governed by this value.
 
 The object has attributes for each resource type, with the following optional attributes:
 
-- `create` - (Optional) The timeout for creating the resource. Defaults to `5m` apart from policy assignments, where this is set to `20m`.
+- `create` - (Optional) The timeout for creating the resource. Defaults to `15m` apart from policy assignments, where this is set to `20m`.
 - `delete` - (Optional) The timeout for deleting the resource. Defaults to `5m`.
 - `update` - (Optional) The timeout for updating the resource. Defaults to `5m`.
 - `read` - (Optional) The timeout for reading the resource. Defaults to `5m`.
