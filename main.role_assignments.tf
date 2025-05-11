@@ -1,7 +1,9 @@
 module "avm_interfaces" {
-  for_each                                  = var.management_group_role_assignments
-  source                                    = "Azure/avm-utl-interfaces/azure"
-  version                                   = "0.2.0"
+  source   = "Azure/avm-utl-interfaces/azure"
+  version  = "0.2.0"
+  for_each = var.management_group_role_assignments
+
+  enable_telemetry                          = var.enable_telemetry
   role_assignment_definition_lookup_enabled = var.role_assignment_definition_lookup_enabled
   role_assignment_definition_scope          = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [each.value.management_group_name])
   role_assignments = {
@@ -16,8 +18,8 @@ module "avm_interfaces" {
       principal_type                         = each.value.principal_type
     }
   }
-  depends_on       = [azapi_resource.role_definitions]
-  enable_telemetry = var.enable_telemetry
+
+  depends_on = [azapi_resource.role_definitions]
 }
 
 resource "azapi_resource" "management_group_role_assignments" {

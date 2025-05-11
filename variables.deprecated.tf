@@ -14,11 +14,11 @@ variable "delays" {
     }), {})
   })
   default     = {}
-  nullable    = false
   description = <<DESCRIPTION
 DEPRECATED: Please use the new `retries` variable instead to allow the provider to retry on certain errors.
 
 A map of delays to apply to the creation and destruction of resources.
 Included to work around some race conditions in Azure.
 DESCRIPTION
+  nullable    = false
 }
