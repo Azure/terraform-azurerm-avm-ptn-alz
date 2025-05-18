@@ -11,7 +11,6 @@ variable "management_group_role_assignments" {
     principal_type                         = optional(string, null)
   }))
   default     = {}
-  nullable    = false
   description = <<DESCRIPTION
   A map of role assignments to create. The map key is deliberately arbitrary to avoid issues where map keys might be unknown at plan time.
 
@@ -31,13 +30,14 @@ We recommend using role assignment conditions to restrict privileged assignments
 "((!(ActionMatches{'Microsoft.Authorization/roleAssignments/write'}))OR(@Request[Microsoft.Authorization/roleAssignments:RoleDefinitionId]ForAnyOfAllValues:GuidNotEquals{8e3af657-a8ff-443c-a75c-2fe8c4bcb635, 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9, f58310d9-a9f6-439a-9e8d-f62e7b41a168}))AND((!(ActionMatches{'Microsoft.Authorization/roleAssignments/delete'}))OR(@Resource[Microsoft.Authorization/roleAssignments:RoleDefinitionId]ForAnyOfAllValues:GuidNotEquals{8e3af657-a8ff-443c-a75c-2fe8c4bcb635, 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9, f58310d9-a9f6-439a-9e8d-f62e7b41a168}))"
 ```
 DESCRIPTION
+  nullable    = false
 }
 
 variable "role_assignment_definition_lookup_enabled" {
   type        = bool
+  default     = true
   description = <<DESCRIPTION
 A control to disable the lookup of role definitions when creating role assignments.
 If you disable this then all role assignments must be supplied with a `role_definition_id_or_name` that is a valid role definition ID.
 DESCRIPTION
-  default     = true
 }
