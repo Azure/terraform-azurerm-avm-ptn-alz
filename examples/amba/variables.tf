@@ -1,10 +1,3 @@
-variable "enable_telemetry" {
-  type        = bool
-  default     = true
-  description = "Enable telemetry for the module."
-  nullable    = false
-}
-
 variable "action_group_arm_role_id" {
   type        = list(string)
   default     = []
@@ -51,6 +44,13 @@ variable "bring_your_own_user_assigned_managed_identity_resource_id" {
   type        = string
   default     = ""
   description = "The resource ID of the user-assigned managed identity."
+}
+
+variable "enable_telemetry" {
+  type        = bool
+  default     = true
+  description = "Enable telemetry for the module."
+  nullable    = false
 }
 
 variable "event_hub_resource_id" {

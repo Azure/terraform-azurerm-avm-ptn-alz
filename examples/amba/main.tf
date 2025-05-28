@@ -6,12 +6,12 @@ provider "alz" {
   library_overwrite_enabled = true
   library_references = [
     {
-      "path": "platform/alz",
-      "ref": "2025.02.0"
+      "path" : "platform/alz",
+      "ref" : "2025.02.0"
     },
     {
-      "path": "platform/amba",
-      "ref": "2025.05.0"
+      "path" : "platform/amba",
+      "ref" : "2025.05.0"
     },
     {
       custom_url = "${path.root}/lib"
@@ -48,9 +48,9 @@ module "alz_architecture" {
   version = "0.12.0"
 
   architecture_name  = "alz-amba"
+  location           = var.location
   parent_resource_id = data.azapi_client_config.current.tenant_id
   enable_telemetry   = var.enable_telemetry
-  location           = var.location
   policy_default_values = {
     amba_alz_management_subscription_id            = jsonencode({ value = var.management_subscription_id != "" ? var.management_subscription_id : data.azapi_client_config.current.subscription_id })
     amba_alz_resource_group_location               = jsonencode({ value = var.location })
