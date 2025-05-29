@@ -5,14 +5,16 @@ resource "terraform_data" "policy_assignments_dependencies" {
 resource "azapi_resource" "policy_assignments" {
   for_each = local.policy_assignments_final
 
-  type = "Microsoft.Authorization/policyAssignments@2024-04-01"
+  location  = var.location
+  name      = each.value.assignment.name
+  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
+  type      = "Microsoft.Authorization/policyAssignments@2024-04-01"
   body = {
     properties = {
       description     = lookup(each.value.assignment.properties, "description", null)
       displayName     = lookup(each.value.assignment.properties, "displayName", null)
       enforcementMode = lookup(each.value.assignment.properties, "enforcementMode", null)
-      metadata = merge(
-        lookup(each.value.assignment.properties, "metadata", {}),
+      metadata = merge(lookup(each.value.assignment.properties, "metadata", {}),
         {
           createdBy = ""
           createdOn = ""
@@ -29,9 +31,6 @@ resource "azapi_resource" "policy_assignments" {
     }
   }
   ignore_missing_property = true
-  location                = var.location
-  name                    = each.value.assignment.name
-  parent_id               = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
   replace_triggers_external_values = [
     lookup(each.value.assignment.properties, "policyDefinitionId", null),
     var.location,
