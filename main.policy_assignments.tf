@@ -3,7 +3,7 @@ resource "terraform_data" "policy_assignments_dependencies" {
 }
 
 resource "azapi_resource" "policy_assignments" {
-  for_each = local.policy_assignments
+  for_each = local.policy_assignments_final
 
   type = "Microsoft.Authorization/policyAssignments@2024-04-01"
   body = {
