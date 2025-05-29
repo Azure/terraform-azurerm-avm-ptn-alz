@@ -163,8 +163,8 @@ Type: `string`
 
 ### <a name="input_parent_resource_id"></a> [parent\_resource\_id](#input\_parent\_resource\_id)
 
-Description: The resource name of the parent management group. Use the tenant id to create a child of the tenant root group.  
-The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.  
+Description: The resource name of the parent management group. Use the tenant id to create a child of the tenant root group.
+The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.
 Do not include the `/providers/Microsoft.Management/managementGroups/` prefix.
 
 Type: `string`
@@ -177,7 +177,7 @@ The following input variables are optional (have default values):
 
 Description: DEPRECATED: Please use the new `retries` variable instead to allow the provider to retry on certain errors.
 
-A map of delays to apply to the creation and destruction of resources.  
+A map of delays to apply to the creation and destruction of resources.
 Included to work around some race conditions in Azure.
 
 Type:
@@ -203,10 +203,10 @@ Default: `{}`
 
 ### <a name="input_dependencies"></a> [dependencies](#input\_dependencies)
 
-Description: Place dependent values into this variable to ensure that resources are created in the correct order.  
+Description: Place dependent values into this variable to ensure that resources are created in the correct order.
 Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
 
-This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.  
+This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.
 See the "Unknown Values & Depends On" section above for more information.
 
 e.g.
@@ -233,8 +233,8 @@ Default: `{}`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
-Description: This variable controls whether or not telemetry is enabled for the module.  
-For more information see https://aka.ms/avm/telemetryinfo.  
+Description: This variable controls whether or not telemetry is enabled for the module.
+For more information see https://aka.ms/avm/telemetryinfo.
 If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
@@ -301,7 +301,7 @@ Default: `{}`
 
 ### <a name="input_override_policy_definition_parameter_assign_permissions_set"></a> [override\_policy\_definition\_parameter\_assign\_permissions\_set](#input\_override\_policy\_definition\_parameter\_assign\_permissions\_set)
 
-Description: This list of objects allows you to set the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.  
+Description: This list of objects allows you to set the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.
 This allows you to correct policies that haven't been authored correctly and means that the provider can generate the correct policy role assignments.
 
 The value is a list of objects with the following attributes:
@@ -509,7 +509,7 @@ Default:
 
 ### <a name="input_override_policy_definition_parameter_assign_permissions_unset"></a> [override\_policy\_definition\_parameter\_assign\_permissions\_unset](#input\_override\_policy\_definition\_parameter\_assign\_permissions\_unset)
 
-Description: This list of objects allows you to unset the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.  
+Description: This list of objects allows you to unset the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.
 This allows you to correct policies that haven't been authored correctly, or prevent permissions being assigned for policies that are disabled in a policy set. The provider can then generate the correct policy role assignments.
 
 The value is a list of objects with the following attributes:
@@ -544,12 +544,12 @@ Default: `null`
 
 ### <a name="input_policy_assignment_non_compliance_message_settings"></a> [policy\_assignment\_non\_compliance\_message\_settings](#input\_policy\_assignment\_non\_compliance\_message\_settings)
 
-Description: Settings for the non-compliance messages of policy assignments. This is used to ensure that the non-compliance messages are set correctly for policy assignments that do not have them set.  
+Description: Settings for the non-compliance messages of policy assignments. This is used to ensure that the non-compliance messages are set correctly for policy assignments that do not have them set.
   The object has the following optional attributes:
 - `fallback_message_enabled` - (Optional) Whether to enable the fallback message for policy assignments that do not have a non-compliance message set. Defaults to `true`.
 - `fallback_message` - (Optional) The fallback message to use for policy assignments that do not have a non-compliance message set. Defaults to "This resource {enforcementMode} be compliant with the assigned policy."
 - `fallback_message_unsupported_assignments` - (Optional) A list of policy assignment names that do not support non-compliance messages. Defaults to a list of Azure Landing Zones policy assignments that do not support non-compliance messages.
-- `enforecement_mode_placeholder` - (Optional) The placeholder to use for the enforcement mode in the fallback message. Defaults to "{enforcementMode}".
+- `enforcement_mode_placeholder` - (Optional) The placeholder to use for the enforcement mode in the fallback message. Defaults to "{enforcementMode}".
 - `enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is enforced. Defaults to "must".
 - `not_enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is not enforced. Defaults to "should".
 
@@ -564,7 +564,7 @@ object({
       "Enforce-AKS-HTTPS",
       "Deny-Priv-Esc-AKS"
     ])
-    enforecement_mode_placeholder = optional(string, "{enforcementMode}")
+    enforcement_mode_placeholder = optional(string, "{enforcementMode}")
     enforced_replacement          = optional(string, "must")
     not_enforced_replacement      = optional(string, "should")
   })
@@ -574,11 +574,11 @@ Default: `{}`
 
 ### <a name="input_policy_assignments_to_modify"></a> [policy\_assignments\_to\_modify](#input\_policy\_assignments\_to\_modify)
 
-Description: A map of policy assignment objects to modify the ALZ architecture with.  
+Description: A map of policy assignment objects to modify the ALZ architecture with.
 You only need to specify the properties you want to change.
 
-The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.  
-The `policy_assignments` value is a map of policy assignments to modify.  
+The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.
+The `policy_assignments` value is a map of policy assignments to modify.
 The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.
 
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
@@ -752,7 +752,7 @@ Default: `{}`
 
 ### <a name="input_role_assignment_definition_lookup_enabled"></a> [role\_assignment\_definition\_lookup\_enabled](#input\_role\_assignment\_definition\_lookup\_enabled)
 
-Description: A control to disable the lookup of role definitions when creating role assignments.  
+Description: A control to disable the lookup of role definitions when creating role assignments.
 If you disable this then all role assignments must be supplied with a `role_definition_id_or_name` that is a valid role definition ID.
 
 Type: `bool`
@@ -779,7 +779,7 @@ Default: `{}`
 
 ### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
 
-Description: A map of timeouts to apply to the creation and destruction of resources.  
+Description: A map of timeouts to apply to the creation and destruction of resources.
 If using retry, the maximum elapsed retry time is governed by this value.
 
 The object has attributes for each resource type, with the following optional attributes:

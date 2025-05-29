@@ -338,9 +338,9 @@ variable "policy_assignment_non_compliance_message_settings" {
       "Enforce-AKS-HTTPS",
       "Deny-Priv-Esc-AKS"
     ])
-    enforecement_mode_placeholder = optional(string, "{enforcementMode}")
-    enforced_replacement          = optional(string, "must")
-    not_enforced_replacement      = optional(string, "should")
+    enforcement_mode_placeholder = optional(string, "{enforcementMode}")
+    enforced_replacement         = optional(string, "must")
+    not_enforced_replacement     = optional(string, "should")
   })
   default     = {}
   description = <<DESCRIPTION
@@ -349,7 +349,7 @@ Settings for the non-compliance messages of policy assignments. This is used to 
 - `fallback_message_enabled` - (Optional) Whether to enable the fallback message for policy assignments that do not have a non-compliance message set. Defaults to `true`.
 - `fallback_message` - (Optional) The fallback message to use for policy assignments that do not have a non-compliance message set. Defaults to "This resource {enforcementMode} be compliant with the assigned policy."
 - `fallback_message_unsupported_assignments` - (Optional) A list of policy assignment names that do not support non-compliance messages. Defaults to a list of Azure Landing Zones policy assignments that do not support non-compliance messages.
-- `enforecement_mode_placeholder` - (Optional) The placeholder to use for the enforcement mode in the fallback message. Defaults to "{enforcementMode}".
+- `enforcement_mode_placeholder` - (Optional) The placeholder to use for the enforcement mode in the fallback message. Defaults to "{enforcementMode}".
 - `enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is enforced. Defaults to "must".
 - `not_enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is not enforced. Defaults to "should".
 DESCRIPTION
