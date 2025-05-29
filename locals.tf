@@ -42,7 +42,6 @@ locals {
 }
 
 locals {
-  policy_assignment_non_compliance_fallback_message = var.policy_assignment_non_compliance_message_settings.fallback_message == null ? "" : var.policy_assignment_non_compliance_message_settings.fallback_message
   policy_assignment_non_compliance_messages = {
     for k, v in local.policy_assignments : k => {
       nonComplianceMessages = length(try(v.assignment.properties.nonComplianceMessages, [])) == 0 && (!var.policy_assignment_non_compliance_message_settings.fallback_message_enabled || contains(var.policy_assignment_non_compliance_message_settings.fallback_message_unsupported_assignments, v.assignment.name)) ? null : [{
