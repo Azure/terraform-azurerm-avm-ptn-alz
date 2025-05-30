@@ -45,7 +45,7 @@ locals {
   policy_assignment_non_compliance_messages = {
     for k, v in local.policy_assignments : k => {
       nonComplianceMessages = length(try(v.assignment.properties.nonComplianceMessages, [])) == 0 && (!var.policy_assignment_non_compliance_message_settings.fallback_message_enabled || contains(var.policy_assignment_non_compliance_message_settings.fallback_message_unsupported_assignments, v.assignment.name)) ? null : [{
-        message = replace(try(v.assignment.properties.nonComplianceMessages[0].message, var.policy_assignment_non_compliance_message_settings.fallback_message), var.policy_assignment_non_compliance_message_settings.enforcement_mode_placeholder, (lookup(v.assignment.properties, "enforcementMode", "Default") == "Default" ? var.policy_assignment_non_compliance_message_settings.enforced_replacement : var.policy_assignment_non_compliance_message_settings.non_enforced_replacement))
+        message = replace(try(v.assignment.properties.nonComplianceMessages[0].message, var.policy_assignment_non_compliance_message_settings.fallback_message), var.policy_assignment_non_compliance_message_settings.enforcement_mode_placeholder, (lookup(v.assignment.properties, "enforcementMode", "Default") == "Default" ? var.policy_assignment_non_compliance_message_settings.enforced_replacement : var.policy_assignment_non_compliance_message_settings.not_enforced_replacement))
       }]
   } }
   policy_assignments = {
