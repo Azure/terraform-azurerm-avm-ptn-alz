@@ -1,12 +1,12 @@
 resource "azapi_resource" "policy_set_definitions" {
   for_each = local.policy_set_definitions
 
-  type = "Microsoft.Authorization/policySetDefinitions@2023-04-01"
+  name      = each.value.set_definition.name
+  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
+  type      = "Microsoft.Authorization/policySetDefinitions@2023-04-01"
   body = {
     properties = each.value.set_definition.properties
   }
-  name                             = each.value.set_definition.name
-  parent_id                        = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
   replace_triggers_external_values = lookup(each.value.set_definition.properties, "policyType", null)
   retry = var.retries.policy_set_definitions.error_message_regex != null ? {
     error_message_regex  = var.retries.policy_set_definitions.error_message_regex

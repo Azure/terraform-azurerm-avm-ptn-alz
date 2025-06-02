@@ -19,10 +19,12 @@ provider "alz" {
 }
 
 module "alz_architecture" {
-  source             = "../../"
+  source = "../../"
+
   architecture_name  = "test"
-  parent_resource_id = data.azapi_client_config.current.tenant_id
   location           = "northeurope"
+  parent_resource_id = data.azapi_client_config.current.tenant_id
+  enable_telemetry   = var.enable_telemetry
   management_group_role_assignments = {
     test1 = {
       principal_type             = var.principal_type
@@ -37,7 +39,6 @@ module "alz_architecture" {
       management_group_name      = "${var.prefix}test2"
     }
   }
-  enable_telemetry = var.enable_telemetry
 }
 ```
 

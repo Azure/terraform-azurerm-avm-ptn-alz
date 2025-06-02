@@ -15,11 +15,6 @@ provider "azurerm" {
   features {}
 }
 
-variable "random_suffix" {
-  type        = string
-  default     = "sdjfnbf"
-  description = "Change me to something unique"
-}
 
 data "azapi_client_config" "current" {}
 
@@ -42,18 +37,11 @@ module "management" {
 }
 
 module "alz" {
-  source             = "../../"
+  source = "../../"
+
   architecture_name  = "alz"
-  parent_resource_id = data.azapi_client_config.current.tenant_id
   location           = local.location
-  policy_default_values = {
-    ama_change_tracking_data_collection_rule_id = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-change-tracking"]) })
-    ama_mdfc_sql_data_collection_rule_id        = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-defender-sql"]) })
-    ama_vm_insights_data_collection_rule_id     = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-vm-insights"]) })
-    ama_user_assigned_managed_identity_id       = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.ManagedIdentity/userAssignedIdentities", [local.uami_name]) })
-    ama_user_assigned_managed_identity_name     = jsonencode({ value = local.uami_name })
-    log_analytics_workspace_id                  = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.OperationalInsights/workspaces", [local.log_analytics_workspace_name]) })
-  }
+  parent_resource_id = data.azapi_client_config.current.tenant_id
   dependencies = {
     policy_assignments = [
       module.management.data_collection_rule_ids,
@@ -71,6 +59,14 @@ module "alz" {
         }
       }
     }
+  }
+  policy_default_values = {
+    ama_change_tracking_data_collection_rule_id = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-change-tracking"]) })
+    ama_mdfc_sql_data_collection_rule_id        = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-defender-sql"]) })
+    ama_vm_insights_data_collection_rule_id     = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Insights/dataCollectionRules", ["dcr-vm-insights"]) })
+    ama_user_assigned_managed_identity_id       = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.ManagedIdentity/userAssignedIdentities", [local.uami_name]) })
+    ama_user_assigned_managed_identity_name     = jsonencode({ value = local.uami_name })
+    log_analytics_workspace_id                  = jsonencode({ value = provider::azapi::resource_group_resource_id(data.azapi_client_config.current.subscription_id, local.resource_group_name, "Microsoft.OperationalInsights/workspaces", [local.log_analytics_workspace_name]) })
   }
 }
 ```
