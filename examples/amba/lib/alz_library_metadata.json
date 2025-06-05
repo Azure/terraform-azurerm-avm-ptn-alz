@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/library_metadata.json",
+  "name": "amba",
+  "display_name": "Azure Monitor Baseline Alerts for Azure Landing Zones",
+  "description": "This library provides the reference set of Azure Monitor Baseline Alerts for Azure Landing Zones (ALZ) policies, archetypes, and management group architecture.",
+  "dependencies": [
+    {
+      "path": "platform/alz",
+      "ref": "2025.02.0"
+    },
+    {
+      "path": "platform/amba",
+      "ref": "2025.05.0"
+    }
+  ]
+}
