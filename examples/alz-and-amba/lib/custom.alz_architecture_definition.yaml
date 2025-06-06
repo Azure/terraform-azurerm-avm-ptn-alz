@@ -1,0 +1,10 @@
+---
+name: custom
+management_groups:
+  - archetypes:
+      - root
+      - amba_root
+    display_name: ALZ root
+    exists: false
+    id: myroot
+    parent_id: null
