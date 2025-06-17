@@ -5,7 +5,9 @@ resource "terraform_data" "policy_role_assignments_dependencies" {
 resource "azapi_resource" "policy_role_assignments" {
   for_each = local.policy_role_assignments
 
-  type = "Microsoft.Authorization/roleAssignments@2022-04-01"
+  name      = each.key
+  parent_id = each.value.scope
+  type      = "Microsoft.Authorization/roleAssignments@2022-04-01"
   body = {
     properties = {
       principalId      = each.value.principal_id
@@ -14,8 +16,6 @@ resource "azapi_resource" "policy_role_assignments" {
       principalType    = "ServicePrincipal"
     }
   }
-  name      = each.key
-  parent_id = each.value.scope
   replace_triggers_external_values = [
     each.value.principal_id,
     each.value.role_definition_id,

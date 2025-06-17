@@ -1,7 +1,9 @@
 resource "azapi_resource" "role_definitions" {
   for_each = local.role_definitions
 
-  type = "Microsoft.Authorization/roleDefinitions@2022-04-01"
+  name      = each.value.role_definition.name
+  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
+  type      = "Microsoft.Authorization/roleDefinitions@2022-04-01"
   body = {
     properties = {
       assignableScopes = each.value.role_definition.properties.assignableScopes
@@ -11,8 +13,6 @@ resource "azapi_resource" "role_definitions" {
       type             = each.value.role_definition.properties.type
     }
   }
-  name      = each.value.role_definition.name
-  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
   retry = var.retries.role_definitions.error_message_regex != null ? {
     error_message_regex  = var.retries.role_definitions.error_message_regex
     interval_seconds     = lookup(var.retries.role_definitions, "interval_seconds", null)

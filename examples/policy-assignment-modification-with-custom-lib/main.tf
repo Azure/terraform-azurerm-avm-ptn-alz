@@ -51,10 +51,11 @@ locals {
 }
 
 module "alz" {
-  source             = "../../"
+  source = "../../"
+
   architecture_name  = "custom"
-  parent_resource_id = data.azurerm_client_config.current.tenant_id
   location           = local.location
+  parent_resource_id = data.azurerm_client_config.current.tenant_id
   policy_assignments_to_modify = {
     myroot = {
       policy_assignments = {

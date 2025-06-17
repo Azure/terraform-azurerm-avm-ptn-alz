@@ -1,7 +1,9 @@
 resource "azapi_resource" "management_groups_level_0" {
   for_each = local.management_groups_level_0
 
-  type = "Microsoft.Management/managementGroups@2023-04-01"
+  name      = each.value.id
+  parent_id = "/"
+  type      = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -12,8 +14,6 @@ resource "azapi_resource" "management_groups_level_0" {
       displayName = each.value.display_name
     }
   }
-  name      = each.value.id
-  parent_id = "/"
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -36,7 +36,9 @@ resource "azapi_resource" "management_groups_level_0" {
 resource "azapi_resource" "management_groups_level_1" {
   for_each = local.management_groups_level_1
 
-  type = "Microsoft.Management/managementGroups@2023-04-01"
+  name      = each.value.id
+  parent_id = "/"
+  type      = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -47,8 +49,6 @@ resource "azapi_resource" "management_groups_level_1" {
       displayName = each.value.display_name
     }
   }
-  name      = each.value.id
-  parent_id = "/"
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -73,7 +73,9 @@ resource "azapi_resource" "management_groups_level_1" {
 resource "azapi_resource" "management_groups_level_2" {
   for_each = local.management_groups_level_2
 
-  type = "Microsoft.Management/managementGroups@2023-04-01"
+  name      = each.value.id
+  parent_id = "/"
+  type      = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -84,8 +86,6 @@ resource "azapi_resource" "management_groups_level_2" {
       displayName = each.value.display_name
     }
   }
-  name      = each.value.id
-  parent_id = "/"
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -110,7 +110,9 @@ resource "azapi_resource" "management_groups_level_2" {
 resource "azapi_resource" "management_groups_level_3" {
   for_each = local.management_groups_level_3
 
-  type = "Microsoft.Management/managementGroups@2023-04-01"
+  name      = each.value.id
+  parent_id = "/"
+  type      = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -121,8 +123,6 @@ resource "azapi_resource" "management_groups_level_3" {
       displayName = each.value.display_name
     }
   }
-  name      = each.value.id
-  parent_id = "/"
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -147,7 +147,9 @@ resource "azapi_resource" "management_groups_level_3" {
 resource "azapi_resource" "management_groups_level_4" {
   for_each = local.management_groups_level_4
 
-  type = "Microsoft.Management/managementGroups@2023-04-01"
+  name      = each.value.id
+  parent_id = "/"
+  type      = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -158,8 +160,6 @@ resource "azapi_resource" "management_groups_level_4" {
       displayName = each.value.display_name
     }
   }
-  name      = each.value.id
-  parent_id = "/"
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -184,7 +184,9 @@ resource "azapi_resource" "management_groups_level_4" {
 resource "azapi_resource" "management_groups_level_5" {
   for_each = local.management_groups_level_5
 
-  type = "Microsoft.Management/managementGroups@2023-04-01"
+  name      = each.value.id
+  parent_id = "/"
+  type      = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -195,8 +197,6 @@ resource "azapi_resource" "management_groups_level_5" {
       displayName = each.value.display_name
     }
   }
-  name      = each.value.id
-  parent_id = "/"
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -221,7 +221,9 @@ resource "azapi_resource" "management_groups_level_5" {
 resource "azapi_resource" "management_groups_level_6" {
   for_each = local.management_groups_level_6
 
-  type = "Microsoft.Management/managementGroups@2023-04-01"
+  name      = each.value.id
+  parent_id = "/"
+  type      = "Microsoft.Management/managementGroups@2023-04-01"
   body = {
     properties = {
       details = {
@@ -232,8 +234,6 @@ resource "azapi_resource" "management_groups_level_6" {
       displayName = each.value.display_name
     }
   }
-  name      = each.value.id
-  parent_id = "/"
   replace_triggers_external_values = [
     each.value.parent_id,
   ]

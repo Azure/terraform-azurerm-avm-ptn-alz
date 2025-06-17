@@ -42,6 +42,12 @@ locals {
 }
 
 locals {
+  policy_assignment_non_compliance_messages = {
+    for k, v in local.policy_assignments : k => {
+      nonComplianceMessages = length(try(v.assignment.properties.nonComplianceMessages, [])) == 0 && (!var.policy_assignment_non_compliance_message_settings.fallback_message_enabled || contains(var.policy_assignment_non_compliance_message_settings.fallback_message_unsupported_assignments, v.assignment.name)) ? null : [{
+        message = replace(try(v.assignment.properties.nonComplianceMessages[0].message, var.policy_assignment_non_compliance_message_settings.fallback_message), var.policy_assignment_non_compliance_message_settings.enforcement_mode_placeholder, (lookup(v.assignment.properties, "enforcementMode", "Default") == "Default" ? var.policy_assignment_non_compliance_message_settings.enforced_replacement : var.policy_assignment_non_compliance_message_settings.not_enforced_replacement))
+      }]
+  } }
   policy_assignments = {
     for paval in flatten([
       for mg in data.alz_architecture.this.management_groups : [
@@ -52,6 +58,17 @@ locals {
         }
       ]
   ]) : "${paval.mg}/${paval.key}" => paval }
+  policy_assignments_final = {
+    for k, v in local.policy_assignments : k => {
+      mg         = v.mg
+      assignment = merge(v.assignment, local.policy_assignments_properties_final[k])
+    }
+  }
+  policy_assignments_properties_final = {
+    for k, v in local.policy_assignments : k => {
+      properties = merge(v.assignment.properties, local.policy_assignment_non_compliance_messages[k])
+    }
+  }
 }
 
 locals {
