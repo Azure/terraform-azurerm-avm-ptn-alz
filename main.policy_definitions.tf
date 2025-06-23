@@ -1,12 +1,12 @@
 resource "azapi_resource" "policy_definitions" {
   for_each = local.policy_definitions
 
-  type = "Microsoft.Authorization/policyDefinitions@2023-04-01"
+  name      = each.value.definition.name
+  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
+  type      = "Microsoft.Authorization/policyDefinitions@2023-04-01"
   body = {
     properties = each.value.definition.properties
   }
-  name      = each.value.definition.name
-  parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
   retry = var.retries.policy_definitions.error_message_regex != null ? {
     error_message_regex  = var.retries.policy_definitions.error_message_regex
     interval_seconds     = lookup(var.retries.policy_definitions, "interval_seconds", null)

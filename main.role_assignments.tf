@@ -1,7 +1,9 @@
 module "avm_interfaces" {
-  for_each                                  = var.management_group_role_assignments
-  source                                    = "Azure/avm-utl-interfaces/azure"
-  version                                   = "0.2.0"
+  source   = "Azure/avm-utl-interfaces/azure"
+  version  = "0.2.0"
+  for_each = var.management_group_role_assignments
+
+  enable_telemetry                          = var.enable_telemetry
   role_assignment_definition_lookup_enabled = var.role_assignment_definition_lookup_enabled
   role_assignment_definition_scope          = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [each.value.management_group_name])
   role_assignments = {
@@ -16,17 +18,17 @@ module "avm_interfaces" {
       principal_type                         = each.value.principal_type
     }
   }
-  depends_on       = [azapi_resource.role_definitions]
-  enable_telemetry = var.enable_telemetry
+
+  depends_on = [azapi_resource.role_definitions]
 }
 
 resource "azapi_resource" "management_group_role_assignments" {
   for_each = module.avm_interfaces
 
-  type      = each.value.role_assignments_azapi.this.type
-  body      = each.value.role_assignments_azapi.this.body
   name      = each.value.role_assignments_azapi.this.name
   parent_id = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_role_assignments[each.key].management_group_name])
+  type      = each.value.role_assignments_azapi.this.type
+  body      = each.value.role_assignments_azapi.this.body
   retry = {
     error_message_regex  = var.retries.role_assignments.error_message_regex
     interval_seconds     = var.retries.role_assignments.interval_seconds

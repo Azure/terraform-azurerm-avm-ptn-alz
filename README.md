@@ -542,6 +542,36 @@ Type: `string`
 
 Default: `null`
 
+### <a name="input_policy_assignment_non_compliance_message_settings"></a> [policy\_assignment\_non\_compliance\_message\_settings](#input\_policy\_assignment\_non\_compliance\_message\_settings)
+
+Description: Settings for the non-compliance messages of policy assignments. This is used to ensure that the non-compliance messages are set correctly for policy assignments that do not have them set.  
+  The object has the following optional attributes:
+- `fallback_message_enabled` - (Optional) Whether to enable the fallback message for policy assignments that do not have a non-compliance message set. Defaults to `true`.
+- `fallback_message` - (Optional) The fallback message to use for policy assignments that do not have a non-compliance message set. Defaults to "This resource {enforcementMode} be compliant with the assigned policy."
+- `fallback_message_unsupported_assignments` - (Optional) A list of policy assignment names that do not support non-compliance messages. Defaults to a list of Azure Landing Zones policy assignments that do not support non-compliance messages.
+- `enforcement_mode_placeholder` - (Optional) The placeholder to use for the enforcement mode in the fallback message. Defaults to "{enforcementMode}".
+- `enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is enforced. Defaults to "must".
+- `not_enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is not enforced. Defaults to "should".
+
+Type:
+
+```hcl
+object({
+    fallback_message_enabled = optional(bool, true)
+    fallback_message         = optional(string, "This resource {enforcementMode} be compliant with the assigned policy.")
+    fallback_message_unsupported_assignments = optional(list(string), [
+      "Deny-Privileged-AKS",
+      "Enforce-AKS-HTTPS",
+      "Deny-Priv-Esc-AKS"
+    ])
+    enforcement_mode_placeholder = optional(string, "{enforcementMode}")
+    enforced_replacement         = optional(string, "must")
+    not_enforced_replacement     = optional(string, "should")
+  })
+```
+
+Default: `{}`
+
 ### <a name="input_policy_assignments_to_modify"></a> [policy\_assignments\_to\_modify](#input\_policy\_assignments\_to\_modify)
 
 Description: A map of policy assignment objects to modify the ALZ architecture with.  
