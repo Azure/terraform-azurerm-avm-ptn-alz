@@ -17,6 +17,13 @@ configuration:
         then:
           - addLabel:
               label: "Needs: Triage :mag:"
+          - addReply:
+              reply: |
+                > [!IMPORTANT]
+                > **The "Needs: Triage :mag:" label must be removed once the triage process is complete!**
+
+                > [!TIP]
+                > For additional guidance on how to triage this issue/PR, see the [Terraform Issue Triage](https://azure.github.io/Azure-Verified-Modules/help-support/issue-triage/terraform-issue-triage) documentation.
 
       - description: 'ITA09 - When #RR is used in an issue, add the "Needs: Author Feedback :ear:" label'
         if:
@@ -47,7 +54,7 @@ configuration:
               label: "Status: Won't Fix :broken_heart:"
           - closeIssue
 
-      - description: 'ITA11 - When a reply from anyone to an issue occurs, remove the "Needs: Author Feedback :ear:" label and label with "Needs: Attention :wave:"'
+      - description: 'ITA11 - When the author replies, remove the "Needs: Author Feedback :ear:" label and label with "Needs: Attention :wave:"'
         if:
           - or:
               - payloadType: Pull_Request_Review_Comment
@@ -57,9 +64,13 @@ configuration:
                 action: Closed
           - hasLabel:
               label: "Needs: Author Feedback :ear:"
+          - isActivitySender:
+              issueAuthor: true
         then:
           - removeLabel:
               label: "Needs: Author Feedback :ear:"
+          - removeLabel:
+              label: "Status: No Recent Activity :zzz:"
           - addLabel:
               label: "Needs: Attention :wave:"
 
@@ -89,12 +100,14 @@ configuration:
                   label: "Type: New Module Proposal :bulb:"
               - hasLabel:
                   label: "Type: Question/Feedback :raising_hand:"
+              - hasLabel:
+                  label: "Type: Security Bug :lock:"
           - isAssignedToSomeone
         then:
           - removeLabel:
               label: "Needs: Triage :mag:"
 
-      - description: 'ITA20 - If the type is feature request, add the "Type: Feature Request :heavy_plus_sign:" label on the issue'
+      - description: 'ITA20 - If the type is feature request, assign the "Type: Feature Request :heavy_plus_sign:" label on the issue'
         if:
           - payloadType: Issues
           - isAction:
@@ -111,7 +124,7 @@ configuration:
           - addLabel:
               label: "Type: Feature Request :heavy_plus_sign:"
 
-      - description: 'ITA21 - If the type is bug, add the "Type: Bug :bug:" label on the issue'
+      - description: 'ITA21 - If the type is bug, assign the "Type: Bug :bug:" label on the issue'
         if:
           - payloadType: Issues
           - isAction:
@@ -127,6 +140,23 @@ configuration:
         then:
           - addLabel:
               label: "Type: Bug :bug:"
+
+      - description: 'ITA22 - If the type is security bug, assign the "Type: Security Bug :lock:" label on the issue'
+        if:
+          - payloadType: Issues
+          - isAction:
+              action: Opened
+          - bodyContains:
+              pattern: |
+                ### Issue Type?
+
+                Security Bug
+          - not:
+              hasLabel:
+                label: "Type: Security Bug :lock:"
+        then:
+          - addLabel:
+              label: "Type: Security Bug :lock:"
 
       - description: 'ITA23 - Remove the "Status: In PR" label from an issue when it''s closed.'
         if:
