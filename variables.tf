@@ -432,18 +432,19 @@ DESCRIPTION
 
 variable "policy_exemptions" {
   type = map(object({
-    name                        = string
-    exemption_category          = string
-    exemption_scope             = string
-    assignment_key              = optional(string, null)
-    assignment_resource_id      = optional(string, null)
-    assignment_scope_validation = optional(string, "Default")
-    definition_reference_ids    = optional(set(string), null)
-    description                 = optional(string, null)
-    display_name                = optional(string, null)
-    expires_on                  = optional(string, null)
-    metadata                    = optional(any, null)
-    tags                        = optional(map(string), null)
+    name                            = string
+    exemption_category              = string
+    exemption_scope                 = optional(string, null)
+    exemption_management_group_name = optional(string, null)
+    assignment_key                  = optional(string, null)
+    assignment_resource_id          = optional(string, null)
+    assignment_scope_validation     = optional(string, "Default")
+    definition_reference_ids        = optional(set(string), null)
+    description                     = optional(string, null)
+    display_name                    = optional(string, null)
+    expires_on                      = optional(string, null)
+    metadata                        = optional(any, null)
+    tags                            = optional(map(string), null)
     resource_selectors = optional(list(object({
       name = string
       resource_selector_selectors = optional(list(object({
@@ -459,7 +460,8 @@ A map of policy exemptions to apply to the ALZ architecture. The key is arbitrar
 
 - `name` - (Required) The name of the policy exemption.
 - `exemption_category` - (Required) The category of the policy exemption. Possible values are `Waiver`, `Mitigated`.
-- `exemption_scope` - (Required) The scope of the policy exemption. The value must be a valid Azure resource id.
+- `exemption_scope` - (Optional) The scope of the policy exemption. The value must be a valid Azure resource id. Conflicts with `exemption_management_group_name`.
+- `exemption_management_group_name` - (Optional) The id of the management group to assign the policy exemption. Conflicts with `exemption_scope`.
 - `assignment_key` - (Optional) The map key of the resource to assign the policy exemption to, this is in the format of: `MgName/PolicyAssignmentName` and is case sensitive.
 - `assignment_resource_id` - (Optional) The id of the resource to assign the policy exemption to.
 - `assignment_scope_validation` - (Optional) The scope validation of the policy exemption. Possible values are `Default`, `DoNotValidate`.
@@ -479,7 +481,12 @@ DESCRIPTION
   nullable    = false
 
   validation {
-    error_message = "Name must be between 1-64 characters.and must not use `#<>%&:\\?/` or whitespace characters"
+    error_message = "One of exemption_scope or exemption_management_group_name must be set."
+    condition     = alltrue([for v in var.policy_exemptions : v.exemption_scope == null != v.exemption_management_group_name == null])
+  }
+
+  validation {
+    error_message = "Name must be between 1-64 characters and must not use `#<>%&:\\?/` or whitespace characters"
     condition     = alltrue([for v in var.policy_exemptions : can(regex("^[^#<>%&:\\?/\\s]{1,64}$", v.name))])
   }
   validation {
@@ -585,6 +592,15 @@ variable "retries" {
       multiplier           = optional(number, null)
       randomization_factor = optional(number, null)
     }), {})
+    policy_exemptions = optional(object({
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed", # Avoids a eventual consistency issue
+      ])
+      interval_seconds     = optional(number, null)
+      max_interval_seconds = optional(number, null)
+      multiplier           = optional(number, null)
+      randomization_factor = optional(number, null)
+    }), {})
     hierarchy_settings = optional(object({
       error_message_regex  = optional(list(string), null)
       interval_seconds     = optional(number, null)
@@ -681,6 +697,13 @@ variable "timeouts" {
       }), {}
     )
     policy_role_assignment = optional(object({
+      create = optional(string, "15m")
+      delete = optional(string, "5m")
+      update = optional(string, "5m")
+      read   = optional(string, "5m")
+      }), {}
+    )
+    policy_exemption = optional(object({
       create = optional(string, "15m")
       delete = optional(string, "5m")
       update = optional(string, "5m")

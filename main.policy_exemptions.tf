@@ -25,7 +25,16 @@ resource "azapi_resource" "policy_exemptions" {
       ]
     }
   }
-  name      = each.value.name
-  parent_id = each.value.exemption_scope
-  tags      = each.value.tags
+  depends_on = [azapi_resource.policy_assignments]
+  name       = each.value.name
+  parent_id  = coalesce(lookup(local.management_group_key_to_resource_id, each.value.exemption_management_group_name, null), each.value.exemption_scope)
+  tags       = each.value.tags
+  retry      = var.retries.policy_exemptions
+
+  timeouts {
+    create = var.timeouts.policy_exemption.create
+    delete = var.timeouts.policy_exemption.delete
+    read   = var.timeouts.policy_exemption.read
+    update = var.timeouts.policy_exemption.update
+  }
 }
