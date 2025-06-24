@@ -264,6 +264,10 @@ variable "override_policy_definition_parameter_assign_permissions_set" {
       "parameter_name"  = "privateDnsZoneId"
     },
     {
+      "definition_name" = "ee40564d-486e-4f68-a5ca-7a621edae0fb",
+      "parameter_name"  = "secondPrivateDnsZoneId"
+    },
+    {
       "definition_name" = "ef9fe2ce-a588-4edd-829c-6247069dcfdb",
       "parameter_name"  = "dcrResourceId"
     },
