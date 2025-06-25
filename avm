@@ -11,6 +11,8 @@ if [ ! "$(command -v "$CONTAINER_RUNTIME")" ]; then
     exit 1
 fi
 
+AVM_IMAGE=${AVM_IMAGE:-mcr.microsoft.com/azterraform}
+
 if [ -z "$1" ]; then
     echo "Error: Please provide a make target. See https://github.com/Azure/tfmod-scaffold/blob/main/avmmakefile for available targets."
     echo
@@ -26,7 +28,7 @@ fi
 # Check if we are running in a container
 # If we are then just run make directly
 if [ -z "$AVM_IN_CONTAINER" ]; then
-  $CONTAINER_RUNTIME run --pull always --user "$(id -u):$(id -g)" --rm -v "$(pwd)":/src -w /src -v $AZURE_CONFIG_DIR:/azureconfig -e AZURE_CONFIG_DIR=/azureconfig -e GITHUB_TOKEN -e GITHUB_REPOSITORY -e ARM_SUBSCRIPTION_ID -e ARM_TENANT_ID -e ARM_CLIENT_ID -e GITHUB_REPOSITORY_OWNER mcr.microsoft.com/azterraform make "$1"
+  $CONTAINER_RUNTIME run --pull always --user "$(id -u):$(id -g)" --rm -v "$(pwd)":/src -w /src -v $AZURE_CONFIG_DIR:/azureconfig -e AZURE_CONFIG_DIR=/azureconfig -e GITHUB_TOKEN -e GITHUB_REPOSITORY -e ARM_SUBSCRIPTION_ID -e ARM_TENANT_ID -e ARM_CLIENT_ID -e GITHUB_REPOSITORY_OWNER $AVM_IMAGE make "$1"
 else
   make "$1"
 fi
