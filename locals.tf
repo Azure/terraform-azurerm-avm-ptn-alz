@@ -106,3 +106,15 @@ locals {
     for k, v in azapi_resource.policy_assignments : k => try(v.identity[0], null)
   }
 }
+
+locals {
+  management_group_key_to_resource_id = { for k, v in merge(
+    azapi_resource.management_groups_level_0,
+    azapi_resource.management_groups_level_1,
+    azapi_resource.management_groups_level_2,
+    azapi_resource.management_groups_level_3,
+    azapi_resource.management_groups_level_4,
+    azapi_resource.management_groups_level_5,
+    azapi_resource.management_groups_level_6,
+  ) : k => v.id }
+}
