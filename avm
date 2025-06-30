@@ -6,6 +6,19 @@ usage () {
   echo "Usage: avm <make target>"
 }
 
+# We need to do this because bash doesn't like it when a script is updated in place.
+if [ -z ${AVM_SCRIPT_FORKED} ]; then
+  # If AVM_SCRIPT_FORKED is not set, we are running the script from the original repository
+  # Set AVM_SCRIPT_FORKED to true to avoid running this block again
+  export AVM_SCRIPT_FORKED=true
+
+  # Make a copy of this script in the current directory
+  # and run that copy.
+  cp "$0" .avm
+  chmod +x .avm
+  exec ./.avm "$@"
+fi
+
 # Default values for environment variables
 CONTAINER_RUNTIME=${CONTAINER_RUNTIME:-"docker"}
 CONTAINER_IMAGE=${CONTAINER_IMAGE:-"mcr.microsoft.com/azterraform:avm-latest"}
@@ -78,5 +91,5 @@ if [ -z "${AVM_IN_CONTAINER}" ]; then
     AVM_PORCH_REF="${AVM_PORCH_REF}" \
     "$1"
 else
-  make TUI="${TUI}" AVM_MAKEFILE_REF="${AVM_MAKEFILE_REF}" "${PORCH_BASE_URL_MAKE_ADD}" AVM_PORCH_REF="${AVM_PORCH_REF}" "$1"
+  make TUI="${TUI}" AVM_MAKEFILE_REF="${AVM_MAKEFILE_REF}" ${PORCH_BASE_URL_MAKE_ADD} AVM_PORCH_REF="${AVM_PORCH_REF}" "$1"
 fi
