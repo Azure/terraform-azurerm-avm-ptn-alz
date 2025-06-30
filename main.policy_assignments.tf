@@ -30,7 +30,10 @@ resource "azapi_resource" "policy_assignments" {
       resourceSelectors     = lookup(each.value.assignment.properties, "resourceSelectors", null)
     }
   }
+  create_headers          = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers          = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   ignore_missing_property = true
+  read_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     lookup(each.value.assignment.properties, "policyDefinitionId", null),
     var.location,
@@ -42,6 +45,7 @@ resource "azapi_resource" "policy_assignments" {
     multiplier           = lookup(var.retries.policy_assignments, "multiplier", null)
     randomization_factor = lookup(var.retries.policy_assignments, "randomization_factor", null)
   } : null
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   dynamic "identity" {
     for_each = lookup(each.value.assignment, "identity", null) != null ? [each.value.assignment.identity] : []

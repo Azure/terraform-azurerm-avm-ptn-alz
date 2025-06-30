@@ -1,0 +1,19 @@
+{
+  "image": " mcr.microsoft.com/public/azterraform:avm-latest",
+  "updateRemoteUserUID": true,
+  "containerUser": "1000",
+  "runArgs": [],
+  "mounts": [],
+  "onCreateCommand": "terraform || true",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terraform.languageServer.terraform.path": "/home/runtimeuser/tfenv/bin/terraform"
+      },
+      "extensions": [
+        "EditorConfig.EditorConfig",
+        "hashicorp.terraform"
+      ]
+    }
+  }
+}

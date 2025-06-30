@@ -25,10 +25,13 @@ module "avm_interfaces" {
 resource "azapi_resource" "management_group_role_assignments" {
   for_each = module.avm_interfaces
 
-  name      = each.value.role_assignments_azapi.this.name
-  parent_id = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_role_assignments[each.key].management_group_name])
-  type      = each.value.role_assignments_azapi.this.type
-  body      = each.value.role_assignments_azapi.this.body
+  name           = each.value.role_assignments_azapi.this.name
+  parent_id      = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_role_assignments[each.key].management_group_name])
+  type           = each.value.role_assignments_azapi.this.type
+  body           = each.value.role_assignments_azapi.this.body
+  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   retry = {
     error_message_regex  = var.retries.role_assignments.error_message_regex
     interval_seconds     = var.retries.role_assignments.interval_seconds
@@ -36,6 +39,7 @@ resource "azapi_resource" "management_group_role_assignments" {
     multiplier           = var.retries.role_assignments.multiplier
     randomization_factor = var.retries.role_assignments.randomization_factor
   }
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.role_assignment.create
