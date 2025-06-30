@@ -50,3 +50,4 @@ avm.tflint_module.merged.hcl
 
 *.tfrc
 examples/*/policy
+*.mptfbackup
