@@ -1,12 +1,27 @@
 #!/usr/bin/env sh
 
+# Create a temporary copy of this script to avoid self-modification issues
+if [ -z "$AVM_FORKED" ]; then
+  # Create temporary directory and file
+    TEMP_DIR=$(mktemp -d)
+    TEMP_FILE="$TEMP_DIR/avm_$(date +%s)_$RANDOM"
+    # Copy the current script to the temporary file
+    cp "$0" "$TEMP_FILE"
+    chmod +x "$TEMP_FILE"
+
+    export AVM_FORKED=1
+    # Use exec to fork to a new process and not return to the script
+    exec "$TEMP_FILE" "$@"
+fi
+
 usage () {
   echo "Usage: avm <make target>"
 }
 
 CONTAINER_RUNTIME=${CONTAINER_RUNTIME:-docker}
 
-if [ ! "$(command -v "$CONTAINER_RUNTIME")" ]; then
+
+if [ ! "$(command -v "$CONTAINER_RUNTIME")" ] && [ -z "$AVM_IN_CONTAINER" ]; then
     echo "Error: $CONTAINER_RUNTIME is not installed. Please install $CONTAINER_RUNTIME first."
     exit 1
 fi
@@ -20,6 +35,13 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+# Set pull option based on AVM_NO_CONTAINER_PULL
+if [ -z "$AVM_NO_CONTAINER_PULL" ]; then
+  PULL_OPTION="--pull always"
+else
+  PULL_OPTION=""
+fi
+
 # Check if AZURE_CONFIG_DIR is set, if not, set it to ~/.azure
 if [ -z "$AZURE_CONFIG_DIR" ]; then
   AZURE_CONFIG_DIR="$HOME/.azure"
@@ -28,7 +50,7 @@ fi
 # Check if we are running in a container
 # If we are then just run make directly
 if [ -z "$AVM_IN_CONTAINER" ]; then
-  $CONTAINER_RUNTIME run --pull always --user "$(id -u):$(id -g)" --rm -v "$(pwd)":/src -w /src -v $AZURE_CONFIG_DIR:/azureconfig -e AZURE_CONFIG_DIR=/azureconfig -e GITHUB_TOKEN -e GITHUB_REPOSITORY -e ARM_SUBSCRIPTION_ID -e ARM_TENANT_ID -e ARM_CLIENT_ID -e GITHUB_REPOSITORY_OWNER $AVM_IMAGE make "$1"
+  $CONTAINER_RUNTIME run $PULL_OPTION --user "$(id -u):$(id -g)" --rm -v "$(pwd)":/src -w /src -v $AZURE_CONFIG_DIR:/azureconfig -e AZURE_CONFIG_DIR=/azureconfig -e GITHUB_TOKEN -e GITHUB_REPOSITORY -e ARM_SUBSCRIPTION_ID -e ARM_TENANT_ID -e ARM_CLIENT_ID -e GITHUB_REPOSITORY_OWNER $AVM_IMAGE make "$1"
 else
   make "$1"
 fi
