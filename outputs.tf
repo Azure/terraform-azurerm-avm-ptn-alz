@@ -1,14 +1,6 @@
 output "management_group_resource_ids" {
   description = "A map of management group names to their resource ids."
-  value = { for k, v in merge(
-    azapi_resource.management_groups_level_0,
-    azapi_resource.management_groups_level_1,
-    azapi_resource.management_groups_level_2,
-    azapi_resource.management_groups_level_3,
-    azapi_resource.management_groups_level_4,
-    azapi_resource.management_groups_level_5,
-    azapi_resource.management_groups_level_6,
-  ) : k => v.id }
+  value       = local.management_group_key_to_resource_id
 }
 
 output "policy_assignment_identity_ids" {
