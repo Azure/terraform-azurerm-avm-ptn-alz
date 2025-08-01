@@ -44,7 +44,7 @@ locals {
 locals {
   policy_assignment_non_compliance_messages = {
     for k, v in local.policy_assignments : k => [
-      for non_compliance_message in try(v.assignment.properties.nonComplianceMessages, !contains(var.policy_assignment_non_compliance_message_settings.fallback_message_unsupported_assignments, v.assignment.properties.name) ? local.policy_assignment_non_compliance_messages_default : []) : try(non_compliance_message.policyDefinitionReferenceId, null) == null ? {
+      for non_compliance_message in try(v.assignment.properties.nonComplianceMessages, !contains(var.policy_assignment_non_compliance_message_settings.fallback_message_unsupported_assignments, v.assignment.name) ? local.policy_assignment_non_compliance_messages_default : []) : try(non_compliance_message.policyDefinitionReferenceId, null) == null ? {
         message = replace(non_compliance_message.message, var.policy_assignment_non_compliance_message_settings.enforcement_mode_placeholder, (lookup(v.assignment.properties, "enforcementMode", "Default") == "Default" ? var.policy_assignment_non_compliance_message_settings.enforced_replacement : var.policy_assignment_non_compliance_message_settings.not_enforced_replacement))
         } : {
         policyDefinitionReferenceId = non_compliance_message.policyDefinitionReferenceId
