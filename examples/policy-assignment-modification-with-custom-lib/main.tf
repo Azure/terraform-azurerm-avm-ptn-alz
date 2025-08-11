@@ -70,6 +70,8 @@ module "alz" {
         Update-Ring1 = {
           parameters = {
             maintenanceConfigurationResourceId = jsonencode({ value = local.maintenance_configuration_resource_id })
+            tagValues                          = jsonencode({ value = [{ key = "Update Manager Policy", value = "Ring1" }] })
+            effect                             = jsonencode({ value = "DeployIfNotExists" })
           }
           identity     = "UserAssigned"
           identity_ids = [local.user_assigned_identity_resource_id]
