@@ -52,9 +52,9 @@ resource "azurerm_user_assigned_identity" "this" {
 locals {
   location                              = "swedencentral"
   maintenance_configuration_name        = "ring1"
-  user_assigned_identity_name           = "uami-policy"
   maintenance_configuration_resource_id = provider::azapi::resource_group_resource_id(data.azurerm_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Maintenance/maintenanceConfigurations", [local.maintenance_configuration_name])
   resource_group_name                   = "rg-update-manager"
+  user_assigned_identity_name           = "uami-policy"
   user_assigned_identity_resource_id    = provider::azapi::resource_group_resource_id(data.azurerm_client_config.current.subscription_id, local.resource_group_name, "Microsoft.ManagedIdentity/userAssignedIdentities", [local.user_assigned_identity_name])
 }
 
