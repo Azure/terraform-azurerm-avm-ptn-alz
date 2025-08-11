@@ -74,11 +74,6 @@ module "alz" {
           identity     = "UserAssigned"
           identity_ids = [local.user_assigned_identity_resource_id]
         }
-        Enforce-Encryption-CMK = {
-          parameters = {
-
-          }
-        }
       }
     }
   }
