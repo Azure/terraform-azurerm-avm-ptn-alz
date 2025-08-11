@@ -2,8 +2,8 @@
 provider "alz" {
   library_references = [
     {
-      path = "platform/alz",
-      ref  = "2024.10.1"
+      "path" : "platform/alz",
+      "ref" : "2025.02.0"
     },
     {
       custom_url = "${path.root}/lib"
@@ -73,6 +73,11 @@ module "alz" {
           }
           identity     = "UserAssigned"
           identity_ids = [local.user_assigned_identity_resource_id]
+        }
+        Enforce-Encryption-CMK = {
+          parameters = {
+
+          }
         }
       }
     }

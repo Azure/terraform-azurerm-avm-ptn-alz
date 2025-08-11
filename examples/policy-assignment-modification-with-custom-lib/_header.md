@@ -7,3 +7,5 @@ This example demonstrates some common patterns:
 - Modification of a policy assignment to supply new parameters to an assigned policy
 
 Thanks to [@phx-tim-butters](https://github.com/phx-tim-butters) for this example!
+
+Make sure to run the `pre.sh` script before running this example.

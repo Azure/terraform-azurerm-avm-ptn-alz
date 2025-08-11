@@ -10,13 +10,15 @@ This example demonstrates some common patterns:
 
 Thanks to [@phx-tim-butters](https://github.com/phx-tim-butters) for this example!
 
+Make sure to run the `pre.sh` script before running this example.
+
 ```hcl
 # Include the additional policies and override archetypes
 provider "alz" {
   library_references = [
     {
-      path = "platform/alz",
-      ref  = "2024.10.1"
+      "path" : "platform/alz",
+      "ref" : "2025.02.0"
     },
     {
       custom_url = "${path.root}/lib"
@@ -87,6 +89,11 @@ module "alz" {
           identity     = "UserAssigned"
           identity_ids = [local.user_assigned_identity_resource_id]
         }
+        Enforce-Encryption-CMK = {
+          parameters = {
+
+          }
+        }
       }
     }
   }
@@ -98,11 +105,11 @@ module "alz" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.16)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.17, >= 0.17.4)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.2)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
