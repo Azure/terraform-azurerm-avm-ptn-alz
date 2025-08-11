@@ -1,8 +1,5 @@
 {
   "apiVersion": "2019-09-01",
-  "identity": {
-    "type": "SystemAssigned"
-  },
   "location": "${default_location}",
   "name": "Update-Ring1",
   "properties": {

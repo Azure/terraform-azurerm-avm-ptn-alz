@@ -78,7 +78,7 @@ module "alz" {
   location           = local.location
   parent_resource_id = data.azurerm_client_config.current.tenant_id
   policy_assignments_to_modify = {
-    myroot = {
+    "${var.prefix}myroot" = {
       policy_assignments = {
         Update-Ring1 = {
           parameters = {
@@ -122,7 +122,15 @@ No required inputs.
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_prefix"></a> [prefix](#input\_prefix)
+
+Description: Management group prefix
+
+Type: `string`
+
+Default: `""`
 
 ## Outputs
 
