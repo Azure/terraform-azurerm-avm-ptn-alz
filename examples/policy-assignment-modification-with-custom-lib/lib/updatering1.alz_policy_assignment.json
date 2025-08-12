@@ -12,6 +12,7 @@
       }
     ],
     "notScopes": [],
+    "parameters": {},
     "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ba0df93e-e4ac-479a-aac2-134bbae39a1a",
     "scope": "${current_scope_resource_id}"
   },
