@@ -77,7 +77,7 @@ locals {
       principal_id       = lookup(local.policy_assignment_identities, "${pra.management_group_id}/${pra.policy_assignment_name}", { principal_id = null }).principal_id
       role_definition_id = startswith(lower(pra.scope), "/subscriptions") ? "/subscriptions/${split("/", pra.scope)[2]}${pra.role_definition_id}" : pra.role_definition_id
       scope              = pra.scope
-    } if (
+      } if(
       !strcontains(pra.scope, "00000000-0000-0000-0000-000000000000") &&
       (
         !strcontains(pra.scope, "/providers/Microsoft.Network/privateDnsZones/") ||
@@ -89,16 +89,16 @@ locals {
 }
 
 locals {
-  dependency_dns_zone_resource_ids = flatten([
-    for dep in try(var.dependencies.policy_assignments, []) : 
-      dep != null && can(keys(dep)) ? flatten([
-        for hub_key, hub_zones in dep : [
-          for zone_name, resource_id in can(keys(hub_zones)) ? hub_zones : {} : resource_id
-          if strcontains(resource_id, "/providers/Microsoft.Network/privateDnsZones/")
-        ]
-      ]) : []
-  ])
   allowed_dns_zone_scopes = toset(local.dependency_dns_zone_resource_ids)
+  dependency_dns_zone_resource_ids = flatten([
+    for dep in try(var.dependencies.policy_assignments, []) :
+    dep != null && can(keys(dep)) ? flatten([
+      for hub_key, hub_zones in dep : [
+        for zone_name, resource_id in can(keys(hub_zones)) ? hub_zones : {} : resource_id
+        if strcontains(resource_id, "/providers/Microsoft.Network/privateDnsZones/")
+      ]
+    ]) : []
+  ])
 }
 
 

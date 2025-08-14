@@ -57,7 +57,7 @@ When using the ALZ connectivity pattern module, you can control which private DN
 module "alz_identity" {
   source = "Azure/avm-ptn-alz/azurerm"
   # ... other configuration ...
-  
+
   dependencies = {
     policy_assignments = [
       module.alz_connectivity.private_dns_zone_resource_ids,
