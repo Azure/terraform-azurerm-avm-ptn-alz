@@ -80,7 +80,7 @@ module "alz" {
   location           = local.location
   parent_resource_id = data.azurerm_client_config.current.tenant_id
   policy_assignments_to_modify = {
-    "${var.prefix}myroot" = {
+    "${var.prefix}" = {
       policy_assignments = {
         Update-Ring1 = {
           parameters = {
