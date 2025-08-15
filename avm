@@ -2,6 +2,20 @@
 
 set -e
 
+# Create a temporary copy of this script to avoid self-modification issues
+if [ -z "$AVM_FORKED" ]; then
+  # Create temporary directory and file
+    TEMP_DIR=$(mktemp -d)
+    TEMP_FILE="$TEMP_DIR/avm_$(date +%s)_$RANDOM"
+    # Copy the current script to the temporary file
+    cp "$0" "$TEMP_FILE"
+    chmod +x "$TEMP_FILE"
+
+    export AVM_FORKED=1
+    # Use exec to fork to a new process and not return to the script
+    exec "$TEMP_FILE" "$@"
+fi
+
 usage () {
   echo "Usage: avm <make target>"
 }
@@ -36,6 +50,13 @@ if [ -z "$1" ]; then
     echo
     usage
     exit 1
+fi
+
+# Set pull option based on AVM_NO_CONTAINER_PULL
+if [ -z "$AVM_NO_CONTAINER_PULL" ]; then
+  PULL_OPTION="--pull always"
+else
+  PULL_OPTION=""
 fi
 
 # Check if AZURE_CONFIG_DIR is set, if not, set it to ~/.azure
