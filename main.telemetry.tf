@@ -21,5 +21,38 @@ resource "modtm_telemetry" "telemetry" {
     module_source   = one(data.modtm_module_source.telemetry).module_source
     module_version  = one(data.modtm_module_source.telemetry).module_version
     random_id       = one(random_uuid.telemetry).result
-  }, { location = var.location })
+  }, { location = local.main_location })
 }
+locals {
+  # tflint-ignore: terraform_unused_declarations
+  avm_azapi_header = join(" ", [for k, v in local.avm_azapi_headers : "${k}=${v}"])
+}
+locals {
+  valid_module_source_regex = [
+    "registry.terraform.io/[A|a]zure/.+",
+    "registry.opentofu.io/[A|a]zure/.+",
+    "git::https://github\\.com/[A|a]zure/.+",
+    "git::ssh:://git@github\\.com/[A|a]zure/.+",
+  ]
+}
+
+locals {
+  avm_azapi_headers = !var.enable_telemetry ? {} : (local.fork_avm ? {
+    fork_avm  = "true"
+    random_id = one(random_uuid.telemetry).result
+    } : {
+    avm                = "true"
+    random_id          = one(random_uuid.telemetry).result
+    avm_module_source  = one(data.modtm_module_source.telemetry).module_source
+    avm_module_version = one(data.modtm_module_source.telemetry).module_version
+  })
+}
+
+locals {
+  fork_avm = !anytrue([for r in local.valid_module_source_regex : can(regex(r, one(data.modtm_module_source.telemetry).module_source))])
+}
+
+locals {
+  main_location = var.location
+}
+
