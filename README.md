@@ -661,12 +661,12 @@ Type:
 
 ```hcl
 object({
-    "policy_assignment"     = optional(string, "2024-04-01")
-    "policy_definition"     = optional(string, "2023-04-01")
-    "policy_set_definition" = optional(string, "2023-04-01")
-    "role_assignment"       = optional(string, "2022-04-01")
-    "role_definition"       = optional(string, "2022-04-01")
-    "management_group"      = optional(string, "2023-04-01")
+    policy_assignment     = optional(string, "2024-04-01")
+    policy_definition     = optional(string, "2023-04-01")
+    policy_set_definition = optional(string, "2023-04-01")
+    role_assignment       = optional(string, "2022-04-01")
+    role_definition       = optional(string, "2022-04-01")
+    management_group      = optional(string, "2023-04-01")
   })
 ```
 
