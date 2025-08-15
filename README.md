@@ -51,6 +51,26 @@ This variable is used as a workaround for the lack of support for `depends_on` i
 Place values into this variable to ensure that policies and policy role assignments do not get created until dependent resources are available.
 See the variable documentation and the examples (private DNS and management) for more information.
 
+#### Private DNS Zone Policy Role Assignment Filtering
+
+When using the ALZ connectivity pattern module, you can control which private DNS zone policy role assignments are created by passing the connectivity module's DNS zone resource IDs through the dependencies variable:
+
+```terraform
+module "alz_identity" {
+  source = "Azure/avm-ptn-alz/azurerm"
+  # ... other configuration ...
+
+  dependencies = {
+    policy_assignments = [
+      module.alz_connectivity.private_dns_zone_resource_ids,
+      # ... other dependencies
+    ]
+  }
+}
+```
+
+This ensures that policy role assignments are only created for DNS zones that actually exist in your connectivity module, preventing errors when trying to assign roles to non-existent resources.
+
 ### Using Provider Functions
 
 Either: Use known values as inputs, or use Terraform Stacks.
