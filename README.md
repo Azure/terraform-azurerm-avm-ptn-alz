@@ -651,6 +651,27 @@ Type: `map(string)`
 
 Default: `null`
 
+### <a name="input_resource_api_versions"></a> [resource\_api\_versions](#input\_resource\_api\_versions)
+
+Description: EXPERIMENTAL: Modify this to change the API versions used for each resource type. Added to support clouds with different API versions, e.g. US Government.
+
+Modifying these values may result in unexpected behavior or compatibility issues, which we cannot test for. Please do not raise issues against this module if you change these values.
+
+Type:
+
+```hcl
+object({
+    "policy_assignment"     = optional(string, "2024-04-01")
+    "policy_definition"     = optional(string, "2023-04-01")
+    "policy_set_definition" = optional(string, "2023-04-01")
+    "role_assignment"       = optional(string, "2022-04-01")
+    "role_definition"       = optional(string, "2022-04-01")
+    "management_group"      = optional(string, "2023-04-01")
+  })
+```
+
+Default: `{}`
+
 ### <a name="input_retries"></a> [retries](#input\_retries)
 
 Description: The retry settings to apply to the CRUD operations. Value is a nested object, the top level keys are the resources and the values are an object with the following attributes:

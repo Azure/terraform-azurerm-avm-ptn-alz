@@ -3,7 +3,7 @@ resource "azapi_resource" "role_definitions" {
 
   name      = each.value.role_definition.name
   parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
-  type      = "Microsoft.Authorization/roleDefinitions@2022-04-01"
+  type      = "Microsoft.Authorization/roleDefinitions@${var.resource_api_versions.role_definition}"
   body = {
     properties = {
       assignableScopes = each.value.role_definition.properties.assignableScopes

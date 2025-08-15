@@ -617,3 +617,21 @@ The object has attributes for each resource type, with the following optional at
 Each time duration is parsed using this function: <https://pkg.go.dev/time#ParseDuration>.
 DESCRIPTION
 }
+
+variable "resource_api_versions" {
+  type = object({
+    "policy_assignment"     = optional(string, "2024-04-01")
+    "policy_definition"     = optional(string, "2023-04-01")
+    "policy_set_definition" = optional(string, "2023-04-01")
+    "role_assignment"       = optional(string, "2022-04-01")
+    "role_definition"       = optional(string, "2022-04-01")
+    "management_group"      = optional(string, "2023-04-01")
+  })
+  default     = {}
+  description = <<DESCRIPTION
+EXPERIMENTAL: Modify this to change the API versions used for each resource type. Added to support clouds with different API versions, e.g. US Government.
+
+Modifying these values may result in unexpected behavior or compatibility issues, which we cannot test for. Please do not raise issues against this module if you change these values.
+DESCRIPTION
+  nullable    = false
+}
