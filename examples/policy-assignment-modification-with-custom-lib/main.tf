@@ -9,6 +9,7 @@ provider "alz" {
       custom_url = "${path.root}/lib"
     }
   ]
+  library_overwrite_enabled = true
 }
 
 # This allows us to get the tenant id

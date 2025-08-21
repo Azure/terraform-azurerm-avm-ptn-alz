@@ -11,7 +11,7 @@
     "enforcementMode": "Default",
     "nonComplianceMessages": [
       {
-        "message": "Azure Update Manager Update not applied"
+        "message": "Azure Update Manager Update {enforcementMode} not applied"
       }
     ],
     "notScopes": [],
