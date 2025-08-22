@@ -9,3 +9,10 @@ resource "local_file" "architecture_definition" {
     prefix = var.prefix
   })
 }
+
+resource "local_file" "parent_tfvars" {
+  filename = "${path.root}/../pre.auto.tfvars"
+  content  = <<CONTENT
+prefix = "${var.prefix}"
+CONTENT
+}
