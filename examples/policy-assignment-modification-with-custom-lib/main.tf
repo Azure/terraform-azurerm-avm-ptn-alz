@@ -64,6 +64,12 @@ module "alz" {
   architecture_name  = "custom"
   location           = local.location
   parent_resource_id = data.azurerm_client_config.current.tenant_id
+  dependencies = {
+    policy_assignments = [
+      azurerm_user_assigned_identity.this.id
+    ]
+  }
+  enable_telemetry = var.enable_telemetry
   policy_assignments_to_modify = {
     (var.prefix) = {
       policy_assignments = {

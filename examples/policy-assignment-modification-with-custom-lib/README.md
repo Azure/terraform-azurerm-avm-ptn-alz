@@ -79,6 +79,12 @@ module "alz" {
   architecture_name  = "custom"
   location           = local.location
   parent_resource_id = data.azurerm_client_config.current.tenant_id
+  dependencies = {
+    policy_assignments = [
+      azurerm_user_assigned_identity.this.id
+    ]
+  }
+  enable_telemetry = var.enable_telemetry
   policy_assignments_to_modify = {
     (var.prefix) = {
       policy_assignments = {
@@ -127,6 +133,14 @@ No required inputs.
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: Enable telemetry for the module.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_prefix"></a> [prefix](#input\_prefix)
 

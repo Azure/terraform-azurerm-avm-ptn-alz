@@ -74,11 +74,17 @@ locals {
 locals {
   policy_role_assignments = data.alz_architecture.this.policy_role_assignments != null ? {
     for pra in data.alz_architecture.this.policy_role_assignments : uuidv5("url", "${pra.policy_assignment_name}${pra.scope}${pra.management_group_id}${pra.role_definition_id}") => {
-      principal_id       = lookup(local.policy_assignment_identities, "${pra.management_group_id}/${pra.policy_assignment_name}", { principal_id = null }).principal_id
+      principal_id       = lookup(local.policy_assignment_identities, "${pra.management_group_id}/${pra.policy_assignment_name}", tostring(null))
       role_definition_id = startswith(lower(pra.scope), "/subscriptions") ? "/subscriptions/${split("/", pra.scope)[2]}${pra.role_definition_id}" : pra.role_definition_id
       scope              = pra.scope
     } if !strcontains(pra.scope, "00000000-0000-0000-0000-000000000000")
   } : {}
+}
+
+locals {
+  policy_assignments_user_assigned_identity = {
+    for k, v in local.policy_assignments : k => keys(v.assignment.identity.userAssignedIdentities) if can(v.assignment.identity.userAssignedIdentities) && length(v.assignment.identity.userAssignedIdentities) > 0
+  }
 }
 
 locals {
@@ -103,6 +109,6 @@ locals {
 
 locals {
   policy_assignment_identities = {
-    for k, v in azapi_resource.policy_assignments : k => try(v.identity[0], null)
+    for k, v in azapi_resource.policy_assignments : k => contains(keys(data.azapi_resource.policy_user_assigned_identities), k) ? data.azapi_resource.policy_user_assigned_identities[k].output.properties.principalId : try(v.identity[0].principal_id, tostring(null))
   }
 }
