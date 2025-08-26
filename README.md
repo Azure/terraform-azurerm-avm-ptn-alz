@@ -143,6 +143,7 @@ The following resources are used by this module:
 - [alz_metadata.telemetry](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/metadata) (data source)
 - [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
+- [azapi_resource.policy_user_assigned_identities](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/resource) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->

@@ -2,6 +2,21 @@ resource "terraform_data" "policy_role_assignments_dependencies" {
   input = sha256(jsonencode(var.dependencies.policy_role_assignments))
 }
 
+data "azapi_resource" "policy_user_assigned_identities" {
+  for_each = local.policy_assignments_user_assigned_identity
+
+  resource_id = each.value[0]
+  type        = "Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31"
+  response_export_values = [
+    "properties.principalId",
+  ]
+
+  depends_on = [
+    terraform_data.policy_role_assignments_dependencies,
+    terraform_data.policy_assignments_dependencies,
+  ]
+}
+
 resource "azapi_resource" "policy_role_assignments" {
   for_each = local.policy_role_assignments
 

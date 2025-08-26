@@ -5,8 +5,9 @@ variable "enable_telemetry" {
   nullable    = false
 }
 
-variable "random_suffix" {
+variable "prefix" {
   type        = string
-  default     = "fgcsnm"
-  description = "Change me to something unique"
+  default     = ""
+  description = "Management group prefix"
+  nullable    = false
 }

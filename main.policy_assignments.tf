@@ -52,7 +52,7 @@ resource "azapi_resource" "policy_assignments" {
 
     content {
       type         = identity.value.type
-      identity_ids = lookup(identity.value, "identity_ids", null)
+      identity_ids = keys(lookup(identity.value, "userAssignedIdentities", {}))
     }
   }
   timeouts {

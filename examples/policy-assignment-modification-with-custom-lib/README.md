@@ -10,13 +10,15 @@ This example demonstrates some common patterns:
 
 Thanks to [@phx-tim-butters](https://github.com/phx-tim-butters) for this example!
 
+Make sure to run the `pre.sh` script before running this example.
+
 ```hcl
 # Include the additional policies and override archetypes
 provider "alz" {
   library_references = [
     {
-      path = "platform/alz",
-      ref  = "2024.10.1"
+      "path" : "platform/alz",
+      "ref" : "2025.02.0"
     },
     {
       custom_url = "${path.root}/lib"
@@ -27,15 +29,15 @@ provider "alz" {
 # This allows us to get the tenant id
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_resource_group" "update_manager" {
+resource "azurerm_resource_group" "this" {
   location = local.location
-  name     = local.update_manager_rg_name
+  name     = local.resource_group_name
 }
 
 resource "azurerm_maintenance_configuration" "this" {
-  location                 = azurerm_resource_group.update_manager.location
+  location                 = azurerm_resource_group.this.location
   name                     = local.maintenance_configuration_name
-  resource_group_name      = azurerm_resource_group.update_manager.name
+  resource_group_name      = azurerm_resource_group.this.name
   scope                    = "InGuestPatch"
   in_guest_user_patch_mode = "User"
 
@@ -54,13 +56,21 @@ resource "azurerm_maintenance_configuration" "this" {
   }
 }
 
+resource "azurerm_user_assigned_identity" "this" {
+  location            = azurerm_resource_group.this.location
+  name                = local.user_assigned_identity_name
+  resource_group_name = azurerm_resource_group.this.name
+}
+
 # The provider shouldn't have any unknown values passed in, or it will mark
 # all resources as needing replacement.
 locals {
   location                              = "swedencentral"
   maintenance_configuration_name        = "ring1"
-  maintenance_configuration_resource_id = provider::azapi::resource_group_resource_id(data.azurerm_client_config.current.subscription_id, local.update_manager_rg_name, "Microsoft.Maintenance/maintenanceConfigurations", [local.maintenance_configuration_name])
-  update_manager_rg_name                = "rg-update-manager"
+  maintenance_configuration_resource_id = provider::azapi::resource_group_resource_id(data.azurerm_client_config.current.subscription_id, local.resource_group_name, "Microsoft.Maintenance/maintenanceConfigurations", [local.maintenance_configuration_name])
+  resource_group_name                   = "rg-update-manager"
+  user_assigned_identity_name           = "uami-policy"
+  user_assigned_identity_resource_id    = provider::azapi::resource_group_resource_id(data.azurerm_client_config.current.subscription_id, local.resource_group_name, "Microsoft.ManagedIdentity/userAssignedIdentities", [local.user_assigned_identity_name])
 }
 
 module "alz" {
@@ -69,13 +79,23 @@ module "alz" {
   architecture_name  = "custom"
   location           = local.location
   parent_resource_id = data.azurerm_client_config.current.tenant_id
+  dependencies = {
+    policy_assignments = [
+      azurerm_user_assigned_identity.this.id
+    ]
+  }
+  enable_telemetry = var.enable_telemetry
   policy_assignments_to_modify = {
-    myroot = {
+    (var.prefix) = {
       policy_assignments = {
         Update-Ring1 = {
           parameters = {
             maintenanceConfigurationResourceId = jsonencode({ value = local.maintenance_configuration_resource_id })
+            tagValues                          = jsonencode({ value = [{ key = "Update Manager Policy", value = "Ring1" }] })
+            effect                             = jsonencode({ value = "DeployIfNotExists" })
           }
+          identity     = "UserAssigned"
+          identity_ids = [local.user_assigned_identity_resource_id]
         }
       }
     }
@@ -88,11 +108,11 @@ module "alz" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.16)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.17, >= 0.17.4)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.2)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
@@ -101,7 +121,8 @@ The following requirements are needed by this module:
 The following resources are used by this module:
 
 - [azurerm_maintenance_configuration.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/maintenance_configuration) (resource)
-- [azurerm_resource_group.update_manager](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
+- [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
+- [azurerm_user_assigned_identity.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) (resource)
 - [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -111,7 +132,23 @@ No required inputs.
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: Enable telemetry for the module.
+
+Type: `bool`
+
+Default: `true`
+
+### <a name="input_prefix"></a> [prefix](#input\_prefix)
+
+Description: Management group prefix
+
+Type: `string`
+
+Default: `""`
 
 ## Outputs
 

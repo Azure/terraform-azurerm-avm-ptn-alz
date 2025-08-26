@@ -13,7 +13,7 @@ output "management_group_resource_ids" {
 
 output "policy_assignment_identity_ids" {
   description = "A map of policy assignment names to their identity ids."
-  value       = { for k, v in local.policy_assignment_identities : k => v.principal_id if v != null }
+  value       = { for k, v in local.policy_assignment_identities : k => v if v != null }
 }
 
 output "policy_assignment_resource_ids" {

@@ -1,0 +1,4 @@
+---
+name: root-custom
+policy_assignments:
+  - "Update-Ring1"

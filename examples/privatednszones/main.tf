@@ -36,6 +36,7 @@ module "alz" {
       module.private_dns_zones.private_dns_zone_resource_ids,
     ]
   }
+  enable_telemetry = var.enable_telemetry
   policy_assignments_to_modify = {
     connectivity = {
       policy_assignments = {

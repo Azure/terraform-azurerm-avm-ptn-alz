@@ -1,8 +1,5 @@
 {
   "apiVersion": "2019-09-01",
-  "identity": {
-    "type": "SystemAssigned"
-  },
   "location": "${default_location}",
   "name": "Update-Ring1",
   "properties": {
@@ -15,19 +12,7 @@
       }
     ],
     "notScopes": [],
-    "parameters": {
-      "maintenanceConfigurationResourceId": {
-        "value": ""
-      },
-      "tagValues": {
-        "value": [
-          {
-            "key": "Update Manager Policy",
-            "value": "Ring1"
-          }
-        ]
-      }
-    },
+    "parameters": {},
     "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ba0df93e-e4ac-479a-aac2-134bbae39a1a",
     "scope": "${current_scope_resource_id}"
   },

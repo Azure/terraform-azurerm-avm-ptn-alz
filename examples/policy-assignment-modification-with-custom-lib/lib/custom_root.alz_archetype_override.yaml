@@ -1,5 +1,0 @@
----
-base_archetype: root
-name: root-custom
-policy_assignments_to_add:
-  - "Update-Ring1"

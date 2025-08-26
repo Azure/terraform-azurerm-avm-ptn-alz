@@ -43,6 +43,7 @@ module "alz" {
       module.private_dns_zones.private_dns_zone_resource_ids,
     ]
   }
+  enable_telemetry = var.enable_telemetry
   policy_assignments_to_modify = {
     connectivity = {
       policy_assignments = {
@@ -89,6 +90,14 @@ No required inputs.
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: Enable telemetry for the module.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_random_suffix"></a> [random\_suffix](#input\_random\_suffix)
 
