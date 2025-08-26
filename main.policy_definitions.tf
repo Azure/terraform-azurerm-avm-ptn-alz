@@ -3,7 +3,7 @@ resource "azapi_resource" "policy_definitions" {
 
   name      = each.value.definition.name
   parent_id = "/providers/Microsoft.Management/managementGroups/${each.value.mg}"
-  type      = "Microsoft.Authorization/policyDefinitions@2023-04-01"
+  type      = "Microsoft.Authorization/policyDefinitions@${var.resource_api_versions.policy_definition}"
   body = {
     properties = each.value.definition.properties
   }

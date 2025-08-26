@@ -5,7 +5,7 @@ resource "azapi_resource" "hierarchy_settings" {
 
   name      = "default"
   parent_id = local.tenant_root_group_resource_id
-  type      = "Microsoft.Management/managementGroups/settings@2023-04-01"
+  type      = "Microsoft.Management/managementGroups/settings@${var.resource_api_versions.management_group}"
   body = {
     properties = {
       defaultManagementGroup               = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_hierarchy_settings.default_management_group_name])
@@ -30,7 +30,7 @@ resource "azapi_update_resource" "hierarchy_settings" {
 
   name      = "default"
   parent_id = local.tenant_root_group_resource_id
-  type      = "Microsoft.Management/managementGroups/settings@2023-04-01"
+  type      = "Microsoft.Management/managementGroups/settings@${var.resource_api_versions.management_group}"
   body = {
     properties = {
       defaultManagementGroup               = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_hierarchy_settings.default_management_group_name])

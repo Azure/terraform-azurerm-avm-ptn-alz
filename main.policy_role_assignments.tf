@@ -7,7 +7,7 @@ resource "azapi_resource" "policy_role_assignments" {
 
   name      = each.key
   parent_id = each.value.scope
-  type      = "Microsoft.Authorization/roleAssignments@2022-04-01"
+  type      = "Microsoft.Authorization/roleAssignments@${var.resource_api_versions.role_assignment}"
   body = {
     properties = {
       principalId      = each.value.principal_id
