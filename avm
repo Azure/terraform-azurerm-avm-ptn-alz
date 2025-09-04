@@ -48,6 +48,11 @@ if [ -d "${AZURE_CONFIG_DIR}" ]; then
   AZURE_CONFIG_MOUNT="-v ${AZURE_CONFIG_DIR}:/home/runtimeuser/.azure"
 fi
 
+# If the host Docker socket exists, mount it into the container so the container can talk to the host docker daemon
+if [ -S /var/run/docker.sock ]; then
+  DOCKER_SOCK_MOUNT="-v /var/run/docker.sock:/var/run/docker.sock"
+fi
+
 # If we are not in GitHub Actions and NO_COLOR is not set, we want to use TUI and interactive mode
 if [ -z "${GITHUB_RUN_ID}" ] && [ -z "${NO_COLOR}" ]; then
   TUI="--tui"
@@ -70,6 +75,7 @@ if [ -z "${AVM_IN_CONTAINER}" ]; then
     ${DOCKER_INTERACTIVE} \
     -v "$(pwd)":/src \
     ${AZURE_CONFIG_MOUNT:-} \
+    ${DOCKER_SOCK_MOUNT:-} \
     -e ARM_CLIENT_ID \
     -e ARM_OIDC_REQUEST_TOKEN \
     -e ARM_OIDC_REQUEST_URL \
