@@ -1,6 +1,6 @@
 module "avm_interfaces" {
   source   = "Azure/avm-utl-interfaces/azure"
-  version  = "0.2.0"
+  version  = "0.4.0"
   for_each = var.management_group_role_assignments
 
   enable_telemetry                          = var.enable_telemetry
