@@ -680,8 +680,8 @@ Description: The retry settings to apply to the CRUD operations. Value is a nest
 - `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`, which will will disable retries. Specify a value to enable.
 - `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
 - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
-- `multiplier` - (Optional) The multiplier to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value.
-- `randomization_factor` - (Optional) The randomization factor to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value.
+- `multiplier` - (Optional) DEPRECATED The multiplier to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value. This value is deprecated and will be removed in a future version.
+- `randomization_factor` - DEPRECATED (Optional) The randomization factor to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value. This value is deprecated and will be removed in a future version.
 
 For more information please see the provider documentation here: <https://registry.terraform.io/providers/Azure/azapi/azurerm/latest/docs/resources/resource#nestedatt--retry>
 
@@ -757,7 +757,9 @@ object({
       randomization_factor = optional(number, null)
     }), {})
     hierarchy_settings = optional(object({
-      error_message_regex  = optional(list(string), null)
+      error_message_regex = optional(list(string), [
+        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+      ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
       multiplier           = optional(number, null)
@@ -823,38 +825,38 @@ Type:
 ```hcl
 object({
     management_group = optional(object({
-      create = optional(string, "15m")
+      create = optional(string, "60m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
-      read   = optional(string, "5m")
+      read   = optional(string, "60m")
       }), {}
     )
     role_definition = optional(object({
-      create = optional(string, "15m")
+      create = optional(string, "60m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
-      read   = optional(string, "5m")
+      read   = optional(string, "60m")
       }), {}
     )
     role_assignment = optional(object({
-      create = optional(string, "15m")
+      create = optional(string, "60m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
-      read   = optional(string, "5m")
+      read   = optional(string, "60m")
       }), {}
     )
     policy_definition = optional(object({
-      create = optional(string, "15m")
+      create = optional(string, "60m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
-      read   = optional(string, "5m")
+      read   = optional(string, "60m")
       }), {}
     )
     policy_set_definition = optional(object({
-      create = optional(string, "15m")
+      create = optional(string, "60m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
-      read   = optional(string, "5m")
+      read   = optional(string, "60m")
       }), {}
     )
     policy_assignment = optional(object({
@@ -865,10 +867,10 @@ object({
       }), {}
     )
     policy_role_assignment = optional(object({
-      create = optional(string, "15m")
+      create = optional(string, "60m")
       delete = optional(string, "5m")
       update = optional(string, "5m")
-      read   = optional(string, "5m")
+      read   = optional(string, "60m")
       }), {}
     )
   })

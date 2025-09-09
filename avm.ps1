@@ -47,13 +47,29 @@ if (Test-Path $AZURE_CONFIG_DIR) {
   $AZURE_CONFIG_MOUNT_PATH = "${AZURE_CONFIG_DIR}:/home/runtimeuser/.azure"
 }
 
-# If we are not in GitHub Actions and NO_COLOR is not set, we want to use TUI and interactive mode
+# New: allow overriding TUI behavior with PORCH_FORCE_TUI and PORCH_NO_TUI environment variables.
+# - If PORCH_FORCE_TUI is set, force TUI and interactive mode (even in GH Actions).
+# - If PORCH_NO_TUI is set, explicitly disable TUI.
+# - Otherwise, fallback to previous behavior: enable TUI only when not in GitHub Actions and NO_COLOR is not set.
 $TUI = $null
 $DOCKER_INTERACTIVE = $null
-if (-not $env:GITHUB_RUN_ID -and -not $env:NO_COLOR) {
+if ($env:PORCH_FORCE_TUI -and $env:PORCH_FORCE_TUI -ne "") {
   $TUI = "--tui"
   $DOCKER_INTERACTIVE = "-it"
   $env:FORCE_COLOR = "1"
+}
+elseif ($env:PORCH_NO_TUI -and $env:PORCH_NO_TUI -ne "") {
+  # Explicitly disable TUI and interactive flags
+  $TUI = $null
+  $DOCKER_INTERACTIVE = $null
+}
+else {
+  # If we are not in GitHub Actions and NO_COLOR is not set, we want to use TUI and interactive mode
+  if (-not $env:GITHUB_RUN_ID -and -not $env:NO_COLOR) {
+    $TUI = "--tui"
+    $DOCKER_INTERACTIVE = "-it"
+    $env:FORCE_COLOR = "1"
+  }
 }
 
 # if PORCH_BASE_URL is set, we want to add it to the make command

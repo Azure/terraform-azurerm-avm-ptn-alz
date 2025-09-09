@@ -53,11 +53,25 @@ if [ -S /var/run/docker.sock ]; then
   DOCKER_SOCK_MOUNT="-v /var/run/docker.sock:/var/run/docker.sock"
 fi
 
-# If we are not in GitHub Actions and NO_COLOR is not set, we want to use TUI and interactive mode
-if [ -z "${GITHUB_RUN_ID}" ] && [ -z "${NO_COLOR}" ]; then
+# New: allow overriding TUI behavior with PORCH_FORCE_TUI and PORCH_NO_TUI environment variables.
+# - If PORCH_FORCE_TUI is set, force TUI and interactive mode (even in GH Actions).
+# - If PORCH_NO_TUI is set, explicitly disable TUI.
+# - Otherwise, fallback to previous behavior: enable TUI only when not in GitHub Actions and NO_COLOR is not set.
+if [ -n "${PORCH_FORCE_TUI}" ]; then
   TUI="--tui"
   DOCKER_INTERACTIVE="-it"
   export FORCE_COLOR=1
+elif [ -n "${PORCH_NO_TUI}" ]; then
+  # Explicitly disable TUI and interactive flags
+  TUI=""
+  DOCKER_INTERACTIVE=""
+else
+  # If we are not in GitHub Actions and NO_COLOR is not set, we want to use TUI and interactive mode
+  if [ -z "${GITHUB_RUN_ID}" ] && [ -z "${NO_COLOR}" ]; then
+    TUI="--tui"
+    DOCKER_INTERACTIVE="-it"
+    export FORCE_COLOR=1
+  fi
 fi
 
 # if AVM_PORCH_BASE_URL is set, we want to add it to the make command
