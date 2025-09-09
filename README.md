@@ -786,6 +786,19 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_role_assignment_name_use_random_uuid"></a> [role\_assignment\_name\_use\_random\_uuid](#input\_role\_assignment\_name\_use\_random\_uuid)
+
+Description: A control to use a random UUID for the role assignment name.  
+If set to false, the name will be a deterministic UUID based on the principal ID and role definition resource ID,  
+though this can cause issues with duplicate UUIDs as the scope of the role assignment is not taken into account.
+
+This is default to false to preserve existing behaviour.  
+However, we recommend this is set to true to avoid resources becoming re-created due to computed attribute changes in the resource graph.
+
+Type: `bool`
+
+Default: `false`
+
 ### <a name="input_subscription_placement"></a> [subscription\_placement](#input\_subscription\_placement)
 
 Description: A map of subscriptions to place into management groups. The key is deliberately arbitrary to avoid issues with known after apply values. The value is an object:
@@ -916,7 +929,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.2.0
+Version: 0.4.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
