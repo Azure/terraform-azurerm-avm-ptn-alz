@@ -1,7 +1,6 @@
 {
   "image": "mcr.microsoft.com/azterraform:avm-latest",
   "updateRemoteUserUID": true,
-  "containerUser": "1000",
   "runArgs": [],
   "mounts": [],
   "onCreateCommand": "terraform || true",
