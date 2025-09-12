@@ -27,7 +27,8 @@ resource "azapi_resource" "management_groups_level_0" {
     multiplier           = lookup(var.retries.management_groups, "multiplier", null)
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.management_group
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -66,7 +67,8 @@ resource "azapi_resource" "management_groups_level_1" {
     multiplier           = lookup(var.retries.management_groups, "multiplier", null)
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.management_group
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -107,7 +109,8 @@ resource "azapi_resource" "management_groups_level_2" {
     multiplier           = lookup(var.retries.management_groups, "multiplier", null)
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.management_group
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -148,7 +151,8 @@ resource "azapi_resource" "management_groups_level_3" {
     multiplier           = lookup(var.retries.management_groups, "multiplier", null)
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.management_group
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -189,7 +193,8 @@ resource "azapi_resource" "management_groups_level_4" {
     multiplier           = lookup(var.retries.management_groups, "multiplier", null)
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.management_group
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -230,7 +235,8 @@ resource "azapi_resource" "management_groups_level_5" {
     multiplier           = lookup(var.retries.management_groups, "multiplier", null)
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.management_group
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -271,7 +277,8 @@ resource "azapi_resource" "management_groups_level_6" {
     multiplier           = lookup(var.retries.management_groups, "multiplier", null)
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.management_group
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create

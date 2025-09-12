@@ -23,7 +23,8 @@ resource "azapi_resource" "role_definitions" {
     multiplier           = lookup(var.retries.role_definitions, "multiplier", null)
     randomization_factor = lookup(var.retries.role_definitions, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.role_definition
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.role_definition.create

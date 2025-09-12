@@ -45,7 +45,8 @@ resource "azapi_resource" "policy_assignments" {
     multiplier           = lookup(var.retries.policy_assignments, "multiplier", null)
     randomization_factor = lookup(var.retries.policy_assignments, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.policy_assignment
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   dynamic "identity" {
     for_each = lookup(each.value.assignment, "identity", null) != null ? [each.value.assignment.identity] : []

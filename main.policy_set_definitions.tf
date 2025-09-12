@@ -18,7 +18,8 @@ resource "azapi_resource" "policy_set_definitions" {
     multiplier           = lookup(var.retries.policy_set_definitions, "multiplier", null)
     randomization_factor = lookup(var.retries.policy_set_definitions, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.policy_set_definition
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.policy_set_definition.create

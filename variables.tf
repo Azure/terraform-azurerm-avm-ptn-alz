@@ -550,6 +550,32 @@ For more information please see the provider documentation here: <https://regist
 DESCRIPTION
 }
 
+variable "role_assignment_name_use_random_uuid" {
+  type        = bool
+  default     = false
+  description = <<DESCRIPTION
+Use a random UUID for the role assignment name rather than a deterministic one.
+Enabling this will fix the uniqueness constraint issues when the same role assignment is created in multiple management groups.
+DESCRIPTION
+}
+
+variable "schema_validation_enabled" {
+  type = object({
+    hierarchy_settings    = optional(bool, true)
+    management_group      = optional(bool, true)
+    policy_assignment     = optional(bool, true)
+    policy_definition     = optional(bool, true)
+    policy_set_definition = optional(bool, true)
+    role_assignment       = optional(bool, true)
+    role_definition       = optional(bool, true)
+  })
+  default     = {}
+  description = <<DESCRIPTION
+Enable or disable schema validation for each resource type. Defaults to `true` for all resource types.
+If you encounter issues with schema validation, please raise an issue against the AzAPI provider.
+DESCRIPTION
+}
+
 variable "subscription_placement" {
   type = map(object({
     subscription_id       = string

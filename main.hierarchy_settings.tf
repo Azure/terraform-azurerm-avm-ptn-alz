@@ -22,7 +22,8 @@ resource "azapi_resource" "hierarchy_settings" {
     multiplier           = lookup(var.retries.hierarchy_settings, "multiplier", null)
     randomization_factor = lookup(var.retries.hierarchy_settings, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.hierarchy_settings
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
 resource "azapi_update_resource" "hierarchy_settings" {

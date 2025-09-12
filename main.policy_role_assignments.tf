@@ -45,7 +45,8 @@ resource "azapi_resource" "policy_role_assignments" {
     multiplier           = lookup(var.retries.policy_role_assignments, "multiplier", null)
     randomization_factor = lookup(var.retries.policy_role_assignments, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.role_assignment
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.policy_role_assignment.create

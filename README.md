@@ -788,6 +788,36 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_role_assignment_name_use_random_uuid"></a> [role\_assignment\_name\_use\_random\_uuid](#input\_role\_assignment\_name\_use\_random\_uuid)
+
+Description: Use a random UUID for the role assignment name rather than a deterministic one.  
+Enabling this will fix the uniqueness constraint issues when the same role assignment is created in multiple management groups.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_schema_validation_enabled"></a> [schema\_validation\_enabled](#input\_schema\_validation\_enabled)
+
+Description: Enable or disable schema validation for each resource type. Defaults to `true` for all resource types.  
+If you encounter issues with schema validation, please raise an issue against the AzAPI provider.
+
+Type:
+
+```hcl
+object({
+    hierarchy_settings    = optional(bool, true)
+    management_group      = optional(bool, true)
+    policy_assignment     = optional(bool, true)
+    policy_definition     = optional(bool, true)
+    policy_set_definition = optional(bool, true)
+    role_assignment       = optional(bool, true)
+    role_definition       = optional(bool, true)
+  })
+```
+
+Default: `{}`
+
 ### <a name="input_subscription_placement"></a> [subscription\_placement](#input\_subscription\_placement)
 
 Description: A map of subscriptions to place into management groups. The key is deliberately arbitrary to avoid issues with known after apply values. The value is an object:
@@ -918,7 +948,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.2.0
+Version: 0.5.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
