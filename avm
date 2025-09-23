@@ -53,6 +53,14 @@ if [ -S /var/run/docker.sock ]; then
   DOCKER_SOCK_MOUNT="-v /var/run/docker.sock:/var/run/docker.sock"
 fi
 
+# If we are in GitHub Copilot Coding Agent, we need to mount the SSL certificates from the host
+SSL_CERT_MOUNTS=""
+if [ -n "${COPILOT_AGENT_ACTION}" ]; then
+  # Mount host's CA bundle to container's expected paths
+  SSL_CERT_MOUNTS="${SSL_CERT_MOUNTS} -v /etc/ssl/certs/ca-certificates.crt:/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem:ro"
+  SSL_CERT_MOUNTS="${SSL_CERT_MOUNTS} -v /etc/ssl/certs/ca-certificates.crt:/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt:ro"
+fi
+
 # New: allow overriding TUI behavior with PORCH_FORCE_TUI and PORCH_NO_TUI environment variables.
 # - If PORCH_FORCE_TUI is set, force TUI and interactive mode (even in GH Actions).
 # - If PORCH_NO_TUI is set, explicitly disable TUI.
@@ -90,6 +98,7 @@ if [ -z "${AVM_IN_CONTAINER}" ]; then
     -v "$(pwd)":/src \
     ${AZURE_CONFIG_MOUNT:-} \
     ${DOCKER_SOCK_MOUNT:-} \
+    ${SSL_CERT_MOUNTS:-} \
     -e ARM_CLIENT_ID \
     -e ARM_OIDC_REQUEST_TOKEN \
     -e ARM_OIDC_REQUEST_URL \
