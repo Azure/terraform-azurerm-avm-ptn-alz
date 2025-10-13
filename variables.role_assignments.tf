@@ -41,3 +41,17 @@ A control to disable the lookup of role definitions when creating role assignmen
 If you disable this then all role assignments must be supplied with a `role_definition_id_or_name` that is a valid role definition ID.
 DESCRIPTION
 }
+
+variable "role_assignment_name_use_random_uuid" {
+  type        = bool
+  default     = false
+  description = <<DESCRIPTION
+A control to use a random UUID for the role assignment name.
+If set to false, the name will be a deterministic UUID based on the principal ID and role definition resource ID,
+though this can cause issues with duplicate UUIDs as the scope of the role assignment is not taken into account.
+
+This is default to false to preserve existing behaviour.
+However, we recommend this is set to true to avoid resources becoming re-created due to computed attribute changes in the resource graph.
+DESCRIPTION
+  nullable    = false
+}
