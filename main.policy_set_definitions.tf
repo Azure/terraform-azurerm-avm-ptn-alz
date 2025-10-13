@@ -11,6 +11,7 @@ resource "azapi_resource" "policy_set_definitions" {
   delete_headers                   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   read_headers                     = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = lookup(each.value.set_definition.properties, "policyType", null)
+  response_export_values           = []
   retry = var.retries.policy_set_definitions.error_message_regex != null ? {
     error_message_regex  = var.retries.policy_set_definitions.error_message_regex
     interval_seconds     = lookup(var.retries.policy_set_definitions, "interval_seconds", null)
@@ -18,7 +19,7 @@ resource "azapi_resource" "policy_set_definitions" {
     multiplier           = lookup(var.retries.policy_set_definitions, "multiplier", null)
     randomization_factor = lookup(var.retries.policy_set_definitions, "randomization_factor", null)
   } : null
-  schema_validation_enabled = var.schema_validation_enabled.policy_set_definition
+  schema_validation_enabled = var.schema_validation_enabled.policy_set_definitions
   update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {

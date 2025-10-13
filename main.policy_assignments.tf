@@ -11,9 +11,10 @@ resource "azapi_resource" "policy_assignments" {
   type      = "Microsoft.Authorization/policyAssignments@${var.resource_api_versions.policy_assignment}"
   body = {
     properties = {
-      description     = lookup(each.value.assignment.properties, "description", null)
-      displayName     = lookup(each.value.assignment.properties, "displayName", null)
-      enforcementMode = lookup(each.value.assignment.properties, "enforcementMode", null)
+      description       = lookup(each.value.assignment.properties, "description", null)
+      definitionVersion = lookup(each.value.assignment.properties, "definitionVersion", "1.*.*")
+      displayName       = lookup(each.value.assignment.properties, "displayName", null)
+      enforcementMode   = lookup(each.value.assignment.properties, "enforcementMode", null)
       metadata = merge(lookup(each.value.assignment.properties, "metadata", {}),
         {
           createdBy = ""
@@ -38,6 +39,7 @@ resource "azapi_resource" "policy_assignments" {
     lookup(each.value.assignment.properties, "policyDefinitionId", null),
     var.location,
   ]
+  response_export_values = []
   retry = var.retries.policy_assignments.error_message_regex != null ? {
     error_message_regex  = var.retries.policy_assignments.error_message_regex
     interval_seconds     = lookup(var.retries.policy_assignments, "interval_seconds", null)
@@ -45,7 +47,7 @@ resource "azapi_resource" "policy_assignments" {
     multiplier           = lookup(var.retries.policy_assignments, "multiplier", null)
     randomization_factor = lookup(var.retries.policy_assignments, "randomization_factor", null)
   } : null
-  schema_validation_enabled = var.schema_validation_enabled.policy_assignment
+  schema_validation_enabled = var.schema_validation_enabled.policy_assignments
   update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   dynamic "identity" {

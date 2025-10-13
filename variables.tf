@@ -561,13 +561,13 @@ DESCRIPTION
 
 variable "schema_validation_enabled" {
   type = object({
-    hierarchy_settings    = optional(bool, true)
-    management_group      = optional(bool, true)
-    policy_assignment     = optional(bool, true)
-    policy_definition     = optional(bool, true)
-    policy_set_definition = optional(bool, true)
-    role_assignment       = optional(bool, true)
-    role_definition       = optional(bool, true)
+    hierarchy_settings     = optional(bool, true)
+    management_groups      = optional(bool, true)
+    policy_assignments     = optional(bool, true)
+    policy_definitions     = optional(bool, true)
+    policy_set_definitions = optional(bool, true)
+    role_assignments       = optional(bool, true)
+    role_definitions       = optional(bool, true)
   })
   default     = {}
   description = <<DESCRIPTION

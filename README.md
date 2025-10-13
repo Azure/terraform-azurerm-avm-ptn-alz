@@ -102,7 +102,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.17)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.19)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
 
@@ -806,13 +806,13 @@ Type:
 
 ```hcl
 object({
-    hierarchy_settings    = optional(bool, true)
-    management_group      = optional(bool, true)
-    policy_assignment     = optional(bool, true)
-    policy_definition     = optional(bool, true)
-    policy_set_definition = optional(bool, true)
-    role_assignment       = optional(bool, true)
-    role_definition       = optional(bool, true)
+    hierarchy_settings     = optional(bool, true)
+    management_groups      = optional(bool, true)
+    policy_assignments     = optional(bool, true)
+    policy_definitions     = optional(bool, true)
+    policy_set_definitions = optional(bool, true)
+    role_assignments       = optional(bool, true)
+    role_definitions       = optional(bool, true)
   })
 ```
 

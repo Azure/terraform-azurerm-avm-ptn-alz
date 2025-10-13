@@ -20,6 +20,7 @@ resource "azapi_resource" "management_groups_level_0" {
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
+  response_export_values = []
   retry = var.retries.management_groups.error_message_regex != null ? {
     error_message_regex  = var.retries.management_groups.error_message_regex
     interval_seconds     = lookup(var.retries.management_groups, "interval_seconds", null)
@@ -27,7 +28,7 @@ resource "azapi_resource" "management_groups_level_0" {
     multiplier           = lookup(var.retries.management_groups, "multiplier", null)
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
-  schema_validation_enabled = var.schema_validation_enabled.management_group
+  schema_validation_enabled = var.schema_validation_enabled.management_groups
   update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
