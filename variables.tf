@@ -550,6 +550,23 @@ For more information please see the provider documentation here: <https://regist
 DESCRIPTION
 }
 
+variable "schema_validation_enabled" {
+  type = object({
+    hierarchy_settings     = optional(bool, true)
+    management_groups      = optional(bool, true)
+    policy_assignments     = optional(bool, true)
+    policy_definitions     = optional(bool, true)
+    policy_set_definitions = optional(bool, true)
+    role_assignments       = optional(bool, true)
+    role_definitions       = optional(bool, true)
+  })
+  default     = {}
+  description = <<DESCRIPTION
+Enable or disable schema validation for each resource type. Defaults to `true` for all resource types.
+If you encounter issues with schema validation, please raise an issue against the AzAPI provider.
+DESCRIPTION
+}
+
 variable "subscription_placement" {
   type = map(object({
     subscription_id       = string

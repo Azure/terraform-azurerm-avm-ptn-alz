@@ -12,9 +12,10 @@ resource "azapi_resource" "hierarchy_settings" {
       requireAuthorizationForGroupCreation = var.management_group_hierarchy_settings.require_authorization_for_group_creation
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = []
   retry = var.retries.hierarchy_settings.error_message_regex != null ? {
     error_message_regex  = var.retries.hierarchy_settings.error_message_regex
     interval_seconds     = lookup(var.retries.hierarchy_settings, "interval_seconds", null)
@@ -22,7 +23,8 @@ resource "azapi_resource" "hierarchy_settings" {
     multiplier           = lookup(var.retries.hierarchy_settings, "multiplier", null)
     randomization_factor = lookup(var.retries.hierarchy_settings, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.hierarchy_settings
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
 resource "azapi_update_resource" "hierarchy_settings" {
@@ -37,7 +39,8 @@ resource "azapi_update_resource" "hierarchy_settings" {
       requireAuthorizationForGroupCreation = var.management_group_hierarchy_settings.require_authorization_for_group_creation
     }
   }
-  read_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = []
   retry = var.retries.hierarchy_settings.error_message_regex != null ? {
     error_message_regex  = var.retries.hierarchy_settings.error_message_regex
     interval_seconds     = lookup(var.retries.hierarchy_settings, "interval_seconds", null)

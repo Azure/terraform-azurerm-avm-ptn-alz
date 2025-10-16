@@ -38,6 +38,7 @@ resource "azapi_resource" "policy_role_assignments" {
     each.value.principal_id,
     each.value.role_definition_id,
   ]
+  response_export_values = []
   retry = var.retries.policy_role_assignments.error_message_regex != null ? {
     error_message_regex  = var.retries.policy_role_assignments.error_message_regex
     interval_seconds     = lookup(var.retries.policy_role_assignments, "interval_seconds", null)
@@ -45,7 +46,8 @@ resource "azapi_resource" "policy_role_assignments" {
     multiplier           = lookup(var.retries.policy_role_assignments, "multiplier", null)
     randomization_factor = lookup(var.retries.policy_role_assignments, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  schema_validation_enabled = var.schema_validation_enabled.role_assignments
+  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.policy_role_assignment.create

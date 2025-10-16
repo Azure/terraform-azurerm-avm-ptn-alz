@@ -102,7 +102,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
 
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.17)
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.20)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
 
@@ -801,6 +801,27 @@ Type: `bool`
 
 Default: `false`
 
+### <a name="input_schema_validation_enabled"></a> [schema\_validation\_enabled](#input\_schema\_validation\_enabled)
+
+Description: Enable or disable schema validation for each resource type. Defaults to `true` for all resource types.  
+If you encounter issues with schema validation, please raise an issue against the AzAPI provider.
+
+Type:
+
+```hcl
+object({
+    hierarchy_settings     = optional(bool, true)
+    management_groups      = optional(bool, true)
+    policy_assignments     = optional(bool, true)
+    policy_definitions     = optional(bool, true)
+    policy_set_definitions = optional(bool, true)
+    role_assignments       = optional(bool, true)
+    role_definitions       = optional(bool, true)
+  })
+```
+
+Default: `{}`
+
 ### <a name="input_subscription_placement"></a> [subscription\_placement](#input\_subscription\_placement)
 
 Description: A map of subscriptions to place into management groups. The key is deliberately arbitrary to avoid issues with known after apply values. The value is an object:
@@ -931,7 +952,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.4.0
+Version: 0.5.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
