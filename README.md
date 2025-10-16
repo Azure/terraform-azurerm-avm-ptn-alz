@@ -790,8 +790,12 @@ Default: `true`
 
 ### <a name="input_role_assignment_name_use_random_uuid"></a> [role\_assignment\_name\_use\_random\_uuid](#input\_role\_assignment\_name\_use\_random\_uuid)
 
-Description: Use a random UUID for the role assignment name rather than a deterministic one.  
-Enabling this will fix the uniqueness constraint issues when the same role assignment is created in multiple management groups.
+Description: A control to use a random UUID for the role assignment name.  
+If set to false, the name will be a deterministic UUID based on the principal ID and role definition resource ID,  
+though this can cause issues with duplicate UUIDs as the scope of the role assignment is not taken into account.
+
+This is default to false to preserve existing behaviour.  
+However, we recommend this is set to true to avoid resources becoming re-created due to computed attribute changes in the resource graph.
 
 Type: `bool`
 

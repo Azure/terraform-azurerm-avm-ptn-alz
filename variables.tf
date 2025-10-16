@@ -550,15 +550,6 @@ For more information please see the provider documentation here: <https://regist
 DESCRIPTION
 }
 
-variable "role_assignment_name_use_random_uuid" {
-  type        = bool
-  default     = false
-  description = <<DESCRIPTION
-Use a random UUID for the role assignment name rather than a deterministic one.
-Enabling this will fix the uniqueness constraint issues when the same role assignment is created in multiple management groups.
-DESCRIPTION
-}
-
 variable "schema_validation_enabled" {
   type = object({
     hierarchy_settings     = optional(bool, true)
