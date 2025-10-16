@@ -5,6 +5,7 @@
   "properties": {
     "description": "You can use Azure Update Manager in Azure to save recurring deployment schedules to install operating system updates for your Windows Server and Linux machines in Azure, in on-premises environments, and in other cloud environments connected using Azure Arc-enabled servers. This policy will also change the patch mode for the Azure Virtual Machine to 'AutomaticByPlatform'. See more: https://aka.ms/umc-scheduled-patching",
     "displayName": "Schedule recurring updates using Azure Update Manager - Ring 1 (Tuesday Midnight)",
+    "definitionVersion": "3.*.*",
     "enforcementMode": "Default",
     "nonComplianceMessages": [
       {
