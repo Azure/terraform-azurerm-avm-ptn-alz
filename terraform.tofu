@@ -1,5 +1,9 @@
+# OpenTofu support is experimental and subject to change.
+# We do not test with OpenTofu in our CI/CD pipelines,
+# so please use at your own risk.
+# Please do raise issues, but we cannot guarantee timely fixes.
 terraform {
-  required_version = ">= 1.12, < 2.0"
+  required_version = ">= 1.10, < 2.0"
 
   required_providers {
     alz = {

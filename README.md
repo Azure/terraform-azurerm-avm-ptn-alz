@@ -89,18 +89,19 @@ module "example" {
 }
 ```
 
-### Deferred Actions
+## OpenTofu Support
 
-We are awaiting the results of the upstream Terraform language experiment *deferred actions*.
-This will provide a solution to this issue.
-See the release notes [here](https://github.com/hashicorp/terraform/releases/tag/v1.10.0-alpha20241023) for more information.
+We are providing _experimental_ support for OpenTofu.
+We do not test with OpenTofu in our CI/CD pipelines, so please raise any issues you find.
+
+We have included a `terraform.tofu` file to work around the versioning differences between Terraform and OpenTofu.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.12, < 2.0)
 
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.20)
 
