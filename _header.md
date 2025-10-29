@@ -87,8 +87,9 @@ module "example" {
 }
 ```
 
-### Deferred Actions
+## OpenTofu Support
 
-We are awaiting the results of the upstream Terraform language experiment *deferred actions*.
-This will provide a solution to this issue.
-See the release notes [here](https://github.com/hashicorp/terraform/releases/tag/v1.10.0-alpha20241023) for more information.
+We are providing _experimental_ support for OpenTofu.
+We do not test with OpenTofu in our CI/CD pipelines, so please raise any issues you find.
+
+We have included a `terraform.tofu` file to work around the versioning differences between Terraform and OpenTofu.
