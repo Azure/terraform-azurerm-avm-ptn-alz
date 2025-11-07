@@ -99,861 +99,94 @@ We have included a `terraform.tofu` file to work around the versioning differenc
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
-The following requirements are needed by this module:
-
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.12, < 2.0)
-
-- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.20)
-
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
-
-- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
-
-- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
-
-- <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.12, < 2.0 |
+| <a name="requirement_alz"></a> [alz](#requirement\_alz) | ~> 0.20 |
+| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 2.4 |
+| <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) | ~> 0.3 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.6 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.9 |
 
 ## Resources
 
-The following resources are used by this module:
-
-- [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_group_role_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.role_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.subscription_placement](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/update_resource) (resource)
-- [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
-- [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
-- [terraform_data.policy_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
-- [terraform_data.policy_role_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
-- [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
-- [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) (data source)
-- [alz_metadata.telemetry](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/metadata) (data source)
-- [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
-- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
-- [azapi_resource.policy_user_assigned_identities](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/resource) (data source)
-- [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
+| Name | Type |
+|------|------|
+| [azapi_resource.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.management_group_role_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.management_groups_level_0](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.management_groups_level_1](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.management_groups_level_2](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.management_groups_level_3](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.management_groups_level_4](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.management_groups_level_5](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.management_groups_level_6](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.policy_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.policy_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.policy_role_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.role_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_resource.subscription_placement](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) | resource |
+| [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/update_resource) | resource |
+| [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) | resource |
+| [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) | resource |
+| [terraform_data.policy_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [terraform_data.policy_role_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [alz_architecture.this](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/architecture) | data source |
+| [alz_metadata.telemetry](https://registry.terraform.io/providers/azure/alz/latest/docs/data-sources/metadata) | data source |
+| [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) | data source |
+| [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) | data source |
+| [azapi_resource.policy_user_assigned_identities](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/resource) | data source |
+| [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) | data source |
 
 <!-- markdownlint-disable MD013 -->
-## Required Inputs
-
-The following input variables are required:
-
-### <a name="input_architecture_name"></a> [architecture\_name](#input\_architecture\_name)
-
-Description: The name of the architecture to create. This needs to be of the `*.alz_architecture_definition.[json|yaml|yml]` files.
-
-Type: `string`
-
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The default location for resources in this management group. Used for policy managed identities.
-
-Type: `string`
-
-### <a name="input_parent_resource_id"></a> [parent\_resource\_id](#input\_parent\_resource\_id)
-
-Description: The resource name of the parent management group. Use the tenant id to create a child of the tenant root group.  
-The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.  
-Do not include the `/providers/Microsoft.Management/managementGroups/` prefix.
-
-Type: `string`
-
-## Optional Inputs
-
-The following input variables are optional (have default values):
-
-### <a name="input_delays"></a> [delays](#input\_delays)
-
-Description: DEPRECATED: Please use the new `retries` variable instead to allow the provider to retry on certain errors.
-
-A map of delays to apply to the creation and destruction of resources.  
-Included to work around some race conditions in Azure.
-
-Type:
-
-```hcl
-object({
-    after_management_group = optional(object({
-      create  = optional(string, "0s")
-      destroy = optional(string, "0s")
-    }), {})
-    after_policy_definitions = optional(object({
-      create  = optional(string, "0s")
-      destroy = optional(string, "0s")
-    }), {})
-    after_policy_set_definitions = optional(object({
-      create  = optional(string, "0s")
-      destroy = optional(string, "0s")
-    }), {})
-  })
-```
-
-Default: `{}`
-
-### <a name="input_dependencies"></a> [dependencies](#input\_dependencies)
-
-Description: Place dependent values into this variable to ensure that resources are created in the correct order.  
-Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
-
-This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.  
-See the "Unknown Values & Depends On" section above for more information.
-
-e.g.
-
-```hcl
-dependencies = {
-  policy_role_assignments = [
-    module.dependency_example1.output,
-    module.dependency_example2.output,
-  ]
-}
-```
-
-Type:
-
-```hcl
-object({
-    policy_role_assignments = optional(any, null)
-    policy_assignments      = optional(any, null)
-  })
-```
-
-Default: `{}`
-
-### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
-
-Description: This variable controls whether or not telemetry is enabled for the module.  
-For more information see <https://aka.ms/avm/telemetryinfo>.  
-If it is set to false, then no telemetry will be collected.
-
-Type: `bool`
-
-Default: `true`
-
-### <a name="input_management_group_hierarchy_settings"></a> [management\_group\_hierarchy\_settings](#input\_management\_group\_hierarchy\_settings)
-
-Description: Set this value to configure the hierarchy settings. Options are:
-
-- `default_management_group_name` - (Required) The name of the default management group.
-- `require_authorization_for_group_creation` - (Optional) By default, all Entra security principals can create new management groups. When enabled, security principals must have management group write access to create new management groups. Defaults to `true`.
-- `update_existing` - (Optional) Update existing hierarchy settings rather than create new. Defaults to `false`.
-
-Type:
-
-```hcl
-object({
-    default_management_group_name            = string
-    require_authorization_for_group_creation = optional(bool, true)
-    update_existing                          = optional(bool, false)
-  })
-```
-
-Default: `null`
-
-### <a name="input_management_group_role_assignments"></a> [management\_group\_role\_assignments](#input\_management\_group\_role\_assignments)
-
-Description:   A map of role assignments to create. The map key is deliberately arbitrary to avoid issues where map keys might be unknown at plan time.
-
-  - `management_group_name` - The name of the management group to assign the role to.
-  - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
-  - `principal_id` - The ID of the principal to assign the role to.
-  - `description` - (Optional) The description of the role assignment.
-  - `skip_service_principal_aad_check` - (Optional) No effect when using AzAPI.
-  - `condition` - (Optional) The condition which will be used to scope the role assignment.
-  - `condition_version` - (Optional) The version of the condition syntax. Leave as `null` if you are not using a condition, if you are then valid values are '2.0'.
-  - `delegated_managed_identity_resource_id` - (Optional) The delegated Azure Resource Id which contains a Managed Identity. Changing this forces a new resource to be created. This field is only used in cross-tenant scenario.
-  - `principal_type` - (Optional) The type of the `principal_id`. Possible values are `User`, `Group` and `ServicePrincipal`. It is necessary to explicitly set this attribute when creating role assignments if the principal creating the assignment is constrained by ABAC rules that filters on the PrincipalType attribute.
-
-We recommend using role assignment conditions to restrict privileged assignments. A sensible default is to use the `condition` attribute to restrict the roles that can be assigned. The following example will restrict the role assignment to prevent the `Owner`, `Role Based Access Control Administrator`, and `User Access Administrator` roles being assigned:
-
-```text
-"((!(ActionMatches{'Microsoft.Authorization/roleAssignments/write'}))OR(@Request[Microsoft.Authorization/roleAssignments:RoleDefinitionId]ForAnyOfAllValues:GuidNotEquals{8e3af657-a8ff-443c-a75c-2fe8c4bcb635, 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9, f58310d9-a9f6-439a-9e8d-f62e7b41a168}))AND((!(ActionMatches{'Microsoft.Authorization/roleAssignments/delete'}))OR(@Resource[Microsoft.Authorization/roleAssignments:RoleDefinitionId]ForAnyOfAllValues:GuidNotEquals{8e3af657-a8ff-443c-a75c-2fe8c4bcb635, 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9, f58310d9-a9f6-439a-9e8d-f62e7b41a168}))"
-```
-
-Type:
-
-```hcl
-map(object({
-    management_group_name                  = string
-    role_definition_id_or_name             = string
-    principal_id                           = string
-    description                            = optional(string, null)
-    skip_service_principal_aad_check       = optional(bool, false)
-    condition                              = optional(string, null)
-    condition_version                      = optional(string, null)
-    delegated_managed_identity_resource_id = optional(string, null)
-    principal_type                         = optional(string, null)
-  }))
-```
-
-Default: `{}`
-
-### <a name="input_override_policy_definition_parameter_assign_permissions_set"></a> [override\_policy\_definition\_parameter\_assign\_permissions\_set](#input\_override\_policy\_definition\_parameter\_assign\_permissions\_set)
-
-Description: This list of objects allows you to set the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.  
-This allows you to correct policies that haven't been authored correctly and means that the provider can generate the correct policy role assignments.
-
-The value is a list of objects with the following attributes:
-
-- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this us a UUID***.
-- `parameter_name` - (Required) The name of the parameter to set the assignPermissions property for.
-
-The default value has been populated with the Azure Landing Zones policies that are assigned by default, but do not have the correct parameter metadata.
-
-Type:
-
-```hcl
-set(object({
-    definition_name = string
-    parameter_name  = string
-  }))
-```
-
-Default:
-
-```json
-[
-  {
-    "definition_name": "04754ef9-9ae3-4477-bf17-86ef50026304",
-    "parameter_name": "userWorkspaceResourceId"
-  },
-  {
-    "definition_name": "09963c90-6ee7-4215-8d26-1cc660a1682f",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "09a1f130-7697-42bc-8d84-8a9ea17e5192",
-    "parameter_name": "dcrResourceId"
-  },
-  {
-    "definition_name": "0b026355-49cb-467b-8ac4-f777874e175a",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "1142b015-2bd7-41e0-8645-a531afe09a1e",
-    "parameter_name": "dcrResourceId"
-  },
-  {
-    "definition_name": "1e5ed725-f16c-478b-bd4b-7bfa2f7940b9",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "2227e1f1-23dd-4c3a-85a9-7024a401d8b2",
-    "parameter_name": "dcrResourceId"
-  },
-  {
-    "definition_name": "34804460-d88b-4922-a7ca-537165e060e",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "4485d24b-a9d3-4206-b691-1fad83bc5007",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "4ec38ebc-381f-45ee-81a4-acbc4be878f8",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "516187d4-ef64-4a1b-ad6b-a7348502976c",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "56d0ed2b-60fc-44bf-af81-a78c851b5fe1",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "59c3d93f-900b-4827-a8bd-562e7b956e7c",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "637125fd-7c39-4b94-bb0a-d331faf333a9",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "63d03cbd-47fd-4ee1-8a1c-9ddf07303de0",
-    "parameter_name": "userWorkspaceResourceId"
-  },
-  {
-    "definition_name": "6a4e6f44-f2af-4082-9702-033c9e88b9f8",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "6dd01e4f-1be1-4e80-9d0b-d109e04cb064",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "7590a335-57cf-4c95-babd-ecbc8fafeb1f",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "7a860e27-9ca2-4fc6-822d-c2d248c300df",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "86cd96e1-1745-420d-94d4-d3f2fe415aa4",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "8fd85785-1547-4a4a-bf90-d5483c9571c5",
-    "parameter_name": "dcrResourceId"
-  },
-  {
-    "definition_name": "9427df23-0f42-4e1e-bf99-a6133d841c4a",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "942bd215-1a66-44be-af65-6a1c0318dbe2",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "98569e20-8f32-4f31-bf34-0e91590ae9d3",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "a63cc0bd-cda4-4178-b705-37dc439d3e0f",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "aaa64d2d-2fa3-45e5-b332-0b031b9b30e8",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "ad1eeff9-20d7-4c82-a04e-903acab0bfc1",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "ae8a10e6-19d6-44a3-a02d-a2bdfc707742",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "b0e86710-7fb7-4a6c-a064-32e9b829509e",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "b318f84a-b872-429b-ac6d-a01b96814452",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "b6faa975-0add-4f35-8d1c-70bba45c4424",
-    "parameter_name": "dcrResourceId"
-  },
-  {
-    "definition_name": "b73e81f3-6303-48ad-9822-b69fc00c15ef",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "baf19753-7502-405f-8745-370519b20483",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "c99ce9c1-ced7-4c3e-aca0-10e69ce0cb02",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "d367bd60-64ca-4364-98ea-276775bddd94",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "d389df0a-e0d7-4607-833c-75a6fdac2c2d",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "d627d7c6-ded5-481a-8f2e-7e16b1e6faf6",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "ddca0ddc-4e9d-4bbb-92a1-f7c4dd7ef7ce",
-    "parameter_name": "dcrResourceId"
-  },
-  {
-    "definition_name": "e016b22b-e0eb-436d-8fd7-160c4eaed6e2",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "ed66d4f5-8220-45dc-ab4a-20d1749c74e6",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "ee40564d-486e-4f68-a5ca-7a621edae0fb",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "ee40564d-486e-4f68-a5ca-7a621edae0fb",
-    "parameter_name": "secondPrivateDnsZoneId"
-  },
-  {
-    "definition_name": "ef9fe2ce-a588-4edd-829c-6247069dcfdb",
-    "parameter_name": "dcrResourceId"
-  },
-  {
-    "definition_name": "f0fcf93c-c063-4071-9668-c47474bd3564",
-    "parameter_name": "privateDnsZoneId"
-  },
-  {
-    "definition_name": "f91991d1-5383-4c95-8ee5-5ac423dd8bb1",
-    "parameter_name": "userAssignedIdentityResourceId"
-  },
-  {
-    "definition_name": "fbc14a67-53e4-4932-abcc-2049c6706009",
-    "parameter_name": "privateDnsZoneId"
-  }
-]
-```
-
-### <a name="input_override_policy_definition_parameter_assign_permissions_unset"></a> [override\_policy\_definition\_parameter\_assign\_permissions\_unset](#input\_override\_policy\_definition\_parameter\_assign\_permissions\_unset)
-
-Description: This list of objects allows you to unset the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.  
-This allows you to correct policies that haven't been authored correctly, or prevent permissions being assigned for policies that are disabled in a policy set. The provider can then generate the correct policy role assignments.
-
-The value is a list of objects with the following attributes:
-
-- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this us a UUID***.
-- `parameter_name` - (Required) The name of the parameter to unset the assignPermissions property for.
-
-Type:
-
-```hcl
-set(object({
-    definition_name = string
-    parameter_name  = string
-  }))
-```
-
-Default: `null`
-
-### <a name="input_partner_id"></a> [partner\_id](#input\_partner\_id)
-
-Description: A value to be included in the telemetry tag. Requires the `enable_telemetry` variable to be set to `true`. The must be in the following format:
-
-`<PARTNER_ID_UUID>:<PARTNER_DATA_UUID>`
-
-e.g.
-
-`00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000`
-
-Type: `string`
-
-Default: `null`
-
-### <a name="input_policy_assignment_non_compliance_message_settings"></a> [policy\_assignment\_non\_compliance\_message\_settings](#input\_policy\_assignment\_non\_compliance\_message\_settings)
-
-Description: Settings for the non-compliance messages of policy assignments. This is used to ensure that the non-compliance messages are set correctly for policy assignments that do not have them set.  
-  The object has the following optional attributes:
-- `fallback_message_enabled` - (Optional) Whether to enable the fallback message for policy assignments that do not have a non-compliance message set. Defaults to `true`.
-- `fallback_message` - (Optional) The fallback message to use for policy assignments that do not have a non-compliance message set. Defaults to "This resource {enforcementMode} be compliant with the assigned policy."
-- `fallback_message_unsupported_assignments` - (Optional) A list of policy assignment names that do not support non-compliance messages. Defaults to a list of Azure Landing Zones policy assignments that do not support non-compliance messages.
-- `enforcement_mode_placeholder` - (Optional) The placeholder to use for the enforcement mode in the fallback message. Defaults to "{enforcementMode}".
-- `enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is enforced. Defaults to "must".
-- `not_enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is not enforced. Defaults to "should".
-
-Type:
-
-```hcl
-object({
-    fallback_message_enabled = optional(bool, true)
-    fallback_message         = optional(string, "This resource {enforcementMode} be compliant with the assigned policy.")
-    fallback_message_unsupported_assignments = optional(list(string), [
-      "Deny-Privileged-AKS",
-      "Enforce-AKS-HTTPS",
-      "Deny-Priv-Esc-AKS"
-    ])
-    enforcement_mode_placeholder = optional(string, "{enforcementMode}")
-    enforced_replacement         = optional(string, "must")
-    not_enforced_replacement     = optional(string, "should")
-  })
-```
-
-Default: `{}`
-
-### <a name="input_policy_assignments_to_modify"></a> [policy\_assignments\_to\_modify](#input\_policy\_assignments\_to\_modify)
-
-Description: A map of policy assignment objects to modify the ALZ architecture with.  
-You only need to specify the properties you want to change.
-
-The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.  
-The `policy_assignments` value is a map of policy assignments to modify.  
-The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.
-
-- `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
-- `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
-- `identity_ids` - (Optional) A set of ids of the user assigned identities to assign to the policy assignment.
-- `non_compliance_message` - (Optional) A set of non compliance message objects to use for the policy assignment. Each object has the following properties:
-  - `message` - (Required) The non compliance message.
-  - `policy_definition_reference_id` - (Optional) The reference id of the policy definition to use for the non compliance message.
-- `parameters` - (Optional) The parameters to use for the policy assignment. The map key is the parameter name and the value is an JSON object containing a single `Value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({Value = \"value\"}) }`.
-- `resource_selectors` - (Optional) A list of resource selector objects to use for the policy assignment. Each object has the following properties:
-  - `name` - (Required) The name of the resource selector.
-  - `selectors` - (Optional) A list of selector objects to use for the resource selector. Each object has the following properties:
-    - `kind` - (Required) The kind of the selector. Allowed values are: `resourceLocation`, `resourceType`, `resourceWithoutLocation`. `resourceWithoutLocation` cannot be used in the same resource selector as `resourceLocation`.
-    - `in` - (Optional) A set of strings to include in the selector.
-    - `not_in` - (Optional) A set of strings to exclude from the selector.
-- `overrides` - (Optional) A list of override objects to use for the policy assignment. Each object has the following properties:
-  - `kind` - (Required) The kind of the override.
-  - `value` - (Required) The value of the override. Supported values are policy effects: <https://learn.microsoft.com/azure/governance/policy/concepts/effects>.
-  - `selectors` - (Optional) A list of selector objects to use for the override. Each object has the following properties:
-    - `kind` - (Required) The kind of the selector.
-    - `in` - (Optional) A set of strings to include in the selector.
-    - `not_in` - (Optional) A set of strings to exclude from the selector.
-
-Type:
-
-```hcl
-map(object({
-    policy_assignments = map(object({
-      enforcement_mode = optional(string, null)
-      identity         = optional(string, null)
-      identity_ids     = optional(list(string), null)
-      parameters       = optional(map(string), null)
-      non_compliance_messages = optional(set(object({
-        message                        = string
-        policy_definition_reference_id = optional(string, null)
-      })), null)
-      resource_selectors = optional(list(object({
-        name = string
-        resource_selector_selectors = optional(list(object({
-          kind   = string
-          in     = optional(set(string), null)
-          not_in = optional(set(string), null)
-        })), [])
-      })))
-      overrides = optional(list(object({
-        kind  = string
-        value = string
-        override_selectors = optional(list(object({
-          kind   = string
-          in     = optional(set(string), null)
-          not_in = optional(set(string), null)
-        })), [])
-      })))
-    }))
-  }))
-```
-
-Default: `{}`
-
-### <a name="input_policy_default_values"></a> [policy\_default\_values](#input\_policy\_default\_values)
-
-Description: A map of default values to apply to policy assignments. The key is the default name as defined in the library, and the value is an JSON object containing a single `value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({ value = \"value\"}) }`
-
-Type: `map(string)`
-
-Default: `null`
-
-### <a name="input_resource_api_versions"></a> [resource\_api\_versions](#input\_resource\_api\_versions)
-
-Description: EXPERIMENTAL: Modify this to change the API versions used for each resource type. Added to support clouds with different API versions, e.g. US Government.
-
-Modifying these values may result in unexpected behavior or compatibility issues, which we cannot test for. Please do not raise issues against this module if you change these values.
-
-Type:
-
-```hcl
-object({
-    policy_assignment     = optional(string, "2024-04-01")
-    policy_definition     = optional(string, "2023-04-01")
-    policy_set_definition = optional(string, "2023-04-01")
-    role_assignment       = optional(string, "2022-04-01")
-    role_definition       = optional(string, "2022-04-01")
-    management_group      = optional(string, "2023-04-01")
-  })
-```
-
-Default: `{}`
-
-### <a name="input_retries"></a> [retries](#input\_retries)
-
-Description: The retry settings to apply to the CRUD operations. Value is a nested object, the top level keys are the resources and the values are an object with the following attributes:
-
-- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`, which will will disable retries. Specify a value to enable.
-- `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
-- `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
-- `multiplier` - (Optional) DEPRECATED The multiplier to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value. This value is deprecated and will be removed in a future version.
-- `randomization_factor` - DEPRECATED (Optional) The randomization factor to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value. This value is deprecated and will be removed in a future version.
-
-For more information please see the provider documentation here: <https://registry.terraform.io/providers/Azure/azapi/azurerm/latest/docs/resources/resource#nestedatt--retry>
-
-Type:
-
-```hcl
-object({
-    management_groups = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-        "Permission to Microsoft.Management/managementGroups on resources of type 'Write' is required on the management group or its ancestors."
-      ])
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-    role_definitions = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-      ])
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-    role_assignments = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-      ])
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-    policy_definitions = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-      ])
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-    policy_set_definitions = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-      ])
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-    policy_assignments = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed",                                                      # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-        "The policy definition specified in policy assignment '.+' is out of scope" # If assignment is created soon after a policy definition has been created then the assignment will fail with this error.
-      ])
-      interval_seconds     = optional(number, 5)
-      max_interval_seconds = optional(number, 30)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-    policy_role_assignments = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed",    # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-        "ResourceNotFound",       # If the resource has just been created, retry until it is available.
-        "RoleAssignmentNotFound", # If the resource has just been created, retry until it is available.
-      ])
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-    hierarchy_settings = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-      ])
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-    subscription_placement = optional(object({
-      error_message_regex = optional(list(string), [
-        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
-      ])
-      interval_seconds     = optional(number, null)
-      max_interval_seconds = optional(number, null)
-      multiplier           = optional(number, null)
-      randomization_factor = optional(number, null)
-    }), {})
-  })
-```
-
-Default: `{}`
-
-### <a name="input_role_assignment_definition_lookup_enabled"></a> [role\_assignment\_definition\_lookup\_enabled](#input\_role\_assignment\_definition\_lookup\_enabled)
-
-Description: A control to disable the lookup of role definitions when creating role assignments.  
-If you disable this then all role assignments must be supplied with a `role_definition_id_or_name` that is a valid role definition ID.
-
-Type: `bool`
-
-Default: `true`
-
-### <a name="input_role_assignment_name_use_random_uuid"></a> [role\_assignment\_name\_use\_random\_uuid](#input\_role\_assignment\_name\_use\_random\_uuid)
-
-Description: A control to use a random UUID for the role assignment name.  
-If set to false, the name will be a deterministic UUID based on the principal ID and role definition resource ID,  
-though this can cause issues with duplicate UUIDs as the scope of the role assignment is not taken into account.
-
-This is default to false to preserve existing behaviour.  
-However, we recommend this is set to true to avoid resources becoming re-created due to computed attribute changes in the resource graph.
-
-Type: `bool`
-
-Default: `false`
-
-### <a name="input_schema_validation_enabled"></a> [schema\_validation\_enabled](#input\_schema\_validation\_enabled)
-
-Description: Enable or disable schema validation for each resource type. Defaults to `true` for all resource types.  
-If you encounter issues with schema validation, please raise an issue against the AzAPI provider.
-
-Type:
-
-```hcl
-object({
-    hierarchy_settings     = optional(bool, true)
-    management_groups      = optional(bool, true)
-    policy_assignments     = optional(bool, true)
-    policy_definitions     = optional(bool, true)
-    policy_set_definitions = optional(bool, true)
-    role_assignments       = optional(bool, true)
-    role_definitions       = optional(bool, true)
-  })
-```
-
-Default: `{}`
-
-### <a name="input_subscription_placement"></a> [subscription\_placement](#input\_subscription\_placement)
-
-Description: A map of subscriptions to place into management groups. The key is deliberately arbitrary to avoid issues with known after apply values. The value is an object:
-
-- `subscription_id` - (Required) The id of the subscription to place in the management group.
-- `management_group_name` - (Required) The name of the management group to place the subscription in.
-
-Type:
-
-```hcl
-map(object({
-    subscription_id       = string
-    management_group_name = string
-  }))
-```
-
-Default: `{}`
-
-### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
-
-Description: A map of timeouts to apply to the creation and destruction of resources.  
-If using retry, the maximum elapsed retry time is governed by this value.
-
-The object has attributes for each resource type, with the following optional attributes:
-
-- `create` - (Optional) The timeout for creating the resource. Defaults to `15m` apart from policy assignments, where this is set to `20m`.
-- `delete` - (Optional) The timeout for deleting the resource. Defaults to `5m`.
-- `update` - (Optional) The timeout for updating the resource. Defaults to `5m`.
-- `read` - (Optional) The timeout for reading the resource. Defaults to `5m`.
-
-Each time duration is parsed using this function: <https://pkg.go.dev/time#ParseDuration>.
-
-Type:
-
-```hcl
-object({
-    management_group = optional(object({
-      create = optional(string, "60m")
-      delete = optional(string, "5m")
-      update = optional(string, "5m")
-      read   = optional(string, "60m")
-      }), {}
-    )
-    role_definition = optional(object({
-      create = optional(string, "60m")
-      delete = optional(string, "5m")
-      update = optional(string, "5m")
-      read   = optional(string, "60m")
-      }), {}
-    )
-    role_assignment = optional(object({
-      create = optional(string, "60m")
-      delete = optional(string, "5m")
-      update = optional(string, "5m")
-      read   = optional(string, "60m")
-      }), {}
-    )
-    policy_definition = optional(object({
-      create = optional(string, "60m")
-      delete = optional(string, "5m")
-      update = optional(string, "5m")
-      read   = optional(string, "60m")
-      }), {}
-    )
-    policy_set_definition = optional(object({
-      create = optional(string, "60m")
-      delete = optional(string, "5m")
-      update = optional(string, "5m")
-      read   = optional(string, "60m")
-      }), {}
-    )
-    policy_assignment = optional(object({
-      create = optional(string, "20m")
-      delete = optional(string, "5m")
-      update = optional(string, "5m")
-      read   = optional(string, "5m")
-      }), {}
-    )
-    policy_role_assignment = optional(object({
-      create = optional(string, "60m")
-      delete = optional(string, "5m")
-      update = optional(string, "5m")
-      read   = optional(string, "60m")
-      }), {}
-    )
-  })
-```
-
-Default: `{}`
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_architecture_name"></a> [architecture\_name](#input\_architecture\_name) | The name of the architecture to create. This needs to be of the `*.alz_architecture_definition.[json|yaml|yml]` files. | `string` | n/a | yes |
+| <a name="input_location"></a> [location](#input\_location) | The default location for resources in this management group. Used for policy managed identities. | `string` | n/a | yes |
+| <a name="input_parent_resource_id"></a> [parent\_resource\_id](#input\_parent\_resource\_id) | The resource name of the parent management group. Use the tenant id to create a child of the tenant root group.<br/>The `azurerm_client_config`/`azapi_client_config` data sources are able to retrieve the tenant id.<br/>Do not include the `/providers/Microsoft.Management/managementGroups/` prefix. | `string` | n/a | yes |
+| <a name="input_delays"></a> [delays](#input\_delays) | DEPRECATED: Please use the new `retries` variable instead to allow the provider to retry on certain errors.<br/><br/>A map of delays to apply to the creation and destruction of resources.<br/>Included to work around some race conditions in Azure. | <pre>object({<br/>    after_management_group = optional(object({<br/>      create  = optional(string, "0s")<br/>      destroy = optional(string, "0s")<br/>    }), {})<br/>    after_policy_definitions = optional(object({<br/>      create  = optional(string, "0s")<br/>      destroy = optional(string, "0s")<br/>    }), {})<br/>    after_policy_set_definitions = optional(object({<br/>      create  = optional(string, "0s")<br/>      destroy = optional(string, "0s")<br/>    }), {})<br/>  })</pre> | `{}` | no |
+| <a name="input_dependencies"></a> [dependencies](#input\_dependencies) | Place dependent values into this variable to ensure that resources are created in the correct order.<br/>Ensure that the values placed here are computed/known after apply, e.g. the resource ids.<br/><br/>This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.<br/>See the "Unknown Values & Depends On" section above for more information.<br/><br/>e.g.<pre>hcl<br/>dependencies = {<br/>  policy_role_assignments = [<br/>    module.dependency_example1.output,<br/>    module.dependency_example2.output,<br/>  ]<br/>}</pre> | <pre>object({<br/>    policy_role_assignments = optional(any, null)<br/>    policy_assignments      = optional(any, null)<br/>  })</pre> | `{}` | no |
+| <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry) | This variable controls whether or not telemetry is enabled for the module.<br/>For more information see <https://aka.ms/avm/telemetryinfo>.<br/>If it is set to false, then no telemetry will be collected. | `bool` | `true` | no |
+| <a name="input_management_group_hierarchy_settings"></a> [management\_group\_hierarchy\_settings](#input\_management\_group\_hierarchy\_settings) | Set this value to configure the hierarchy settings. Options are:<br/><br/>- `default_management_group_name` - (Required) The name of the default management group.<br/>- `require_authorization_for_group_creation` - (Optional) By default, all Entra security principals can create new management groups. When enabled, security principals must have management group write access to create new management groups. Defaults to `true`.<br/>- `update_existing` - (Optional) Update existing hierarchy settings rather than create new. Defaults to `false`. | <pre>object({<br/>    default_management_group_name            = string<br/>    require_authorization_for_group_creation = optional(bool, true)<br/>    update_existing                          = optional(bool, false)<br/>  })</pre> | `null` | no |
+| <a name="input_management_group_role_assignments"></a> [management\_group\_role\_assignments](#input\_management\_group\_role\_assignments) | A map of role assignments to create. The map key is deliberately arbitrary to avoid issues where map keys might be unknown at plan time.<br/><br/>  - `management_group_name` - The name of the management group to assign the role to.<br/>  - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.<br/>  - `principal_id` - The ID of the principal to assign the role to.<br/>  - `description` - (Optional) The description of the role assignment.<br/>  - `skip_service_principal_aad_check` - (Optional) No effect when using AzAPI.<br/>  - `condition` - (Optional) The condition which will be used to scope the role assignment.<br/>  - `condition_version` - (Optional) The version of the condition syntax. Leave as `null` if you are not using a condition, if you are then valid values are '2.0'.<br/>  - `delegated_managed_identity_resource_id` - (Optional) The delegated Azure Resource Id which contains a Managed Identity. Changing this forces a new resource to be created. This field is only used in cross-tenant scenario.<br/>  - `principal_type` - (Optional) The type of the `principal_id`. Possible values are `User`, `Group` and `ServicePrincipal`. It is necessary to explicitly set this attribute when creating role assignments if the principal creating the assignment is constrained by ABAC rules that filters on the PrincipalType attribute.<br/><br/>We recommend using role assignment conditions to restrict privileged assignments. A sensible default is to use the `condition` attribute to restrict the roles that can be assigned. The following example will restrict the role assignment to prevent the `Owner`, `Role Based Access Control Administrator`, and `User Access Administrator` roles being assigned:<pre>text<br/>"((!(ActionMatches{'Microsoft.Authorization/roleAssignments/write'}))OR(@Request[Microsoft.Authorization/roleAssignments:RoleDefinitionId]ForAnyOfAllValues:GuidNotEquals{8e3af657-a8ff-443c-a75c-2fe8c4bcb635, 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9, f58310d9-a9f6-439a-9e8d-f62e7b41a168}))AND((!(ActionMatches{'Microsoft.Authorization/roleAssignments/delete'}))OR(@Resource[Microsoft.Authorization/roleAssignments:RoleDefinitionId]ForAnyOfAllValues:GuidNotEquals{8e3af657-a8ff-443c-a75c-2fe8c4bcb635, 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9, f58310d9-a9f6-439a-9e8d-f62e7b41a168}))"</pre> | <pre>map(object({<br/>    management_group_name                  = string<br/>    role_definition_id_or_name             = string<br/>    principal_id                           = string<br/>    description                            = optional(string, null)<br/>    skip_service_principal_aad_check       = optional(bool, false)<br/>    condition                              = optional(string, null)<br/>    condition_version                      = optional(string, null)<br/>    delegated_managed_identity_resource_id = optional(string, null)<br/>    principal_type                         = optional(string, null)<br/>  }))</pre> | `{}` | no |
+| <a name="input_override_policy_definition_parameter_assign_permissions_set"></a> [override\_policy\_definition\_parameter\_assign\_permissions\_set](#input\_override\_policy\_definition\_parameter\_assign\_permissions\_set) | This list of objects allows you to set the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.<br/>This allows you to correct policies that haven't been authored correctly and means that the provider can generate the correct policy role assignments.<br/><br/>The value is a list of objects with the following attributes:<br/><br/>- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this us a UUID***.<br/>- `parameter_name` - (Required) The name of the parameter to set the assignPermissions property for.<br/><br/>The default value has been populated with the Azure Landing Zones policies that are assigned by default, but do not have the correct parameter metadata. | <pre>set(object({<br/>    definition_name = string<br/>    parameter_name  = string<br/>  }))</pre> | <pre>[<br/>  {<br/>    "definition_name": "04754ef9-9ae3-4477-bf17-86ef50026304",<br/>    "parameter_name": "userWorkspaceResourceId"<br/>  },<br/>  {<br/>    "definition_name": "09963c90-6ee7-4215-8d26-1cc660a1682f",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "09a1f130-7697-42bc-8d84-8a9ea17e5192",<br/>    "parameter_name": "dcrResourceId"<br/>  },<br/>  {<br/>    "definition_name": "0b026355-49cb-467b-8ac4-f777874e175a",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "1142b015-2bd7-41e0-8645-a531afe09a1e",<br/>    "parameter_name": "dcrResourceId"<br/>  },<br/>  {<br/>    "definition_name": "1e5ed725-f16c-478b-bd4b-7bfa2f7940b9",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "2227e1f1-23dd-4c3a-85a9-7024a401d8b2",<br/>    "parameter_name": "dcrResourceId"<br/>  },<br/>  {<br/>    "definition_name": "34804460-d88b-4922-a7ca-537165e060e",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "4485d24b-a9d3-4206-b691-1fad83bc5007",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "4ec38ebc-381f-45ee-81a4-acbc4be878f8",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "516187d4-ef64-4a1b-ad6b-a7348502976c",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "56d0ed2b-60fc-44bf-af81-a78c851b5fe1",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "59c3d93f-900b-4827-a8bd-562e7b956e7c",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "637125fd-7c39-4b94-bb0a-d331faf333a9",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "63d03cbd-47fd-4ee1-8a1c-9ddf07303de0",<br/>    "parameter_name": "userWorkspaceResourceId"<br/>  },<br/>  {<br/>    "definition_name": "6a4e6f44-f2af-4082-9702-033c9e88b9f8",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "6dd01e4f-1be1-4e80-9d0b-d109e04cb064",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "7590a335-57cf-4c95-babd-ecbc8fafeb1f",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "7a860e27-9ca2-4fc6-822d-c2d248c300df",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "86cd96e1-1745-420d-94d4-d3f2fe415aa4",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "8fd85785-1547-4a4a-bf90-d5483c9571c5",<br/>    "parameter_name": "dcrResourceId"<br/>  },<br/>  {<br/>    "definition_name": "9427df23-0f42-4e1e-bf99-a6133d841c4a",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "942bd215-1a66-44be-af65-6a1c0318dbe2",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "98569e20-8f32-4f31-bf34-0e91590ae9d3",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "a63cc0bd-cda4-4178-b705-37dc439d3e0f",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "aaa64d2d-2fa3-45e5-b332-0b031b9b30e8",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "ad1eeff9-20d7-4c82-a04e-903acab0bfc1",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "ae8a10e6-19d6-44a3-a02d-a2bdfc707742",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "b0e86710-7fb7-4a6c-a064-32e9b829509e",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "b318f84a-b872-429b-ac6d-a01b96814452",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "b6faa975-0add-4f35-8d1c-70bba45c4424",<br/>    "parameter_name": "dcrResourceId"<br/>  },<br/>  {<br/>    "definition_name": "b73e81f3-6303-48ad-9822-b69fc00c15ef",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "baf19753-7502-405f-8745-370519b20483",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "c99ce9c1-ced7-4c3e-aca0-10e69ce0cb02",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "d367bd60-64ca-4364-98ea-276775bddd94",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "d389df0a-e0d7-4607-833c-75a6fdac2c2d",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "d627d7c6-ded5-481a-8f2e-7e16b1e6faf6",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "ddca0ddc-4e9d-4bbb-92a1-f7c4dd7ef7ce",<br/>    "parameter_name": "dcrResourceId"<br/>  },<br/>  {<br/>    "definition_name": "e016b22b-e0eb-436d-8fd7-160c4eaed6e2",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "ed66d4f5-8220-45dc-ab4a-20d1749c74e6",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "ee40564d-486e-4f68-a5ca-7a621edae0fb",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "ee40564d-486e-4f68-a5ca-7a621edae0fb",<br/>    "parameter_name": "secondPrivateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "ef9fe2ce-a588-4edd-829c-6247069dcfdb",<br/>    "parameter_name": "dcrResourceId"<br/>  },<br/>  {<br/>    "definition_name": "f0fcf93c-c063-4071-9668-c47474bd3564",<br/>    "parameter_name": "privateDnsZoneId"<br/>  },<br/>  {<br/>    "definition_name": "f91991d1-5383-4c95-8ee5-5ac423dd8bb1",<br/>    "parameter_name": "userAssignedIdentityResourceId"<br/>  },<br/>  {<br/>    "definition_name": "fbc14a67-53e4-4932-abcc-2049c6706009",<br/>    "parameter_name": "privateDnsZoneId"<br/>  }<br/>]</pre> | no |
+| <a name="input_override_policy_definition_parameter_assign_permissions_unset"></a> [override\_policy\_definition\_parameter\_assign\_permissions\_unset](#input\_override\_policy\_definition\_parameter\_assign\_permissions\_unset) | This list of objects allows you to unset the [`assignPermissions` metadata property](https://learn.microsoft.com/azure/governance/policy/concepts/definition-structure-parameters#parameter-properties) of the supplied definition and parameter names.<br/>This allows you to correct policies that haven't been authored correctly, or prevent permissions being assigned for policies that are disabled in a policy set. The provider can then generate the correct policy role assignments.<br/><br/>The value is a list of objects with the following attributes:<br/><br/>- `definition_name` - (Required) The name of the policy definition, ***for built-in policies this us a UUID***.<br/>- `parameter_name` - (Required) The name of the parameter to unset the assignPermissions property for. | <pre>set(object({<br/>    definition_name = string<br/>    parameter_name  = string<br/>  }))</pre> | `null` | no |
+| <a name="input_parent_id_overrides"></a> [parent\_id\_overrides](#input\_parent\_id\_overrides) | A map of parent\_id overrides for resources that have inconsistent casing in Azure.<br/>This allows you to override the parent\_id path for specific resources to avoid forced replacement due to casing differences.<br/><br/>The object has the following optional attributes:<br/><br/>- `policy_assignments` - (Optional) A map of policy assignment keys to parent\_id path overrides. The key should be in the format `management_group_id/assignment_name`. The value should be the parent\_id path prefix (e.g., `/providers/Microsoft.Management/managementgroups` instead of `/providers/Microsoft.Management/managementGroups`).<br/>- `policy_definitions` - (Optional) A map of policy definition keys to parent\_id path overrides. The key should be in the format `management_group_id/definition_name`. The value should be the parent\_id path prefix.<br/>- `policy_set_definitions` - (Optional) A map of policy set definition keys to parent\_id path overrides. The key should be in the format `management_group_id/set_definition_name`. The value should be the parent\_id path prefix.<br/>- `role_definitions` - (Optional) A map of role definition keys to parent\_id path overrides. The key should be in the format `management_group_id/role_definition_name`. The value should be the parent\_id path prefix.<br/>- `management_groups` - (Optional) A map of management group keys to parent\_id path overrides. The key should be the management group id. The value should be the parent\_id path prefix.<br/><br/>Example:<pre>hcl<br/>parent_id_overrides = {<br/>  policy_definitions = {<br/>    "myMgId/Append-KV-SoftDelete" = "/providers/Microsoft.Management/managementgroups"<br/>  }<br/>}</pre> | <pre>object({<br/>    policy_assignments     = optional(map(string), {})<br/>    policy_definitions     = optional(map(string), {})<br/>    policy_set_definitions = optional(map(string), {})<br/>    role_definitions       = optional(map(string), {})<br/>    management_groups      = optional(map(string), {})<br/>  })</pre> | `{}` | no |
+| <a name="input_partner_id"></a> [partner\_id](#input\_partner\_id) | A value to be included in the telemetry tag. Requires the `enable_telemetry` variable to be set to `true`. The must be in the following format:<br/><br/>`<PARTNER_ID_UUID>:<PARTNER_DATA_UUID>`<br/><br/>e.g.<br/><br/>`00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000` | `string` | `null` | no |
+| <a name="input_policy_assignment_non_compliance_message_settings"></a> [policy\_assignment\_non\_compliance\_message\_settings](#input\_policy\_assignment\_non\_compliance\_message\_settings) | Settings for the non-compliance messages of policy assignments. This is used to ensure that the non-compliance messages are set correctly for policy assignments that do not have them set.<br/>  The object has the following optional attributes:<br/>- `fallback_message_enabled` - (Optional) Whether to enable the fallback message for policy assignments that do not have a non-compliance message set. Defaults to `true`.<br/>- `fallback_message` - (Optional) The fallback message to use for policy assignments that do not have a non-compliance message set. Defaults to "This resource {enforcementMode} be compliant with the assigned policy."<br/>- `fallback_message_unsupported_assignments` - (Optional) A list of policy assignment names that do not support non-compliance messages. Defaults to a list of Azure Landing Zones policy assignments that do not support non-compliance messages.<br/>- `enforcement_mode_placeholder` - (Optional) The placeholder to use for the enforcement mode in the fallback message. Defaults to "{enforcementMode}".<br/>- `enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is enforced. Defaults to "must".<br/>- `not_enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is not enforced. Defaults to "should". | <pre>object({<br/>    fallback_message_enabled = optional(bool, true)<br/>    fallback_message         = optional(string, "This resource {enforcementMode} be compliant with the assigned policy.")<br/>    fallback_message_unsupported_assignments = optional(list(string), [<br/>      "Deny-Privileged-AKS",<br/>      "Enforce-AKS-HTTPS",<br/>      "Deny-Priv-Esc-AKS"<br/>    ])<br/>    enforcement_mode_placeholder = optional(string, "{enforcementMode}")<br/>    enforced_replacement         = optional(string, "must")<br/>    not_enforced_replacement     = optional(string, "should")<br/>  })</pre> | `{}` | no |
+| <a name="input_policy_assignments_to_modify"></a> [policy\_assignments\_to\_modify](#input\_policy\_assignments\_to\_modify) | A map of policy assignment objects to modify the ALZ architecture with.<br/>You only need to specify the properties you want to change.<br/><br/>The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.<br/>The `policy_assignments` value is a map of policy assignments to modify.<br/>The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.<br/><br/>- `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.<br/>- `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.<br/>- `identity_ids` - (Optional) A set of ids of the user assigned identities to assign to the policy assignment.<br/>- `non_compliance_message` - (Optional) A set of non compliance message objects to use for the policy assignment. Each object has the following properties:<br/>  - `message` - (Required) The non compliance message.<br/>  - `policy_definition_reference_id` - (Optional) The reference id of the policy definition to use for the non compliance message.<br/>- `parameters` - (Optional) The parameters to use for the policy assignment. The map key is the parameter name and the value is an JSON object containing a single `Value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({Value = \"value\"}) }`.<br/>- `resource_selectors` - (Optional) A list of resource selector objects to use for the policy assignment. Each object has the following properties:<br/>  - `name` - (Required) The name of the resource selector.<br/>  - `selectors` - (Optional) A list of selector objects to use for the resource selector. Each object has the following properties:<br/>    - `kind` - (Required) The kind of the selector. Allowed values are: `resourceLocation`, `resourceType`, `resourceWithoutLocation`. `resourceWithoutLocation` cannot be used in the same resource selector as `resourceLocation`.<br/>    - `in` - (Optional) A set of strings to include in the selector.<br/>    - `not_in` - (Optional) A set of strings to exclude from the selector.<br/>- `overrides` - (Optional) A list of override objects to use for the policy assignment. Each object has the following properties:<br/>  - `kind` - (Required) The kind of the override.<br/>  - `value` - (Required) The value of the override. Supported values are policy effects: <https://learn.microsoft.com/azure/governance/policy/concepts/effects>.<br/>  - `selectors` - (Optional) A list of selector objects to use for the override. Each object has the following properties:<br/>    - `kind` - (Required) The kind of the selector.<br/>    - `in` - (Optional) A set of strings to include in the selector.<br/>    - `not_in` - (Optional) A set of strings to exclude from the selector. | <pre>map(object({<br/>    policy_assignments = map(object({<br/>      enforcement_mode = optional(string, null)<br/>      identity         = optional(string, null)<br/>      identity_ids     = optional(list(string), null)<br/>      parameters       = optional(map(string), null)<br/>      non_compliance_messages = optional(set(object({<br/>        message                        = string<br/>        policy_definition_reference_id = optional(string, null)<br/>      })), null)<br/>      resource_selectors = optional(list(object({<br/>        name = string<br/>        resource_selector_selectors = optional(list(object({<br/>          kind   = string<br/>          in     = optional(set(string), null)<br/>          not_in = optional(set(string), null)<br/>        })), [])<br/>      })))<br/>      overrides = optional(list(object({<br/>        kind  = string<br/>        value = string<br/>        override_selectors = optional(list(object({<br/>          kind   = string<br/>          in     = optional(set(string), null)<br/>          not_in = optional(set(string), null)<br/>        })), [])<br/>      })))<br/>    }))<br/>  }))</pre> | `{}` | no |
+| <a name="input_policy_default_values"></a> [policy\_default\_values](#input\_policy\_default\_values) | A map of default values to apply to policy assignments. The key is the default name as defined in the library, and the value is an JSON object containing a single `value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({ value = \"value\"}) }` | `map(string)` | `null` | no |
+| <a name="input_resource_api_versions"></a> [resource\_api\_versions](#input\_resource\_api\_versions) | EXPERIMENTAL: Modify this to change the API versions used for each resource type. Added to support clouds with different API versions, e.g. US Government.<br/><br/>Modifying these values may result in unexpected behavior or compatibility issues, which we cannot test for. Please do not raise issues against this module if you change these values. | <pre>object({<br/>    policy_assignment     = optional(string, "2024-04-01")<br/>    policy_definition     = optional(string, "2023-04-01")<br/>    policy_set_definition = optional(string, "2023-04-01")<br/>    role_assignment       = optional(string, "2022-04-01")<br/>    role_definition       = optional(string, "2022-04-01")<br/>    management_group      = optional(string, "2023-04-01")<br/>  })</pre> | `{}` | no |
+| <a name="input_retries"></a> [retries](#input\_retries) | The retry settings to apply to the CRUD operations. Value is a nested object, the top level keys are the resources and the values are an object with the following attributes:<br/><br/>- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`, which will will disable retries. Specify a value to enable.<br/>- `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.<br/>- `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.<br/>- `multiplier` - (Optional) DEPRECATED The multiplier to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value. This value is deprecated and will be removed in a future version.<br/>- `randomization_factor` - DEPRECATED (Optional) The randomization factor to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value. This value is deprecated and will be removed in a future version.<br/><br/>For more information please see the provider documentation here: <https://registry.terraform.io/providers/Azure/azapi/azurerm/latest/docs/resources/resource#nestedatt--retry> | <pre>object({<br/>    management_groups = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>        "Permission to Microsoft.Management/managementGroups on resources of type 'Write' is required on the management group or its ancestors."<br/>      ])<br/>      interval_seconds     = optional(number, null)<br/>      max_interval_seconds = optional(number, null)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>    role_definitions = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>      ])<br/>      interval_seconds     = optional(number, null)<br/>      max_interval_seconds = optional(number, null)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>    role_assignments = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>      ])<br/>      interval_seconds     = optional(number, null)<br/>      max_interval_seconds = optional(number, null)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>    policy_definitions = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>      ])<br/>      interval_seconds     = optional(number, null)<br/>      max_interval_seconds = optional(number, null)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>    policy_set_definitions = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>      ])<br/>      interval_seconds     = optional(number, null)<br/>      max_interval_seconds = optional(number, null)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>    policy_assignments = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed",                                                      # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>        "The policy definition specified in policy assignment '.+' is out of scope" # If assignment is created soon after a policy definition has been created then the assignment will fail with this error.<br/>      ])<br/>      interval_seconds     = optional(number, 5)<br/>      max_interval_seconds = optional(number, 30)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>    policy_role_assignments = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed",    # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>        "ResourceNotFound",       # If the resource has just been created, retry until it is available.<br/>        "RoleAssignmentNotFound", # If the resource has just been created, retry until it is available.<br/>      ])<br/>      interval_seconds     = optional(number, null)<br/>      max_interval_seconds = optional(number, null)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>    hierarchy_settings = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>      ])<br/>      interval_seconds     = optional(number, null)<br/>      max_interval_seconds = optional(number, null)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>    subscription_placement = optional(object({<br/>      error_message_regex = optional(list(string), [<br/>        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.<br/>      ])<br/>      interval_seconds     = optional(number, null)<br/>      max_interval_seconds = optional(number, null)<br/>      multiplier           = optional(number, null)<br/>      randomization_factor = optional(number, null)<br/>    }), {})<br/>  })</pre> | `{}` | no |
+| <a name="input_role_assignment_definition_lookup_enabled"></a> [role\_assignment\_definition\_lookup\_enabled](#input\_role\_assignment\_definition\_lookup\_enabled) | A control to disable the lookup of role definitions when creating role assignments.<br/>If you disable this then all role assignments must be supplied with a `role_definition_id_or_name` that is a valid role definition ID. | `bool` | `true` | no |
+| <a name="input_role_assignment_name_use_random_uuid"></a> [role\_assignment\_name\_use\_random\_uuid](#input\_role\_assignment\_name\_use\_random\_uuid) | A control to use a random UUID for the role assignment name.<br/>If set to false, the name will be a deterministic UUID based on the principal ID and role definition resource ID,<br/>though this can cause issues with duplicate UUIDs as the scope of the role assignment is not taken into account.<br/><br/>This is default to false to preserve existing behaviour.<br/>However, we recommend this is set to true to avoid resources becoming re-created due to computed attribute changes in the resource graph. | `bool` | `false` | no |
+| <a name="input_schema_validation_enabled"></a> [schema\_validation\_enabled](#input\_schema\_validation\_enabled) | Enable or disable schema validation for each resource type. Defaults to `true` for all resource types.<br/>If you encounter issues with schema validation, please raise an issue against the AzAPI provider. | <pre>object({<br/>    hierarchy_settings     = optional(bool, true)<br/>    management_groups      = optional(bool, true)<br/>    policy_assignments     = optional(bool, true)<br/>    policy_definitions     = optional(bool, true)<br/>    policy_set_definitions = optional(bool, true)<br/>    role_assignments       = optional(bool, true)<br/>    role_definitions       = optional(bool, true)<br/>  })</pre> | `{}` | no |
+| <a name="input_subscription_placement"></a> [subscription\_placement](#input\_subscription\_placement) | A map of subscriptions to place into management groups. The key is deliberately arbitrary to avoid issues with known after apply values. The value is an object:<br/><br/>- `subscription_id` - (Required) The id of the subscription to place in the management group.<br/>- `management_group_name` - (Required) The name of the management group to place the subscription in. | <pre>map(object({<br/>    subscription_id       = string<br/>    management_group_name = string<br/>  }))</pre> | `{}` | no |
+| <a name="input_timeouts"></a> [timeouts](#input\_timeouts) | A map of timeouts to apply to the creation and destruction of resources.<br/>If using retry, the maximum elapsed retry time is governed by this value.<br/><br/>The object has attributes for each resource type, with the following optional attributes:<br/><br/>- `create` - (Optional) The timeout for creating the resource. Defaults to `15m` apart from policy assignments, where this is set to `20m`.<br/>- `delete` - (Optional) The timeout for deleting the resource. Defaults to `5m`.<br/>- `update` - (Optional) The timeout for updating the resource. Defaults to `5m`.<br/>- `read` - (Optional) The timeout for reading the resource. Defaults to `5m`.<br/><br/>Each time duration is parsed using this function: <https://pkg.go.dev/time#ParseDuration>. | <pre>object({<br/>    management_group = optional(object({<br/>      create = optional(string, "60m")<br/>      delete = optional(string, "5m")<br/>      update = optional(string, "5m")<br/>      read   = optional(string, "60m")<br/>      }), {}<br/>    )<br/>    role_definition = optional(object({<br/>      create = optional(string, "60m")<br/>      delete = optional(string, "5m")<br/>      update = optional(string, "5m")<br/>      read   = optional(string, "60m")<br/>      }), {}<br/>    )<br/>    role_assignment = optional(object({<br/>      create = optional(string, "60m")<br/>      delete = optional(string, "5m")<br/>      update = optional(string, "5m")<br/>      read   = optional(string, "60m")<br/>      }), {}<br/>    )<br/>    policy_definition = optional(object({<br/>      create = optional(string, "60m")<br/>      delete = optional(string, "5m")<br/>      update = optional(string, "5m")<br/>      read   = optional(string, "60m")<br/>      }), {}<br/>    )<br/>    policy_set_definition = optional(object({<br/>      create = optional(string, "60m")<br/>      delete = optional(string, "5m")<br/>      update = optional(string, "5m")<br/>      read   = optional(string, "60m")<br/>      }), {}<br/>    )<br/>    policy_assignment = optional(object({<br/>      create = optional(string, "20m")<br/>      delete = optional(string, "5m")<br/>      update = optional(string, "5m")<br/>      read   = optional(string, "5m")<br/>      }), {}<br/>    )<br/>    policy_role_assignment = optional(object({<br/>      create = optional(string, "60m")<br/>      delete = optional(string, "5m")<br/>      update = optional(string, "5m")<br/>      read   = optional(string, "60m")<br/>      }), {}<br/>    )<br/>  })</pre> | `{}` | no |
 
 ## Outputs
 
-The following outputs are exported:
-
-### <a name="output_management_group_resource_ids"></a> [management\_group\_resource\_ids](#output\_management\_group\_resource\_ids)
-
-Description: A map of management group names to their resource ids.
-
-### <a name="output_policy_assignment_identity_ids"></a> [policy\_assignment\_identity\_ids](#output\_policy\_assignment\_identity\_ids)
-
-Description: A map of policy assignment names to their identity ids.
-
-### <a name="output_policy_assignment_resource_ids"></a> [policy\_assignment\_resource\_ids](#output\_policy\_assignment\_resource\_ids)
-
-Description: A map of policy assignment names to their resource ids.
-
-### <a name="output_policy_definition_resource_ids"></a> [policy\_definition\_resource\_ids](#output\_policy\_definition\_resource\_ids)
-
-Description: A map of policy definition names to their resource ids.
-
-### <a name="output_policy_role_assignment_resource_ids"></a> [policy\_role\_assignment\_resource\_ids](#output\_policy\_role\_assignment\_resource\_ids)
-
-Description: A map of policy role assignments to their resource ids.
-
-### <a name="output_policy_set_definition_resource_ids"></a> [policy\_set\_definition\_resource\_ids](#output\_policy\_set\_definition\_resource\_ids)
-
-Description: A map of policy set definition names to their resource ids.
-
-### <a name="output_role_definition_resource_ids"></a> [role\_definition\_resource\_ids](#output\_role\_definition\_resource\_ids)
-
-Description: A map of role definition names to their resource ids.
+| Name | Description |
+|------|-------------|
+| <a name="output_management_group_resource_ids"></a> [management\_group\_resource\_ids](#output\_management\_group\_resource\_ids) | A map of management group names to their resource ids. |
+| <a name="output_policy_assignment_identity_ids"></a> [policy\_assignment\_identity\_ids](#output\_policy\_assignment\_identity\_ids) | A map of policy assignment names to their identity ids. |
+| <a name="output_policy_assignment_resource_ids"></a> [policy\_assignment\_resource\_ids](#output\_policy\_assignment\_resource\_ids) | A map of policy assignment names to their resource ids. |
+| <a name="output_policy_definition_resource_ids"></a> [policy\_definition\_resource\_ids](#output\_policy\_definition\_resource\_ids) | A map of policy definition names to their resource ids. |
+| <a name="output_policy_role_assignment_resource_ids"></a> [policy\_role\_assignment\_resource\_ids](#output\_policy\_role\_assignment\_resource\_ids) | A map of policy role assignments to their resource ids. |
+| <a name="output_policy_set_definition_resource_ids"></a> [policy\_set\_definition\_resource\_ids](#output\_policy\_set\_definition\_resource\_ids) | A map of policy set definition names to their resource ids. |
+| <a name="output_role_definition_resource_ids"></a> [role\_definition\_resource\_ids](#output\_role\_definition\_resource\_ids) | A map of role definition names to their resource ids. |
 
 ## Modules
 
-The following Modules are called:
-
-### <a name="module_avm_interfaces"></a> [avm\_interfaces](#module\_avm\_interfaces)
-
-Source: Azure/avm-utl-interfaces/azure
-
-Version: 0.5.0
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_avm_interfaces"></a> [avm\_interfaces](#module\_avm\_interfaces) | Azure/avm-utl-interfaces/azure | 0.5.0 |
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
