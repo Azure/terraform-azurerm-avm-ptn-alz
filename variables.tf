@@ -33,6 +33,40 @@ DESCRIPTION
   }
 }
 
+variable "parent_id_overrides" {
+  type = object({
+    policy_assignments     = optional(map(string), {})
+    policy_definitions     = optional(map(string), {})
+    policy_set_definitions = optional(map(string), {})
+    role_definitions       = optional(map(string), {})
+    management_groups      = optional(map(string), {})
+  })
+  default     = {}
+  description = <<DESCRIPTION
+A map of parent_id overrides for resources that have inconsistent casing in Azure.
+This allows you to override the parent_id path for specific resources to avoid forced replacement due to casing differences.
+
+The object has the following optional attributes:
+
+- `policy_assignments` - (Optional) A map of policy assignment keys to parent_id path overrides. The key should be in the format `management_group_id/assignment_name`. The value should be the parent_id path prefix (e.g., `/providers/Microsoft.Management/managementgroups` instead of `/providers/Microsoft.Management/managementGroups`).
+- `policy_definitions` - (Optional) A map of policy definition keys to parent_id path overrides. The key should be in the format `management_group_id/definition_name`. The value should be the parent_id path prefix.
+- `policy_set_definitions` - (Optional) A map of policy set definition keys to parent_id path overrides. The key should be in the format `management_group_id/set_definition_name`. The value should be the parent_id path prefix.
+- `role_definitions` - (Optional) A map of role definition keys to parent_id path overrides. The key should be in the format `management_group_id/role_definition_name`. The value should be the parent_id path prefix.
+- `management_groups` - (Optional) A map of management group keys to parent_id path overrides. The key should be the management group id. The value should be the parent_id path prefix.
+
+Example:
+
+```hcl
+parent_id_overrides = {
+  policy_definitions = {
+    "myMgId/Append-KV-SoftDelete" = "/providers/Microsoft.Management/managementgroups"
+  }
+}
+```
+DESCRIPTION
+  nullable    = false
+}
+
 variable "dependencies" {
   type = object({
     policy_role_assignments = optional(any, null)

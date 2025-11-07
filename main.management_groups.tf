@@ -8,7 +8,7 @@ resource "azapi_resource" "management_groups_level_0" {
     properties = {
       details = {
         parent = {
-          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
+          id = "${coalesce(lookup(var.parent_id_overrides.management_groups, each.value.id, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.parent_id}"
         }
       }
       displayName = each.value.display_name
@@ -49,7 +49,7 @@ resource "azapi_resource" "management_groups_level_1" {
     properties = {
       details = {
         parent = {
-          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
+          id = "${coalesce(lookup(var.parent_id_overrides.management_groups, each.value.id, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.parent_id}"
         }
       }
       displayName = each.value.display_name
@@ -91,7 +91,7 @@ resource "azapi_resource" "management_groups_level_2" {
     properties = {
       details = {
         parent = {
-          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
+          id = "${coalesce(lookup(var.parent_id_overrides.management_groups, each.value.id, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.parent_id}"
         }
       }
       displayName = each.value.display_name
@@ -133,7 +133,7 @@ resource "azapi_resource" "management_groups_level_3" {
     properties = {
       details = {
         parent = {
-          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
+          id = "${coalesce(lookup(var.parent_id_overrides.management_groups, each.value.id, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.parent_id}"
         }
       }
       displayName = each.value.display_name
@@ -175,7 +175,7 @@ resource "azapi_resource" "management_groups_level_4" {
     properties = {
       details = {
         parent = {
-          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
+          id = "${coalesce(lookup(var.parent_id_overrides.management_groups, each.value.id, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.parent_id}"
         }
       }
       displayName = each.value.display_name
@@ -217,7 +217,7 @@ resource "azapi_resource" "management_groups_level_5" {
     properties = {
       details = {
         parent = {
-          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
+          id = "${coalesce(lookup(var.parent_id_overrides.management_groups, each.value.id, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.parent_id}"
         }
       }
       displayName = each.value.display_name
@@ -259,7 +259,7 @@ resource "azapi_resource" "management_groups_level_6" {
     properties = {
       details = {
         parent = {
-          id = "/providers/Microsoft.Management/managementGroups/${each.value.parent_id}"
+          id = "${coalesce(lookup(var.parent_id_overrides.management_groups, each.value.id, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.parent_id}"
         }
       }
       displayName = each.value.display_name
