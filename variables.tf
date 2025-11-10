@@ -336,9 +336,14 @@ The object has the following optional attributes:
 Example:
 
 ```hcl
-parent_id_overrides = {
-  policy_definitions = {
-    "myMgId/Append-KV-SoftDelete" = "/providers/Microsoft.Management/managementgroups"
+module "alz" {
+  source = "Azure/terraform-azurerm-avm-ptn-alz/azurerm"
+  
+  # the key format is `management group id/policy assignment name`
+  parent_id_overrides = {
+    policy_definitions = {
+      "alz/Deny-Classic-Resources" = "/providers/Microsoft.Management/managementgroups"
+    }
   }
 }
 ```
