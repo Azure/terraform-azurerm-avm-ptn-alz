@@ -48,6 +48,15 @@ if [ -d "${AZURE_CONFIG_DIR}" ]; then
   AZURE_CONFIG_MOUNT="-v ${AZURE_CONFIG_DIR}:/home/runtimeuser/.azure"
 fi
 
+# Check if AVM_TMP_DIR is set, if so mount it to /tmp
+if [ -z "${AVM_TMP_DIR}" ] && [ -n "${RUNNER_TEMP}" ]; then
+  AVM_TMP_DIR="${RUNNER_TEMP}"
+fi
+
+if [ -n "${AVM_TMP_DIR}" ]; then
+  TMP_MOUNT="-v ${AVM_TMP_DIR}:/tmp"
+fi
+
 # If the host Docker socket exists, mount it into the container so the container can talk to the host docker daemon
 if [ -S /var/run/docker.sock ]; then
   DOCKER_SOCK_MOUNT="-v /var/run/docker.sock:/var/run/docker.sock"
@@ -87,6 +96,19 @@ if [ -n "${AVM_PORCH_BASE_URL}" ]; then
   PORCH_BASE_URL_MAKE_ADD="PORCH_BASE_URL=${AVM_PORCH_BASE_URL}"
 fi
 
+# Get the repo specific environment variables from avm.config if it exists
+LOCAL_ENVIRONMENT_VARIABLES=""
+if [ -f "avm.config.json" ]; then
+  declare -A variables
+  eval "$(cat "avm.config.json" | jq -r 'to_entries[] | @sh "variables[\(.key|tostring)]=\(.value|tostring)"')"
+
+  for key in "${!variables[@]}"; do
+    export "$key"="${variables[$key]}"
+    LOCAL_ENVIRONMENT_VARIABLES="${LOCAL_ENVIRONMENT_VARIABLES}-e $key "
+    echo "Set environment variable: $key"="${variables[$key]}"
+  done
+fi
+
 # Check if we are running in a container
 # If we are then just run make directly
 if [ -z "${AVM_IN_CONTAINER}" ]; then
@@ -99,6 +121,7 @@ if [ -z "${AVM_IN_CONTAINER}" ]; then
     ${AZURE_CONFIG_MOUNT:-} \
     ${DOCKER_SOCK_MOUNT:-} \
     ${SSL_CERT_MOUNTS:-} \
+    ${TMP_MOUNT:-} \
     -e ARM_CLIENT_ID \
     -e ARM_OIDC_REQUEST_TOKEN \
     -e ARM_OIDC_REQUEST_URL \
@@ -110,11 +133,13 @@ if [ -z "${AVM_IN_CONTAINER}" ]; then
     -e NO_COLOR \
     -e PORCH_LOG_LEVEL \
     -e TF_IN_AUTOMATION=1 \
+    ${LOCAL_ENVIRONMENT_VARIABLES} \
     --env-file <(env | grep '^TF_VAR_') \
     --env-file <(env | grep '^AVM_') \
     "${CONTAINER_IMAGE}" \
     make \
     TUI="${TUI}" \
+    AVM_PORCH_STDOUT="${AVM_PORCH_STDOUT}" \
     AVM_MAKEFILE_REF="${AVM_MAKEFILE_REF}" \
     "${PORCH_BASE_URL_MAKE_ADD}" \
     AVM_PORCH_REF="${AVM_PORCH_REF}" \

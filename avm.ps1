@@ -130,6 +130,7 @@ if (-not $env:AVM_IN_CONTAINER) {
     "MPTF_URL",
     "NO_COLOR",
     "PORCH_LOG_LEVEL",
+    "AVM_PORCH_STDOUT",
     "TEST_TYPE",
     "TFLINT_CONFIG_URL"
   )
@@ -154,11 +155,25 @@ if (-not $env:AVM_IN_CONTAINER) {
     $dockerArgs += @("-e", "$($_.Name)=$($_.Value)")
   }
 
+  # Add local environment variables from avm.config.json
+  if (Test-Path "avm.config.json") {
+    $jsonContent = Get-Content "avm.config.json" -Raw | ConvertFrom-Json -AsHashtable
+
+    foreach ($key in $jsonContent.Keys) {
+      [System.Environment]::SetEnvironmentVariable($key, $jsonContent[$key])
+      $dockerArgs += @("-e", "$key")
+    }
+  }
+
   $dockerArgs += $CONTAINER_IMAGE
   $dockerArgs += "make"
 
   if ($TUI) {
     $dockerArgs += "TUI=$TUI"
+  }
+
+  if($env:AVM_PORCH_STDOUT) {
+    $dockerArgs += "AVM_PORCH_STDOUT=$($env:AVM_PORCH_STDOUT)"
   }
 
   $dockerArgs += "MAKEFILE_REF=$MAKEFILE_REF"
