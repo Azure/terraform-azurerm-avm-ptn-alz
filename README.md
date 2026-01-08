@@ -552,6 +552,7 @@ Example:
 ```hcl
 module "alz" {
   source = "Azure/terraform-azurerm-avm-ptn-alz/azurerm"
+
   # the key format is `management group id/policy assignment name`
   parent_id_overrides = {
     policy_definitions = {
@@ -573,20 +574,6 @@ object({
 ```
 
 Default: `{}`
-
-### <a name="input_partner_id"></a> [partner\_id](#input\_partner\_id)
-
-Description: A value to be included in the telemetry tag. Requires the `enable_telemetry` variable to be set to `true`. The must be in the following format:
-
-`<PARTNER_ID_UUID>:<PARTNER_DATA_UUID>`
-
-e.g.
-
-`00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000`
-
-Type: `string`
-
-Default: `null`
 
 ### <a name="input_policy_assignment_non_compliance_message_settings"></a> [policy\_assignment\_non\_compliance\_message\_settings](#input\_policy\_assignment\_non\_compliance\_message\_settings)
 
@@ -879,6 +866,25 @@ map(object({
 ```
 
 Default: `{}`
+
+### <a name="input_telemetry_additional_content"></a> [telemetry\_additional\_content](#input\_telemetry\_additional\_content)
+
+Description: Additional content to add to the telemetry tags. This can be used to add custom tags to the telemetry data.
+
+Any information entered here will be sent to Microsoft as part of the telemetry data collected. Do not include any personal or sensitive information.
+
+e.g.
+
+```hcl
+telemetry_additional_content = {
+  custom_tag_1 = "value1"
+  custom_tag_2 = "value2"
+}
+```
+
+Type: `any`
+
+Default: `null`
 
 ### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
 
