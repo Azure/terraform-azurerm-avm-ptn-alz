@@ -132,6 +132,8 @@ The following resources are used by this module:
 - [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.role_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.subscription_placement](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource_action.subscription_placement_create](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
+- [azapi_resource_action.subscription_placement_delete](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/update_resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
@@ -552,6 +554,7 @@ Example:
 ```hcl
 module "alz" {
   source = "Azure/terraform-azurerm-avm-ptn-alz/azurerm"
+
   # the key format is `management group id/policy assignment name`
   parent_id_overrides = {
     policy_definitions = {
@@ -879,6 +882,26 @@ map(object({
 ```
 
 Default: `{}`
+
+### <a name="input_subscription_placement_destroy_move_to_parent_resource_id_enabled"></a> [subscription\_placement\_destroy\_move\_to\_parent\_resource\_id\_enabled](#input\_subscription\_placement\_destroy\_move\_to\_parent\_resource\_id\_enabled)
+
+Description: If set to `true`, when destroying a subscription placement, the subscription will be moved to the parent management group specified in the `parent_resource_id` variable.  
+If set to `false`, the subscription will be moved to the default management group.  
+The variable `subscription_placement_destroy_target_management_group_id` takes precedence over this variable.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_subscription_placement_destroy_target_management_group_id"></a> [subscription\_placement\_destroy\_target\_management\_group\_id](#input\_subscription\_placement\_destroy\_target\_management\_group\_id)
+
+Description: If set, when destroying a subscription placement, the subscription will be moved to this management group id.  
+If not set, the subscription will be moved to to the default management group.  
+This variable takes precedence over the `subscription_placement_destroy_move_to_parent_resource_id_enabled` variable.
+
+Type: `string`
+
+Default: `null`
 
 ### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
 

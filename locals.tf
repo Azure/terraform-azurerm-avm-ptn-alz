@@ -112,3 +112,9 @@ locals {
     for k, v in azapi_resource.policy_assignments : k => contains(keys(data.azapi_resource.policy_user_assigned_identities), k) ? data.azapi_resource.policy_user_assigned_identities[k].output.properties.principalId : try(v.identity[0].principal_id, tostring(null))
   }
 }
+
+# Subscription placement locals
+locals {
+  subscription_placement_destroy_management_group_id                          = (var.subscription_placement_destroy_target_management_group_id != null && var.subscription_placement_destroy_target_management_group_id != "") ? var.subscription_placement_destroy_target_management_group_id : (var.subscription_placement_destroy_move_to_parent_resource_id_enabled ? var.parent_resource_id : null)
+  subscription_placement_destroy_move_to_specific_management_group_id_enabled = local.subscription_placement_destroy_management_group_id != null
+}
