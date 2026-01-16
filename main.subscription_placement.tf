@@ -1,5 +1,5 @@
 resource "azapi_resource" "subscription_placement" {
-  for_each = var.subscription_placement
+  for_each = local.subscription_placement_destroy_move_to_specific_management_group_id_enabled ? {} : var.subscription_placement
 
   name                   = each.value.subscription_id
   parent_id              = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}"
@@ -26,4 +26,50 @@ resource "azapi_resource" "subscription_placement" {
     azapi_resource.management_groups_level_5,
     azapi_resource.management_groups_level_6,
   ]
+}
+
+resource "azapi_resource_action" "subscription_placement_create" {
+  for_each = local.subscription_placement_destroy_move_to_specific_management_group_id_enabled ? var.subscription_placement : {}
+
+  method                 = "PUT"
+  resource_id            = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}/subscriptions/${each.value.subscription_id}"
+  type                   = "Microsoft.Management/managementGroups/subscriptions@2023-04-01"
+  headers                = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = []
+  retry = var.retries.subscription_placement.error_message_regex != null ? {
+    error_message_regex  = var.retries.subscription_placement.error_message_regex
+    interval_seconds     = lookup(var.retries.subscription_placement, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.subscription_placement, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.subscription_placement, "multiplier", null)
+    randomization_factor = lookup(var.retries.subscription_placement, "randomization_factor", null)
+  } : null
+  when = "apply"
+
+  depends_on = [
+    azapi_resource.management_groups_level_0,
+    azapi_resource.management_groups_level_1,
+    azapi_resource.management_groups_level_2,
+    azapi_resource.management_groups_level_3,
+    azapi_resource.management_groups_level_4,
+    azapi_resource.management_groups_level_5,
+    azapi_resource.management_groups_level_6,
+  ]
+}
+
+resource "azapi_resource_action" "subscription_placement_delete" {
+  for_each = local.subscription_placement_destroy_move_to_specific_management_group_id_enabled ? var.subscription_placement : {}
+
+  method                 = "PUT"
+  resource_id            = "/providers/Microsoft.Management/managementGroups/${local.subscription_placement_destroy_management_group_id}/subscriptions/${each.value.subscription_id}"
+  type                   = "Microsoft.Management/managementGroups/subscriptions@2023-04-01"
+  headers                = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = []
+  retry = var.retries.subscription_placement.error_message_regex != null ? {
+    error_message_regex  = var.retries.subscription_placement.error_message_regex
+    interval_seconds     = lookup(var.retries.subscription_placement, "interval_seconds", null)
+    max_interval_seconds = lookup(var.retries.subscription_placement, "max_interval_seconds", null)
+    multiplier           = lookup(var.retries.subscription_placement, "multiplier", null)
+    randomization_factor = lookup(var.retries.subscription_placement, "randomization_factor", null)
+  } : null
+  when = "destroy"
 }

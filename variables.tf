@@ -338,7 +338,7 @@ Example:
 ```hcl
 module "alz" {
   source = "Azure/terraform-azurerm-avm-ptn-alz/azurerm"
-  
+
   # the key format is `management group id/policy assignment name`
   parent_id_overrides = {
     policy_definitions = {
@@ -622,6 +622,27 @@ DESCRIPTION
     error_message = "All subscription ids must be valid UUIDs."
     condition     = alltrue([for v in var.subscription_placement : can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", v.subscription_id))])
   }
+}
+
+variable "subscription_placement_destroy_move_to_parent_resource_id_enabled" {
+  type        = bool
+  default     = false
+  description = <<DESCRIPTION
+If set to `true`, when destroying a subscription placement, the subscription will be moved to the parent management group specified in the `parent_resource_id` variable.
+If set to `false`, the subscription will be moved to the default management group.
+The variable `subscription_placement_destroy_target_management_group_id` takes precedence over this variable.
+DESCRIPTION
+  nullable    = false
+}
+
+variable "subscription_placement_destroy_target_management_group_id" {
+  type        = string
+  default     = null
+  description = <<DESCRIPTION
+If set, when destroying a subscription placement, the subscription will be moved to this management group id.
+If not set, the subscription will be moved to to the default management group.
+This variable takes precedence over the `subscription_placement_destroy_move_to_parent_resource_id_enabled` variable.
+DESCRIPTION
 }
 
 variable "timeouts" {
