@@ -632,6 +632,7 @@ If set to `true`, when destroying a subscription placement, the subscription wil
 If set to `false`, the subscription will be moved to the default management group.
 The variable `subscription_placement_destroy_target_management_group_id` takes precedence over this variable.
 DESCRIPTION
+  nullable    = false
 }
 
 variable "subscription_placement_destroy_target_management_group_id" {
