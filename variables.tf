@@ -631,7 +631,7 @@ variable "subscription_placement_destroy_behavior" {
   description = <<DESCRIPTION
 The behavior to apply when destroying a subscription placement. Possible values are:
 - `parent` - Move the subscription to the parent management group.
-- `intermediate_root` - Move the subscription to the intermediate root management group. If the intermediate root management group is not a pre-existing, the subscription will still be moved to it on destroy, but the management group destroy will fail.
+- `intermediate_root` - Move the subscription to the intermediate root management group. The intermediate root management group must be pre-existing to use this option. Will fallback to `default` if there is no pre-existing intermediate root management group.
 - `custom` - Move the subscription to a custom management group specified by the `subscription_placement_destroy_target_management_group_id` variable.
 - `default` - Move the subscription to the default management group as specified in your Azure tenant
 DESCRIPTION
