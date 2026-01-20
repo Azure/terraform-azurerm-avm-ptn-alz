@@ -650,7 +650,6 @@ variable "subscription_placement_destroy_custom_target_management_group_id" {
 The target management group name to move subscriptions to when the `subscription_placement_destroy_behavior` variable is set to `custom`.
 Do not include the `/providers/Microsoft.Management/managementGroups/` prefix.
 DESCRIPTION
-  nullable    = false
 
   validation {
     condition     = var.subscription_placement_destroy_custom_target_management_group_id == null ? true : !strcontains(var.subscription_placement_destroy_custom_target_management_group_id, "/")
