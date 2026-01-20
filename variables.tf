@@ -623,6 +623,11 @@ DESCRIPTION
     error_message = "All subscription ids must be valid UUIDs."
     condition     = alltrue([for v in var.subscription_placement : can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", v.subscription_id))])
   }
+
+  validation {
+    error_message = "Each subscription ID can only be specified once in the subscription_placement variable."
+    condition     = length(var.subscription_placement) == length(distinct([for v in var.subscription_placement : v.subscription_id]))
+  }
 }
 
 variable "subscription_placement_destroy_behavior" {
