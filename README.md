@@ -899,7 +899,8 @@ Default: `"default"`
 
 ### <a name="input_subscription_placement_destroy_custom_target_management_group_id"></a> [subscription\_placement\_destroy\_custom\_target\_management\_group\_id](#input\_subscription\_placement\_destroy\_custom\_target\_management\_group\_id)
 
-Description: The target management group id to move subscriptions to when the `subscription_placement_destroy_behavior` variable is set to `custom`.
+Description: The target management group name to move subscriptions to when the `subscription_placement_destroy_behavior` variable is set to `custom`.  
+Do not include the `/providers/Microsoft.Management/managementGroups/` prefix.
 
 Type: `string`
 

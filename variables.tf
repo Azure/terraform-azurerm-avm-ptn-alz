@@ -647,8 +647,19 @@ variable "subscription_placement_destroy_custom_target_management_group_id" {
   type        = string
   default     = null
   description = <<DESCRIPTION
-The target management group id to move subscriptions to when the `subscription_placement_destroy_behavior` variable is set to `custom`.
+The target management group name to move subscriptions to when the `subscription_placement_destroy_behavior` variable is set to `custom`.
+Do not include the `/providers/Microsoft.Management/managementGroups/` prefix.
 DESCRIPTION
+  nullable    = false
+
+  validation {
+    condition     = var.subscription_placement_destroy_custom_target_management_group_id == null ? true : !strcontains(var.subscription_placement_destroy_custom_target_management_group_id, "/")
+    error_message = "The target resource id must be the name of the target management group and should not contain `/`."
+  }
+  validation {
+    condition     = var.subscription_placement_destroy_custom_target_management_group_id == null ? true : length(var.subscription_placement_destroy_custom_target_management_group_id) > 0
+    error_message = "The target resource id must not be an empty string."
+  }
 }
 
 variable "timeouts" {
