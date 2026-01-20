@@ -115,6 +115,12 @@ locals {
 
 # Subscription placement locals
 locals {
-  subscription_placement_destroy_management_group_id                          = (var.subscription_placement_destroy_target_management_group_id != null && var.subscription_placement_destroy_target_management_group_id != "") ? var.subscription_placement_destroy_target_management_group_id : (var.subscription_placement_destroy_move_to_parent_resource_id_enabled ? var.parent_resource_id : null)
-  subscription_placement_destroy_move_to_specific_management_group_id_enabled = local.subscription_placement_destroy_management_group_id != null
+  intermediate_root_management_group                      = [for management_group in local.management_groups : management_group if management_group.level == 0 && management_group.exists]
+  intermediate_root_management_group_exists               = length(local.intermediate_root_management_group) > 0
+  intermediate_root_management_group_id                   = local.intermediate_root_management_group_exists ? local.intermediate_root_management_group[0].id : null
+  subscription_placement_destroy_behavior_default_enabled = var.subscription_placement_destroy_behavior == "default" || (var.subscription_placement_destroy_behavior == "intermediate_root" && local.intermediate_root_management_group_id == null)
+  subscription_placement_destroy_management_group_id = (var.subscription_placement_destroy_behavior == "parent" ? var.parent_resource_id :
+    (var.subscription_placement_destroy_behavior == "intermediate_root" ? local.intermediate_root_management_group_id :
+      (var.subscription_placement_destroy_behavior == "custom" ? var.subscription_placement_destroy_custom_target_management_group_id :
+  null)))
 }

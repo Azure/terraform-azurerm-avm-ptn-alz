@@ -1,3 +1,7 @@
+resource "terraform_data" "management_groups_dependencies" {
+  input = sha256(jsonencode(var.dependencies.management_groups))
+}
+
 resource "azapi_resource" "management_groups_level_0" {
   for_each = local.management_groups_level_0
 
@@ -37,6 +41,10 @@ resource "azapi_resource" "management_groups_level_0" {
     read   = var.timeouts.management_group.read
     update = var.timeouts.management_group.update
   }
+
+  depends_on = [
+    terraform_data.management_groups_dependencies,
+  ]
 }
 
 resource "azapi_resource" "management_groups_level_1" {

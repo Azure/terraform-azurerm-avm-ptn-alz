@@ -1,5 +1,5 @@
 resource "azapi_resource" "subscription_placement" {
-  for_each = local.subscription_placement_destroy_move_to_specific_management_group_id_enabled ? {} : var.subscription_placement
+  for_each = local.subscription_placement_destroy_behavior_default_enabled ? var.subscription_placement : {}
 
   name                   = each.value.subscription_id
   parent_id              = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}"
@@ -29,7 +29,7 @@ resource "azapi_resource" "subscription_placement" {
 }
 
 resource "azapi_resource_action" "subscription_placement_create" {
-  for_each = local.subscription_placement_destroy_move_to_specific_management_group_id_enabled ? var.subscription_placement : {}
+  for_each = local.subscription_placement_destroy_behavior_default_enabled ? {} : var.subscription_placement
 
   method                 = "PUT"
   resource_id            = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}/subscriptions/${each.value.subscription_id}"
@@ -57,7 +57,7 @@ resource "azapi_resource_action" "subscription_placement_create" {
 }
 
 resource "azapi_resource_action" "subscription_placement_delete" {
-  for_each = local.subscription_placement_destroy_move_to_specific_management_group_id_enabled ? var.subscription_placement : {}
+  for_each = local.subscription_placement_destroy_behavior_default_enabled ? {} : var.subscription_placement
 
   method                 = "PUT"
   resource_id            = "/providers/Microsoft.Management/managementGroups/${local.subscription_placement_destroy_management_group_id}/subscriptions/${each.value.subscription_id}"
@@ -72,4 +72,14 @@ resource "azapi_resource_action" "subscription_placement_delete" {
     randomization_factor = lookup(var.retries.subscription_placement, "randomization_factor", null)
   } : null
   when = "destroy"
+
+  depends_on = [
+    azapi_resource.management_groups_level_0,
+    azapi_resource.management_groups_level_1,
+    azapi_resource.management_groups_level_2,
+    azapi_resource.management_groups_level_3,
+    azapi_resource.management_groups_level_4,
+    azapi_resource.management_groups_level_5,
+    azapi_resource.management_groups_level_6,
+  ]
 }
