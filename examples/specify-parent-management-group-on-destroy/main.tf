@@ -63,5 +63,5 @@ module "alz_architecture" {
       management_group_name = local.intermediate_root_management_group_id
     }
   }
-  subscription_placement_destroy_move_to_parent_resource_id_enabled = true
+  subscription_placement_destroy_behavior = "parent"
 }

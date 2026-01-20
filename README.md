@@ -137,6 +137,7 @@ The following resources are used by this module:
 - [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/update_resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
+- [terraform_data.management_groups_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [terraform_data.policy_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [terraform_data.policy_role_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
@@ -229,6 +230,7 @@ Type:
 
 ```hcl
 object({
+    management_groups       = optional(any, null)
     policy_role_assignments = optional(any, null)
     policy_assignments      = optional(any, null)
   })
@@ -883,21 +885,21 @@ map(object({
 
 Default: `{}`
 
-### <a name="input_subscription_placement_destroy_move_to_parent_resource_id_enabled"></a> [subscription\_placement\_destroy\_move\_to\_parent\_resource\_id\_enabled](#input\_subscription\_placement\_destroy\_move\_to\_parent\_resource\_id\_enabled)
+### <a name="input_subscription_placement_destroy_behavior"></a> [subscription\_placement\_destroy\_behavior](#input\_subscription\_placement\_destroy\_behavior)
 
-Description: If set to `true`, when destroying a subscription placement, the subscription will be moved to the parent management group specified in the `parent_resource_id` variable.  
-If set to `false`, the subscription will be moved to the default management group.  
-The variable `subscription_placement_destroy_target_management_group_id` takes precedence over this variable.
+Description: The behavior to apply when destroying a subscription placement. Possible values are:
+- `parent` - Move the subscription to the parent management group.
+- `intermediate_root` - Move the subscription to the intermediate root management group. If the intermediate root management group is not a pre-existing, the subscription will still be moved to it on destroy, but the management group destroy will fail.
+- `custom` - Move the subscription to a custom management group specified by the `subscription_placement_destroy_target_management_group_id` variable.
+- `default` - Move the subscription to the default management group as specified in your Azure tenant
 
-Type: `bool`
+Type: `string`
 
-Default: `false`
+Default: `"default"`
 
-### <a name="input_subscription_placement_destroy_target_management_group_id"></a> [subscription\_placement\_destroy\_target\_management\_group\_id](#input\_subscription\_placement\_destroy\_target\_management\_group\_id)
+### <a name="input_subscription_placement_destroy_custom_target_management_group_id"></a> [subscription\_placement\_destroy\_custom\_target\_management\_group\_id](#input\_subscription\_placement\_destroy\_custom\_target\_management\_group\_id)
 
-Description: If set, when destroying a subscription placement, the subscription will be moved to this management group id.  
-If not set, the subscription will be moved to to the default management group.  
-This variable takes precedence over the `subscription_placement_destroy_move_to_parent_resource_id_enabled` variable.
+Description: The target management group id to move subscriptions to when the `subscription_placement_destroy_behavior` variable is set to `custom`.
 
 Type: `string`
 

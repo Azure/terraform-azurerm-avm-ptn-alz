@@ -35,6 +35,7 @@ DESCRIPTION
 
 variable "dependencies" {
   type = object({
+    management_groups       = optional(any, null)
     policy_role_assignments = optional(any, null)
     policy_assignments      = optional(any, null)
   })
@@ -624,24 +625,29 @@ DESCRIPTION
   }
 }
 
-variable "subscription_placement_destroy_move_to_parent_resource_id_enabled" {
-  type        = bool
-  default     = false
+variable "subscription_placement_destroy_behavior" {
+  type        = string
+  default     = "default"
   description = <<DESCRIPTION
-If set to `true`, when destroying a subscription placement, the subscription will be moved to the parent management group specified in the `parent_resource_id` variable.
-If set to `false`, the subscription will be moved to the default management group.
-The variable `subscription_placement_destroy_target_management_group_id` takes precedence over this variable.
+The behavior to apply when destroying a subscription placement. Possible values are:
+- `parent` - Move the subscription to the parent management group.
+- `intermediate_root` - Move the subscription to the intermediate root management group. If the intermediate root management group is not a pre-existing, the subscription will still be moved to it on destroy, but the management group destroy will fail.
+- `custom` - Move the subscription to a custom management group specified by the `subscription_placement_destroy_target_management_group_id` variable.
+- `default` - Move the subscription to the default management group as specified in your Azure tenant
 DESCRIPTION
   nullable    = false
+
+  validation {
+    condition     = contains(["parent", "intermediate_root", "custom", "default"], var.subscription_placement_destroy_behavior)
+    error_message = "The subscription_placement_destroy_behavior variable must be one of 'parent', 'intermediate_root', 'custom', or 'default'."
+  }
 }
 
-variable "subscription_placement_destroy_target_management_group_id" {
+variable "subscription_placement_destroy_custom_target_management_group_id" {
   type        = string
   default     = null
   description = <<DESCRIPTION
-If set, when destroying a subscription placement, the subscription will be moved to this management group id.
-If not set, the subscription will be moved to to the default management group.
-This variable takes precedence over the `subscription_placement_destroy_move_to_parent_resource_id_enabled` variable.
+The target management group id to move subscriptions to when the `subscription_placement_destroy_behavior` variable is set to `custom`.
 DESCRIPTION
 }
 
