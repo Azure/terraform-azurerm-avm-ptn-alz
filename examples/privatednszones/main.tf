@@ -31,12 +31,10 @@ module "alz" {
   architecture_name  = "alz"
   location           = local.location
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  dependencies = {
-    policy_assignments = [
-      module.private_dns_zones.private_dns_zone_resource_ids,
-    ]
-  }
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry   = var.enable_telemetry
+  policy_assignments_dependencies = [
+    module.private_dns_zones.private_dns_zone_resource_ids,
+  ]
   policy_assignments_to_modify = {
     connectivity = {
       policy_assignments = {

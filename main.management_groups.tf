@@ -1,5 +1,5 @@
 resource "terraform_data" "management_groups_dependencies" {
-  input = sha256(jsonencode(var.dependencies.management_groups))
+  input = sha256(jsonencode(var.management_groups_dependencies))
 }
 
 resource "azapi_resource" "management_groups_level_0" {

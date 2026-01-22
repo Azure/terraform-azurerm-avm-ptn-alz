@@ -40,15 +40,15 @@ Similarly, if you pass an unknown (known after apply) value into the module, it 
 This may cause resources to be unnecessarily recreated.
 
 To work around this, we have two features.
-Firstly we have a `dependencies` variable.
-This variable is used to ensure that policies and policy role assignments do not get created until dependent resources are available.
+Firstly we have `_dependencies` variables for policy assignments, policy role assignments, and management groups.
+These variables are used to ensure that the relevant resources do not get created until dependent resources are available.
 
 Secondly, for values that are passed into the module, use string interpolation or provider functions to create the required. For example:
 
-### Using `var.dependencies`
+### Using `_dependencies` variables
 
-This variable is used as a workaround for the lack of support for `depends_on` in the ALZ provider.
-Place values into this variable to ensure that policies and policy role assignments do not get created until dependent resources are available.
+These variables are used as a workaround for the lack of support for `depends_on` in the ALZ provider.
+Place values into the relevant variable to ensure that management groups, policy assignments, and policy role assignments do not get created until dependent resources are available.
 See the variable documentation and the examples (private DNS and management) for more information.
 
 ### Using Provider Functions
@@ -207,37 +207,6 @@ object({
 
 Default: `{}`
 
-### <a name="input_dependencies"></a> [dependencies](#input\_dependencies)
-
-Description: Place dependent values into this variable to ensure that resources are created in the correct order.  
-Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
-
-This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.  
-See the "Unknown Values & Depends On" section above for more information.
-
-e.g.
-
-```hcl
-dependencies = {
-  policy_role_assignments = [
-    module.dependency_example1.output,
-    module.dependency_example2.output,
-  ]
-}
-```
-
-Type:
-
-```hcl
-object({
-    management_groups       = optional(any, null)
-    policy_role_assignments = optional(any, null)
-    policy_assignments      = optional(any, null)
-  })
-```
-
-Default: `{}`
-
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
 Description: This variable controls whether or not telemetry is enabled for the module.  
@@ -305,6 +274,26 @@ map(object({
 ```
 
 Default: `{}`
+
+### <a name="input_management_groups_dependencies"></a> [management\_groups\_dependencies](#input\_management\_groups\_dependencies)
+
+Description: Place dependent values into this variable to ensure that management groups are created in the correct order.  
+Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
+
+This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.  
+See the "Unknown Values & Depends On" section above for more information.
+
+e.g.
+```hcl
+management_group_dependencies = [
+  module.dependency_example1.output,
+  module.dependency_example2.output,
+]
+```
+
+Type: `any`
+
+Default: `null`
 
 ### <a name="input_override_policy_definition_parameter_assign_permissions_set"></a> [override\_policy\_definition\_parameter\_assign\_permissions\_set](#input\_override\_policy\_definition\_parameter\_assign\_permissions\_set)
 
@@ -623,6 +612,26 @@ object({
 
 Default: `{}`
 
+### <a name="input_policy_assignments_dependencies"></a> [policy\_assignments\_dependencies](#input\_policy\_assignments\_dependencies)
+
+Description: Place dependent values into this variable to ensure that policy assignments are created in the correct order.  
+Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
+
+This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.  
+See the "Unknown Values & Depends On" section above for more information.
+
+e.g.
+```hcl
+policy_assignments_dependencies = [
+  module.dependency_example1.output,
+  module.dependency_example2.output,
+]
+```
+
+Type: `any`
+
+Default: `null`
+
 ### <a name="input_policy_assignments_to_modify"></a> [policy\_assignments\_to\_modify](#input\_policy\_assignments\_to\_modify)
 
 Description: A map of policy assignment objects to modify the ALZ architecture with.  
@@ -694,6 +703,26 @@ Default: `{}`
 Description: A map of default values to apply to policy assignments. The key is the default name as defined in the library, and the value is an JSON object containing a single `value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({ value = \"value\"}) }`
 
 Type: `map(string)`
+
+Default: `null`
+
+### <a name="input_policy_role_assignments_dependencies"></a> [policy\_role\_assignments\_dependencies](#input\_policy\_role\_assignments\_dependencies)
+
+Description: Place dependent values into this variable to ensure that policy role assignments are created in the correct order.  
+Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
+
+This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.  
+See the "Unknown Values & Depends On" section above for more information.
+
+e.g.
+```hcl
+policy_role_assignments_dependencies = [
+  module.dependency_example1.output,
+  module.dependency_example2.output,
+]
+```
+
+Type: `any`
 
 Default: `null`
 
