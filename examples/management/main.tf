@@ -36,13 +36,11 @@ module "alz" {
   architecture_name  = "alz"
   location           = local.location
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  dependencies = {
-    policy_assignments = [
-      module.management.data_collection_rule_ids,
-      module.management.resource_id,
-      module.management.user_assigned_identity_ids,
-    ]
-  }
+  policy_assignments_dependencies = [
+    module.management.data_collection_rule_ids,
+    module.management.resource_id,
+    module.management.user_assigned_identity_ids,
+  ]
   policy_assignments_to_modify = {
     connectivity = {
       policy_assignments = {

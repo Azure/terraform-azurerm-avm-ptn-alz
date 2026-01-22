@@ -38,15 +38,15 @@ Similarly, if you pass an unknown (known after apply) value into the module, it 
 This may cause resources to be unnecessarily recreated.
 
 To work around this, we have two features.
-Firstly we have a `dependencies` variable.
-This variable is used to ensure that policies and policy role assignments do not get created until dependent resources are available.
+Firstly we have `_dependencies` variables for policy assignments, policy role assignments, and management groups.
+These variables are used to ensure that the relevant resources do not get created until dependent resources are available.
 
 Secondly, for values that are passed into the module, use string interpolation or provider functions to create the required. For example:
 
-### Using `var.dependencies`
+### Using `_dependencies` variables
 
-This variable is used as a workaround for the lack of support for `depends_on` in the ALZ provider.
-Place values into this variable to ensure that policies and policy role assignments do not get created until dependent resources are available.
+These variables are used as a workaround for the lack of support for `depends_on` in the ALZ provider.
+Place values into the relevant variable to ensure that management groups, policy assignments, and policy role assignments do not get created until dependent resources are available.
 See the variable documentation and the examples (private DNS and management) for more information.
 
 ### Using Provider Functions
