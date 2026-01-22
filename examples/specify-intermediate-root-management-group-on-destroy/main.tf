@@ -104,13 +104,11 @@ module "alz_architecture" {
   architecture_name  = "alz"
   location           = "northeurope"
   parent_resource_id = azapi_resource.parent.name
-  dependencies = {
-    management_groups = [
-      azapi_resource_action.subscription_placement_create,
-      azapi_resource_action.subscription_placement_delete,
-    ]
-  }
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry   = var.enable_telemetry
+  management_groups_dependencies = [
+    azapi_resource_action.subscription_placement_create,
+    azapi_resource_action.subscription_placement_delete,
+  ]
   subscription_placement = {
     test = {
       subscription_id       = data.azapi_client_config.current.subscription_id

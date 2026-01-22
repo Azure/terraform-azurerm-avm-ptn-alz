@@ -33,34 +33,6 @@ DESCRIPTION
   }
 }
 
-variable "dependencies" {
-  type = object({
-    management_groups       = optional(any, null)
-    policy_role_assignments = optional(any, null)
-    policy_assignments      = optional(any, null)
-  })
-  default     = {}
-  description = <<DESCRIPTION
-Place dependent values into this variable to ensure that resources are created in the correct order.
-Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
-
-This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.
-See the "Unknown Values & Depends On" section above for more information.
-
-e.g.
-
-```hcl
-dependencies = {
-  policy_role_assignments = [
-    module.dependency_example1.output,
-    module.dependency_example2.output,
-  ]
-}
-```
-DESCRIPTION
-  nullable    = false
-}
-
 variable "management_group_hierarchy_settings" {
   type = object({
     default_management_group_name            = string
@@ -92,6 +64,25 @@ DESCRIPTION
     error_message = "The management group name must not end with a period."
     condition     = var.management_group_hierarchy_settings == null ? true : !can(regex("\\.$", var.management_group_hierarchy_settings.default_management_group_name))
   }
+}
+
+variable "management_groups_dependencies" {
+  type        = any
+  default     = null
+  description = <<DESCRIPTION
+Place dependent values into this variable to ensure that management groups are created in the correct order.
+Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
+
+This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.
+See the "Unknown Values & Depends On" section above for more information.
+
+e.g.
+```hcl
+management_group_dependencies = [
+  module.dependency_example1.output,
+  module.dependency_example2.output,
+]
+DESCRIPTION
 }
 
 variable "override_policy_definition_parameter_assign_permissions_set" {
@@ -398,6 +389,25 @@ DESCRIPTION
   nullable    = false
 }
 
+variable "policy_assignments_dependencies" {
+  type        = any
+  default     = null
+  description = <<DESCRIPTION
+Place dependent values into this variable to ensure that policy assignments are created in the correct order.
+Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
+
+This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.
+See the "Unknown Values & Depends On" section above for more information.
+
+e.g.
+```hcl
+policy_assignments_dependencies = [
+  module.dependency_example1.output,
+  module.dependency_example2.output,
+]
+DESCRIPTION
+}
+
 variable "policy_assignments_to_modify" {
   type = map(object({
     policy_assignments = map(object({
@@ -465,6 +475,25 @@ variable "policy_default_values" {
   default     = null
   description = <<DESCRIPTION
 A map of default values to apply to policy assignments. The key is the default name as defined in the library, and the value is an JSON object containing a single `value` attribute with the values to apply. This to mitigate issues with the Terraform type system. E.g. `{ defaultName = jsonencode({ value = \"value\"}) }`
+DESCRIPTION
+}
+
+variable "policy_role_assignments_dependencies" {
+  type        = any
+  default     = null
+  description = <<DESCRIPTION
+Place dependent values into this variable to ensure that policy role assignments are created in the correct order.
+Ensure that the values placed here are computed/known after apply, e.g. the resource ids.
+
+This is necessary as the unknown values and `depends_on` are not supported by this module as we use the alz provider.
+See the "Unknown Values & Depends On" section above for more information.
+
+e.g.
+```hcl
+policy_role_assignments_dependencies = [
+  module.dependency_example1.output,
+  module.dependency_example2.output,
+]
 DESCRIPTION
 }
 
