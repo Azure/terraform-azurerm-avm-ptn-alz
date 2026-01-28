@@ -343,25 +343,6 @@ DESCRIPTION
   nullable    = false
 }
 
-variable "partner_id" {
-  type        = string
-  default     = null
-  description = <<DESCRIPTION
-A value to be included in the telemetry tag. Requires the `enable_telemetry` variable to be set to `true`. The must be in the following format:
-
-`<PARTNER_ID_UUID>:<PARTNER_DATA_UUID>`
-
-e.g.
-
-`00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000`
-DESCRIPTION
-
-  validation {
-    error_message = "The partner id must be in the format <PARTNER_ID_UUID>:<PARTNER_DATA_UUID>. All letters must be lowercase"
-    condition     = var.partner_id == null ? true : can(regex("^[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}:[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}$", var.partner_id))
-  }
-}
-
 variable "policy_assignment_non_compliance_message_settings" {
   type = object({
     fallback_message_enabled = optional(bool, true)
@@ -688,6 +669,26 @@ DESCRIPTION
     condition     = var.subscription_placement_destroy_custom_target_management_group_id == null ? true : length(var.subscription_placement_destroy_custom_target_management_group_id) > 0
     error_message = "The target resource id must not be an empty string."
   }
+}
+
+variable "telemetry_additional_content" {
+  type        = map(string)
+  default     = null
+  description = <<DESCRIPTION
+Additional content to add to the telemetry tags. This can be used to add custom tags to the telemetry data.
+To add array / object values, serialize them as JSON strings using `jsonencode()`.
+
+Any information entered here will be sent to Microsoft as part of the telemetry data collected. Do not include any personal or sensitive information.
+
+e.g.
+
+```hcl
+telemetry_additional_content = {
+  custom_tag_1 = "value1"
+  custom_tag_2 = "value2"
+  custom_array_tag = jsonencode(["value1", "value2"])
+}
+DESCRIPTION
 }
 
 variable "timeouts" {
