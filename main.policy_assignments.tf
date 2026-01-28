@@ -1,5 +1,5 @@
 resource "terraform_data" "policy_assignments_dependencies" {
-  input = sha256(jsonencode(var.dependencies.policy_assignments))
+  input = sha256(jsonencode(var.policy_assignments_dependencies))
 }
 
 resource "azapi_resource" "policy_assignments" {
