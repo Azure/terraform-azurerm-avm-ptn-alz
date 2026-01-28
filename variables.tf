@@ -672,10 +672,11 @@ DESCRIPTION
 }
 
 variable "telemetry_additional_content" {
-  type        = any
+  type        = map(string)
   default     = null
   description = <<DESCRIPTION
 Additional content to add to the telemetry tags. This can be used to add custom tags to the telemetry data.
+To add array / object values, serialize them as JSON strings using `jsonencode()`.
 
 Any information entered here will be sent to Microsoft as part of the telemetry data collected. Do not include any personal or sensitive information.
 
@@ -685,13 +686,9 @@ e.g.
 telemetry_additional_content = {
   custom_tag_1 = "value1"
   custom_tag_2 = "value2"
+  custom_array_tag = jsonencode(["value1", "value2"])
 }
 DESCRIPTION
-
-  validation {
-    error_message = "The telemetry_additional_content variable must be a map/object."
-    condition     = var.telemetry_additional_content == null || can(merge({}, var.telemetry_additional_content))
-  }
 }
 
 variable "timeouts" {

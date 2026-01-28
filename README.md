@@ -923,7 +923,8 @@ Default: `null`
 
 ### <a name="input_telemetry_additional_content"></a> [telemetry\_additional\_content](#input\_telemetry\_additional\_content)
 
-Description: Additional content to add to the telemetry tags. This can be used to add custom tags to the telemetry data.
+Description: Additional content to add to the telemetry tags. This can be used to add custom tags to the telemetry data.  
+To add array / object values, serialize them as JSON strings using `jsonencode()`.
 
 Any information entered here will be sent to Microsoft as part of the telemetry data collected. Do not include any personal or sensitive information.
 
@@ -933,10 +934,11 @@ e.g.
 telemetry_additional_content = {
   custom_tag_1 = "value1"
   custom_tag_2 = "value2"
+  custom_array_tag = jsonencode(["value1", "value2"])
 }
 ```
 
-Type: `any`
+Type: `map(string)`
 
 Default: `null`
 
