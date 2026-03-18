@@ -1,0 +1,397 @@
+#!/usr/bin/env bash
+# azure-schema - Query Azure resource type schemas from the command line.
+#
+# Data source: bicep-types-az (https://github.com/Azure/bicep-types-az)
+#   - index.json for resource type discovery and API version listing
+#   - types.json per resource type for schema definitions
+#
+# Dependencies: bash 4+, curl, jq
+
+set -euo pipefail
+
+readonly PROG="$(basename "$0")"
+readonly CACHE_DIR="${XDG_CACHE_HOME:-${HOME}/.cache}/azure-schema"
+readonly BICEP_TYPES_BASE="https://raw.githubusercontent.com/Azure/bicep-types-az/main/generated"
+readonly INDEX_URL="${BICEP_TYPES_BASE}/index.json"
+readonly INDEX_CACHE="${CACHE_DIR}/index.json"
+readonly INDEX_MAX_AGE=86400 # 24 hours
+
+# Bicep type flags (bitfield)
+# 1 = Required, 2 = ReadOnly, 4 = WriteOnly, 8 = DeployTimeConstant
+readonly FLAG_REQUIRED=1
+readonly FLAG_READONLY=2
+readonly FLAG_WRITEONLY=4
+
+# --------------------------------------------------------------------------- #
+# Helpers
+# --------------------------------------------------------------------------- #
+
+die() { printf "Error: %b\n" "$*" >&2; exit 1; }
+
+usage() {
+  cat <<EOF
+Usage:
+  ${PROG} get <ResourceType> <ApiVersion> [--json] [--depth N]
+  ${PROG} versions <ResourceProvider>
+  ${PROG} help
+
+Commands:
+  get       Fetch the schema for a resource type at a given API version.
+            Default output is a human-readable summary. Pass --json for raw resolved JSON.
+            --depth N  Resolve nested object properties to N levels deep (default: 5).
+
+  versions  List available API versions for all resource types under a provider.
+
+Examples:
+  ${PROG} get Microsoft.ContainerService/managedClusters 2025-10-01
+  ${PROG} get Microsoft.Storage/storageAccounts 2023-01-01 --json
+  ${PROG} get Microsoft.Storage/storageAccounts 2023-01-01 --depth 3
+  ${PROG} versions Microsoft.Storage
+EOF
+}
+
+ensure_cache_dir() {
+  [[ -d "${CACHE_DIR}" ]] || mkdir -p "${CACHE_DIR}"
+}
+
+# Download the bicep-types-az index.json and cache it.
+fetch_index() {
+  ensure_cache_dir
+  local needs_fetch=0
+
+  if [[ ! -f "${INDEX_CACHE}" ]]; then
+    needs_fetch=1
+  else
+    local age
+    age=$(( $(date +%s) - $(stat -c %Y "${INDEX_CACHE}" 2>/dev/null || stat -f %m "${INDEX_CACHE}" 2>/dev/null || echo 0) ))
+    if (( age > INDEX_MAX_AGE )); then
+      needs_fetch=1
+    fi
+  fi
+
+  if (( needs_fetch )); then
+    echo "Fetching resource type index (cached for 24h)..." >&2
+    curl -sSfL "${INDEX_URL}" -o "${INDEX_CACHE}" || die "Failed to download index from ${INDEX_URL}"
+  fi
+}
+
+# Look up a resource type in the index and return "file_path type_index".
+# e.g. "containerservice_0/microsoft.containerservice/2025-10-01/types.json 376"
+resolve_index_ref() {
+  local resource_type="$1"
+  local api_version="$2"
+
+  local lookup_key="${resource_type}@${api_version}"
+
+  local ref
+  ref="$(jq -r --arg key "${lookup_key}" '
+    .resources[$key]["$ref"] //
+    (.resources | to_entries[] | select(.key | ascii_downcase == ($key | ascii_downcase)) | .value["$ref"]) //
+    empty
+  ' "${INDEX_CACHE}" 2>/dev/null)" || return 1
+
+  [[ -n "${ref}" ]] || return 1
+
+  # ref format: "containerservice_0/microsoft.containerservice/2025-10-01/types.json#/376"
+  local file_path type_index
+  file_path="$(echo "${ref}" | cut -d'#' -f1)"
+  type_index="$(echo "${ref}" | cut -d'/' -f2-  | cut -d'#' -f2 | tr -d '/')"
+
+  echo "${file_path} ${type_index}"
+}
+
+# Fetch a types.json file and cache it.
+fetch_types_file() {
+  local file_path="$1"
+  ensure_cache_dir
+
+  # Create a safe cache filename from the path
+  local cache_key
+  cache_key="$(echo "${file_path}" | tr '/' '_')"
+  local cache_file="${CACHE_DIR}/${cache_key}"
+
+  if [[ ! -f "${cache_file}" ]]; then
+    local url="${BICEP_TYPES_BASE}/${file_path}"
+    echo "Fetching types from ${file_path}..." >&2
+    curl -sSfL "${url}" -o "${cache_file}" 2>/dev/null \
+      || { rm -f "${cache_file}"; die "Failed to fetch ${url}"; }
+  fi
+
+  echo "${cache_file}"
+}
+
+# --------------------------------------------------------------------------- #
+# cmd: versions
+# --------------------------------------------------------------------------- #
+
+cmd_versions() {
+  local provider="${1:-}"
+  [[ -n "${provider}" ]] || die "Usage: ${PROG} versions <ResourceProvider>  Example: ${PROG} versions Microsoft.Storage"
+
+  fetch_index
+
+  local pattern
+  pattern="$(echo "${provider}" | tr '[:upper:]' '[:lower:]')"
+
+  jq -r --arg pat "${pattern}" '
+    .resources | keys[] |
+    select((. | ascii_downcase) | startswith($pat)) |
+    split("@") | "\(.[0])  \(.[1])"
+  ' "${INDEX_CACHE}" | sort | column -t
+
+  local count
+  count=$(jq -r --arg pat "${pattern}" '
+    [.resources | keys[] | select((. | ascii_downcase) | startswith($pat))] | length
+  ' "${INDEX_CACHE}")
+
+  echo "" >&2
+  echo "${count} resource type/version(s) found for ${provider}" >&2
+}
+
+# --------------------------------------------------------------------------- #
+# cmd: get
+# --------------------------------------------------------------------------- #
+
+cmd_get() {
+  local resource_type="${1:-}"
+  local api_version="${2:-}"
+  local output_mode="summary"
+  local max_depth=5
+
+  shift 2 2>/dev/null || true
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --json) output_mode="json" ;;
+      --depth)
+        shift
+        max_depth="${1:-5}"
+        ;;
+      *) die "Unknown flag: $1" ;;
+    esac
+    shift
+  done
+
+  [[ -n "${resource_type}" ]] || die "Usage: ${PROG} get <ResourceType> <ApiVersion> [--json]"
+  [[ -n "${api_version}" ]]   || die "Usage: ${PROG} get <ResourceType> <ApiVersion> [--json]"
+
+  fetch_index
+
+  # Look up the resource in the index.
+  local ref_info
+  ref_info="$(resolve_index_ref "${resource_type}" "${api_version}")" \
+    || die "Resource type '${resource_type}@${api_version}' not found in index.\nUse '${PROG} versions ${resource_type%%/*}' to list available versions."
+
+  local file_path type_index
+  file_path="$(echo "${ref_info}" | cut -d' ' -f1)"
+  type_index="$(echo "${ref_info}" | cut -d' ' -f2)"
+
+  # Fetch the types.json file.
+  local types_file
+  types_file="$(fetch_types_file "${file_path}")"
+
+  if [[ "${output_mode}" == "json" ]]; then
+    render_json "${types_file}" "${type_index}" "${max_depth}"
+  else
+    render_summary "${types_file}" "${type_index}" "${resource_type}" "${api_version}" "${max_depth}"
+  fi
+}
+
+# --------------------------------------------------------------------------- #
+# JSON output - resolve types into a readable JSON structure
+# --------------------------------------------------------------------------- #
+
+render_json() {
+  local types_file="$1"
+  local type_index="$2"
+  local max_depth="$3"
+
+  jq --argjson idx "${type_index}" --argjson maxd "${max_depth}" '
+    . as $types |
+
+    # Resolve a type ref index to a type description, with depth limiting.
+    def resolve(depth):
+      . as $t |
+      if depth > $maxd then
+        if $t["$type"] == "ObjectType" then {"type": "object", "name": $t.name, "_truncated": "depth limit exceeded"}
+        else {"type": ($t["$type"] // "unknown"), "_truncated": "depth limit exceeded"}
+        end
+      else
+        if $t["$type"] == "StringType" then
+          { type: "string" }
+          + (if $t | has("minLength") then { minLength: $t.minLength } else {} end)
+          + (if $t | has("maxLength") then { maxLength: $t.maxLength } else {} end)
+          + (if $t | has("pattern") then { pattern: $t.pattern } else {} end)
+        elif $t["$type"] == "StringLiteralType" then
+          { type: "string", const: $t.value }
+        elif $t["$type"] == "IntegerType" then
+          { type: "integer" }
+          + (if $t | has("minValue") then { minimum: $t.minValue } else {} end)
+          + (if $t | has("maxValue") then { maximum: $t.maxValue } else {} end)
+        elif $t["$type"] == "BooleanType" then
+          { type: "boolean" }
+        elif $t["$type"] == "AnyType" then
+          { type: "any" }
+        elif $t["$type"] == "ArrayType" then
+          { type: "array" }
+          + (if $t.itemType["$ref"] then
+              { items: ($types[$t.itemType["$ref"] | split("/") | last | tonumber] | resolve(depth + 1)) }
+            else {} end)
+        elif $t["$type"] == "UnionType" then
+          { type: "union",
+            oneOf: [ $t.elements[] |
+              if .["$ref"] then
+                $types[.["$ref"] | split("/") | last | tonumber] | resolve(depth + 1)
+              else .
+              end
+            ]
+          }
+        elif $t["$type"] == "ObjectType" then
+          { type: "object", name: $t.name }
+          + (if $t.properties then
+              { properties:
+                ($t.properties | to_entries | map(
+                  { key: .key,
+                    value: (
+                      .value as $prop |
+                      (if $prop.type["$ref"] then
+                        $types[$prop.type["$ref"] | split("/") | last | tonumber] | resolve(depth + 1)
+                      else {}
+                      end)
+                      + (if $prop.description then { description: $prop.description } else {} end)
+                      + (if ($prop.flags // 0) | (. / 1 | floor) % 2 == 1 then { required: true } else {} end)
+                      + (if ($prop.flags // 0) | (. / 2 | floor) % 2 == 1 then { readOnly: true } else {} end)
+                      + (if ($prop.flags // 0) | (. / 4 | floor) % 2 == 1 then { writeOnly: true } else {} end)
+                    )
+                  }
+                ) | from_entries)
+              }
+            else {} end)
+        else
+          { type: ($t["$type"] // "unknown") }
+        end
+      end;
+
+    # Start from the ResourceType entry, follow its body ref.
+    .[$idx] as $rt |
+    ($rt.body["$ref"] | split("/") | last | tonumber) as $body_idx |
+    $types[$body_idx] | resolve(0)
+  ' "${types_file}"
+}
+
+# --------------------------------------------------------------------------- #
+# Human-readable summary renderer
+# --------------------------------------------------------------------------- #
+
+render_summary() {
+  local types_file="$1"
+  local type_index="$2"
+  local resource_type="$3"
+  local api_version="$4"
+  local max_depth="$5"
+
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  ${resource_type} @ ${api_version}"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+
+  jq -r --argjson idx "${type_index}" --argjson maxd "${max_depth}" '
+    . as $types |
+
+    # Resolve a type index to a short type string.
+    def type_str:
+      if .["$type"] == "StringType" then "string"
+      elif .["$type"] == "StringLiteralType" then "\"\(.value)\""
+      elif .["$type"] == "IntegerType" then "integer"
+      elif .["$type"] == "BooleanType" then "boolean"
+      elif .["$type"] == "AnyType" then "any"
+      elif .["$type"] == "ArrayType" then
+        if .itemType["$ref"] then
+          "array<\($types[.itemType["$ref"] | split("/") | last | tonumber] | type_str)>"
+        else "array"
+        end
+      elif .["$type"] == "UnionType" then
+        "(" + ([.elements[] |
+          if .["$ref"] then $types[.["$ref"] | split("/") | last | tonumber] | type_str
+          else "?" end
+        ] | join(" | ")) + ")"
+      elif .["$type"] == "ObjectType" then .name // "object"
+      elif .["$type"] == "ResourceType" then .name // "resource"
+      else .["$type"] // "unknown"
+      end;
+
+    # Print properties of an object type at a given indent level.
+    def print_props(indent; depth):
+      .properties // {} | to_entries[] |
+      .key as $name |
+      .value as $prop |
+      ($prop.flags // 0) as $flags |
+
+      # Resolve the type
+      (if $prop.type["$ref"] then
+        $types[$prop.type["$ref"] | split("/") | last | tonumber]
+      else null end) as $resolved |
+
+      # Type string
+      (if $resolved then $resolved | type_str else "unknown" end) as $tstr |
+
+      # Flags
+      (if ($flags / 1 | floor) % 2 == 1 then " [REQUIRED]" else "" end) as $req |
+      (if ($flags / 2 | floor) % 2 == 1 then " [READ-ONLY]" else "" end) as $ro |
+      (if ($flags / 4 | floor) % 2 == 1 then " [WRITE-ONLY]" else "" end) as $wo |
+
+      # Description (truncate at 120 chars)
+      (if $prop.description then
+        if ($prop.description | length) > 120 then
+          "\n\(indent)      \($prop.description[:120])..."
+        else
+          "\n\(indent)      \($prop.description)"
+        end
+      else "" end) as $desc |
+
+      "\(indent)  \($name): \($tstr)\($req)\($ro)\($wo)\($desc)",
+
+      # Recurse into nested ObjectType properties, or show truncation indicator
+      (if $resolved and $resolved["$type"] == "ObjectType" and $resolved.properties then
+        if depth < $maxd then
+          $resolved | print_props("\(indent)    "; depth + 1)
+        else
+          "\(indent)      (...depth limit exceeded)"
+        end
+      else empty end);
+
+    # Start from the ResourceType entry, follow its body ref.
+    .[$idx] as $rt |
+    ($rt.body["$ref"] | split("/") | last | tonumber) as $body_idx |
+    $types[$body_idx] as $body |
+
+    # Collect required top-level properties
+    ([$body.properties // {} | to_entries[] | select((.value.flags // 0) as $f | ($f / 1 | floor) % 2 == 1) | .key]) as $required |
+
+    "PROPERTIES:",
+    "───────────────────────────────────────────────────────────────────────────────",
+    ($body | print_props(""; 0)),
+    "",
+    "───────────────────────────────────────────────────────────────────────────────",
+    "Required: \($required | join(", "))"
+  ' "${types_file}"
+
+  echo ""
+}
+
+# --------------------------------------------------------------------------- #
+# Main
+# --------------------------------------------------------------------------- #
+
+main() {
+  local cmd="${1:-help}"
+  shift 2>/dev/null || true
+
+  case "${cmd}" in
+    get)      cmd_get "$@" ;;
+    versions) cmd_versions "$@" ;;
+    help|--help|-h) usage ;;
+    *) die "Unknown command: ${cmd}. Run '${PROG} help' for usage." ;;
+  esac
+}
+
+main "$@"
