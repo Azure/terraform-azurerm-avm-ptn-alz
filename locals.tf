@@ -77,7 +77,7 @@ locals {
       principal_id       = lookup(local.policy_assignment_identities, "${pra.management_group_id}/${pra.policy_assignment_name}", tostring(null))
       role_definition_id = startswith(lower(pra.scope), "/subscriptions") ? "/subscriptions/${split("/", pra.scope)[2]}${pra.role_definition_id}" : pra.role_definition_id
       scope              = pra.scope
-    } if !strcontains(pra.scope, "00000000-0000-0000-0000-000000000000")
+    } if !strcontains(pra.scope, "00000000-0000-0000-0000-000000000000") && try(var.policy_assignments_to_modify[pra.management_group_id].policy_assignments[pra.policy_assignment_name].creation_enabled, true)
   } : {}
 }
 
