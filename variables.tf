@@ -417,7 +417,7 @@ variable "policy_assignments_to_modify" {
           not_in = optional(set(string), null)
         })), [])
       })))
-      assignment_creation_enabled = optional(bool, true)
+      creation_enabled = optional(bool, true)
     }))
   }))
   default     = {}
@@ -449,7 +449,7 @@ The key of this map is the assignment name, and the value is an object with opti
     - `kind` - (Required) The kind of the selector.
     - `in` - (Optional) A set of strings to include in the selector.
     - `not_in` - (Optional) A set of strings to exclude from the selector.
-- `assignment_creation_enabled` - (Optional) Whether the policy assignment is created or not. Defaults to `true`. This is a convenience property for small scale deployments, the recommended approach is to update your custom library to exclude the policy assignment.
+- `creation_enabled` - (Optional) Whether the policy assignment is created or not. Defaults to `true`. IMPORTANT: This is a convenience property for very small scale deployments, the recommended approach is to update your custom library to exclude the policy assignment.
 
 DESCRIPTION
 }

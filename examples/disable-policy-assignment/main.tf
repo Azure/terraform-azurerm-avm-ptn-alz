@@ -22,7 +22,7 @@ module "alz_architecture" {
       policy_assignments = {
         # Disable the DDoS protection policy assignment as we don't have a DDoS protection plan.
         Enable-DDoS-VNET = {
-          enabled = false
+          creation_enabled = false
         }
       }
     }
@@ -30,7 +30,7 @@ module "alz_architecture" {
       policy_assignments = {
         # Disable the private DNS zones policy assignment as we don't have private DNS zones deployed.
         Deploy-Private-DNS-Zones = {
-          enabled = false
+          creation_enabled = false
         }
       }
     }
@@ -38,7 +38,7 @@ module "alz_architecture" {
       policy_assignments = {
         # Disable the DDoS protection policy assignment as we don't have a DDoS protection plan.
         Enable-DDoS-VNET = {
-          enabled = false
+          creation_enabled = false
         }
       }
     }

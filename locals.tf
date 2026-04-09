@@ -55,8 +55,7 @@ locals {
           key        = paname
           assignment = jsondecode(pa)
           mg         = mg.id
-        } if try(var.policy_assignments_to_modify[mg.id].policy_assignments[paname].assignment_creation_enabled (Optional) Whether the policy assignment is created or not. Defaults to `true`. This is a convenience property for small scale deployments, the recommended approach is to update your custom library to exclude the policy assignment.
-, true)
+        } if try(var.policy_assignments_to_modify[mg.id].policy_assignments[paname].creation_enabled, true)
       ]
   ]) : "${paval.mg}/${paval.key}" => paval }
   policy_assignments_final = {
