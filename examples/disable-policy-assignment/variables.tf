@@ -1,3 +1,8 @@
+variable "prefix" {
+  type     = string
+  nullable = false
+}
+
 variable "enable_telemetry" {
   type        = bool
   default     = true

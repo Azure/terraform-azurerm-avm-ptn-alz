@@ -7,18 +7,21 @@ provider "alz" {
       path = "platform/alz",
       ref  = "2026.01.3"
     },
+    {
+      custom_url = "${path.root}/lib"
+    }
   ]
 }
 
 module "alz_architecture" {
   source = "../../"
 
-  architecture_name  = "alz"
+  architecture_name  = "alz_custom"
   location           = "northeurope"
   parent_resource_id = data.azapi_client_config.current.tenant_id
   enable_telemetry   = var.enable_telemetry
   policy_assignments_to_modify = {
-    connectivity = {
+    ("${var.prefix}-connectivity") = {
       policy_assignments = {
         # Disable the DDoS protection policy assignment as we don't have a DDoS protection plan.
         Enable-DDoS-VNET = {
@@ -26,7 +29,7 @@ module "alz_architecture" {
         }
       }
     }
-    corp = {
+    ("${var.prefix}-corp") = {
       policy_assignments = {
         # Disable the private DNS zones policy assignment as we don't have private DNS zones deployed.
         Deploy-Private-DNS-Zones = {
@@ -34,7 +37,7 @@ module "alz_architecture" {
         }
       }
     }
-    landingzones = {
+    ("${var.prefix}-landingzones") = {
       policy_assignments = {
         # Disable the DDoS protection policy assignment as we don't have a DDoS protection plan.
         Enable-DDoS-VNET = {
