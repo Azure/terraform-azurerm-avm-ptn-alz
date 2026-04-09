@@ -392,6 +392,7 @@ DESCRIPTION
 variable "policy_assignments_to_modify" {
   type = map(object({
     policy_assignments = map(object({
+      enabled          = optional(bool, true)
       enforcement_mode = optional(string, null)
       identity         = optional(string, null)
       identity_ids     = optional(list(string), null)
@@ -428,6 +429,7 @@ The key is the id of the management group. The value is an object with a single 
 The `policy_assignments` value is a map of policy assignments to modify.
 The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.
 
+- `enabled` - (Optional) Whether the policy assignment is created or not. Defaults to `true`. This is a convenience property for small scale deployments, the recommended approach is to update your custom library to exclude the policy assignment.
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
 - `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
 - `identity_ids` - (Optional) A set of ids of the user assigned identities to assign to the policy assignment.

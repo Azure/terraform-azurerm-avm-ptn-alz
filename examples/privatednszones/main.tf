@@ -1,7 +1,7 @@
 provider "alz" {
   library_references = [{
     path = "platform/alz"
-    ref  = "2024.11.0"
+    ref  = "2026.01.3"
   }]
 }
 

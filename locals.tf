@@ -55,7 +55,7 @@ locals {
           key        = paname
           assignment = jsondecode(pa)
           mg         = mg.id
-        }
+        } if try(var.policy_assignments_to_modify[mg.id].policy_assignments[paname].enabled, true)
       ]
   ]) : "${paval.mg}/${paval.key}" => paval }
   policy_assignments_final = {
