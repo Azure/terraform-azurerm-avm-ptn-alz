@@ -19,6 +19,18 @@ curl -sSfL https://github.com/matt-FFFFFF/tfpluginschema/releases/latest/downloa
 curl -sSfL https://github.com/matt-FFFFFF/tfpluginschema/releases/latest/download/tfpluginschema_0.8.0_darwin_amd64.tar.gz | tar -xz -C /usr/local/bin tfpluginschema
 ```
 
+```powershell
+# Windows (amd64)
+$url = "https://github.com/matt-FFFFFF/tfpluginschema/releases/latest/download/tfpluginschema_0.8.0_windows_amd64.zip"
+$dest = Join-Path $HOME ".tfpluginschema"
+New-Item -ItemType Directory -Path $dest -Force | Out-Null
+Invoke-WebRequest -Uri $url -OutFile (Join-Path $dest "tfpluginschema.zip")
+Expand-Archive -Path (Join-Path $dest "tfpluginschema.zip") -DestinationPath $dest -Force
+Remove-Item (Join-Path $dest "tfpluginschema.zip")
+# Add to PATH if not already present
+if ($env:PATH -notlike "*$dest*") { $env:PATH += ";$dest" }
+```
+
 Check latest version at: <https://github.com/matt-FFFFFF/tfpluginschema/releases>
 
 ## Global Options
@@ -34,13 +46,13 @@ Check latest version at: <https://github.com/matt-FFFFFF/tfpluginschema/releases
 
 ### List available provider versions
 
-```bash
+```sh
 tfpluginschema -n Azure -p azapi version list
 ```
 
 ### List resources, data sources, functions, or ephemeral resources
 
-```bash
+```sh
 tfpluginschema -n Azure -p azapi resource list
 tfpluginschema -n Azure -p azapi datasource list
 tfpluginschema -n Azure -p azapi function list
@@ -49,43 +61,43 @@ tfpluginschema -n Azure -p azapi ephemeral list
 
 ### Get a resource schema
 
-```bash
+```sh
 tfpluginschema -n Azure -p azapi resource schema azapi_resource
 ```
 
 ### Get a data source schema
 
-```bash
+```sh
 tfpluginschema -n Azure -p azapi datasource schema azapi_client_config
 ```
 
 ### Get a function schema
 
-```bash
+```sh
 tfpluginschema -n Azure -p azapi function schema build_resource_id
 ```
 
 ### Get an ephemeral resource schema
 
-```bash
+```sh
 tfpluginschema -n Azure -p azapi ephemeral schema azapi_resource_action
 ```
 
 ### Get the provider configuration schema
 
-```bash
+```sh
 tfpluginschema -n Azure -p azapi provider schema
 ```
 
 ### Pin to a specific provider version
 
-```bash
+```sh
 tfpluginschema -n Azure -p azapi --pv 2.5.0 resource schema azapi_resource
 ```
 
 ### Use a version constraint
 
-```bash
+```sh
 tfpluginschema -n hashicorp -p azurerm --pv "~>4.0" resource list
 ```
 

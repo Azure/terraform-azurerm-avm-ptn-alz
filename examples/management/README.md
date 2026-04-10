@@ -8,7 +8,7 @@ This example shows how to deploy the ALZ reference architecture combines with th
 provider "alz" {
   library_references = [{
     path = "platform/alz"
-    ref  = "2024.10.1"
+    ref  = "2026.01.3"
   }]
 }
 

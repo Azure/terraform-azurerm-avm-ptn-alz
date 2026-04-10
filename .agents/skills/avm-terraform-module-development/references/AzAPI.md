@@ -79,34 +79,57 @@ mock_provider "azapi" {}
 
 ## Azure Resource Schema Lookup
 
-Use the `azure-schema` CLI tool (bundled at `.agents/skills/AVM-Terraform-Development/azure-schema`) to look up resource type schemas, properties, constraints, and available API versions. This is essential for knowing the correct `type` and `body` structure for `azapi_resource`.
+Use the `azure-schema` CLI tool to look up resource type schemas, properties, constraints, and available API versions. This is essential for knowing the correct `type` and `body` structure for `azapi_resource`.
+
+- **Bash**: `.agents/skills/avm-terraform-module-development/scripts/azure-schema`
+- **PowerShell**: `.agents/skills/avm-terraform-module-development/scripts/azure-schema.ps1`
 
 ### List available API versions
 
 ```bash
-.agents/skills/AVM-Terraform-Development/azure-schema versions Microsoft.Storage
+.agents/skills/avm-terraform-module-development/scripts/azure-schema versions Microsoft.Storage
+```
+
+```powershell
+.agents/skills/avm-terraform-module-development/scripts/azure-schema.ps1 versions Microsoft.Storage
 ```
 
 ### Get a resource schema (human-readable)
 
 ```bash
-.agents/skills/AVM-Terraform-Development/azure-schema get Microsoft.Storage/storageAccounts 2023-01-01
+.agents/skills/avm-terraform-module-development/scripts/azure-schema get Microsoft.Storage/storageAccounts 2023-01-01
+```
+
+```powershell
+.agents/skills/avm-terraform-module-development/scripts/azure-schema.ps1 get Microsoft.Storage/storageAccounts 2023-01-01
 ```
 
 ### Get a resource schema (resolved JSON)
 
 ```bash
-.agents/skills/AVM-Terraform-Development/azure-schema get Microsoft.Storage/storageAccounts 2023-01-01 --json
+.agents/skills/avm-terraform-module-development/scripts/azure-schema get Microsoft.Storage/storageAccounts 2023-01-01 --json
+```
+
+```powershell
+.agents/skills/avm-terraform-module-development/scripts/azure-schema.ps1 get Microsoft.Storage/storageAccounts 2023-01-01 -Json
 ```
 
 ### Control depth
 
 ```bash
 # Shallow view (top-level properties only)
-.agents/skills/AVM-Terraform-Development/azure-schema get Microsoft.Storage/storageAccounts 2023-01-01 --depth 2
+.agents/skills/avm-terraform-module-development/scripts/azure-schema get Microsoft.Storage/storageAccounts 2023-01-01 --depth 2
 
 # Deep view (default is 5)
-.agents/skills/AVM-Terraform-Development/azure-schema get Microsoft.Storage/storageAccounts 2023-01-01 --depth 8
+.agents/skills/avm-terraform-module-development/scripts/azure-schema get Microsoft.Storage/storageAccounts 2023-01-01 --depth 8
+```
+
+```powershell
+# Shallow view (top-level properties only)
+.agents/skills/avm-terraform-module-development/scripts/azure-schema.ps1 get Microsoft.Storage/storageAccounts 2023-01-01 -Depth 2
+
+# Deep view (default is 5)
+.agents/skills/avm-terraform-module-development/scripts/azure-schema.ps1 get Microsoft.Storage/storageAccounts 2023-01-01 -Depth 8
 ```
 
 ## Sensitive attributes

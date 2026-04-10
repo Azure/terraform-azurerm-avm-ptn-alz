@@ -1,5 +1,5 @@
 ---
-name: AVM-Terraform-Development
+name: avm-terraform-module-development
 description: Azure Verified Modules (AVM) Terraform development workflow for fixing issues and adding features
 glob: "**/*.terraform,**/*.tf,**/*.tfvars,**/*.tfstate,**/*.tflint.hcl,**/*.tf.json,**/*.tfvars.json"
 ---
@@ -29,15 +29,15 @@ git checkout -b fix/<issue-number>-<short-description>
 
 ### Step 3: Implement the change
 
-All Azure resources MUST be deployed using the **AzAPI provider** (`Azure/azapi`). For AzAPI resource patterns, schema lookups, and the `azure-schema` CLI tool, read [AzAPI.md](AzAPI.md).
+All Azure resources MUST be deployed using the **AzAPI provider** (`Azure/azapi`). For AzAPI resource patterns, schema lookups, and the `azure-schema` CLI tool, read [AzAPI.md](references/AzAPI.md).
 
-To query Terraform provider schemas (resources, data sources, functions, ephemeral resources), use the `tfpluginschema` CLI. See [tfpluginschema.md](tfpluginschema.md).
+To query Terraform provider schemas (resources, data sources, functions, ephemeral resources), use the `tfpluginschema` CLI. See [tfpluginschema.md](references/tfpluginschema.md).
 
 Make the necessary code changes to add the feature or fix the issue.
 
 ### Step 4: Add unit tests (if justified)
 
-Unit tests use **provider mocking** and live in the `tests/unit` directory. Add or update unit tests when your change introduces new logic, variables, or outputs that can be validated without deploying real infrastructure. For test writing guidance, syntax, and patterns, read [terraform-test.md](terraform-test.md).
+Unit tests use **provider mocking** and live in the `tests/unit` directory. Add or update unit tests when your change introduces new logic, variables, or outputs that can be validated without deploying real infrastructure. For test writing guidance, syntax, and patterns, read [terraform-test.md](references/terraform-test.md).
 
 ```bash
 PORCH_NO_TUI=1 ./avm tf-test-unit
@@ -45,7 +45,7 @@ PORCH_NO_TUI=1 ./avm tf-test-unit
 
 ### Step 5: Add integration tests (if justified)
 
-Integration tests do **not** use provider mocking and live in the `tests/integration` directory. Add or update integration tests when your change requires validation against real Azure infrastructure. For test writing guidance, syntax, and patterns, read [terraform-test.md](terraform-test.md).
+Integration tests do **not** use provider mocking and live in the `tests/integration` directory. Add or update integration tests when your change requires validation against real Azure infrastructure. For test writing guidance, syntax, and patterns, read [terraform-test.md](references/terraform-test.md).
 
 ```bash
 PORCH_NO_TUI=1 ./avm tf-test-integration
@@ -58,6 +58,8 @@ If your change affects module usage or introduces new functionality, add or upda
 ```bash
 PORCH_NO_TUI=1 AVM_EXAMPLE="<ExampleDir>" ./avm test-examples
 ```
+
+When running on Windows, distributing tests across multiple Azure subscriptions, or retaining deployed resources for manual validation, see [example-test.md](references/example-test.md) for manual local testing of examples (init, plan, apply, idempotency check, and optional destroy).
 
 ### Step 7: Update documentation (if justified)
 
@@ -118,8 +120,9 @@ If any issues arise during testing or PR checks, refer to the official AVM testi
 
 ### Tool Integration
 
-- **AzAPI Provider & Schema Lookup**: See [AzAPI.md](AzAPI.md) for resource patterns and the `azure-schema` CLI tool
-- **Terraform Provider Schemas**: See [tfpluginschema.md](tfpluginschema.md) for querying resource, data source, function, and ephemeral schemas from any provider
-- **Terraform Tests**: See [terraform-test.md](terraform-test.md) for writing unit and integration tests
+- **AzAPI Provider & Schema Lookup**: See [AzAPI.md](references/AzAPI.md) for resource patterns and the `azure-schema` CLI tool
+- **Terraform Provider Schemas**: See [tfpluginschema.md](references/tfpluginschema.md) for querying resource, data source, function, and ephemeral schemas from any provider
+- **Terraform Tests**: See [terraform-test.md](references/terraform-test.md) for writing unit and integration tests
+- **Example Testing**: See [example-test.md](references/example-test.md) for manually testing examples against real Azure infrastructure
 - **Deployment Guidance**: Use `azure_get_deployment_best_practices` tool
 - **Service Documentation**: Use `microsoft.docs.mcp` tool for Azure service-specific guidance
