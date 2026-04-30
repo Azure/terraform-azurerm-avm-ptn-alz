@@ -11,12 +11,9 @@ variables {
 run "default" {
   command = plan
 
-  # The variable defaults to {}, which means default_message is null and merge_mode is "replace".
-  # This is the backwards-compatible default behaviour of the alz provider — the provider does
-  # not inject a default non-compliance message when default_message is null.
   assert {
-    condition     = var.policy_assignment_non_compliance_message_settings.default_message == null
-    error_message = "The default_message should default to null for backwards compatibility with the alz provider."
+    condition     = var.policy_assignment_non_compliance_message_settings.default_message == "This resource {enforcementMode} be compliant with the assigned policy"
+    error_message = "The default_message should default to 'This resource {enforcementMode} be compliant with the assigned policy'."
   }
 
   assert {
@@ -25,8 +22,8 @@ run "default" {
   }
 
   assert {
-    condition     = data.alz_architecture.this.default_non_compliance_message_settings.default_message == null
-    error_message = "The default_message passed to the alz provider should be null when not set."
+    condition     = data.alz_architecture.this.default_non_compliance_message_settings.default_message == "This resource {enforcementMode} be compliant with the assigned policy"
+    error_message = "The default_message passed to the alz provider should be 'This resource {enforcementMode} be compliant with the assigned policy' when not set."
   }
 
   assert {
@@ -40,12 +37,12 @@ run "set_default_message" {
 
   variables {
     policy_assignment_non_compliance_message_settings = {
-      default_message = "This resource {enforcementMode} be compliant with the assigned policy."
+      default_message = "This resource {enforcementMode} be compliant."
     }
   }
 
   assert {
-    condition     = data.alz_architecture.this.default_non_compliance_message_settings.default_message == "This resource {enforcementMode} be compliant with the assigned policy."
+    condition     = data.alz_architecture.this.default_non_compliance_message_settings.default_message == "This resource {enforcementMode} be compliant."
     error_message = "The default_message should be passed through to the alz provider."
   }
 
