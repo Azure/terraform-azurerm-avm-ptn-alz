@@ -345,29 +345,29 @@ DESCRIPTION
 
 variable "policy_assignment_non_compliance_message_settings" {
   type = object({
-    fallback_message_enabled = optional(bool, true)
-    fallback_message         = optional(string, "This resource {enforcementMode} be compliant with the assigned policy.")
-    fallback_message_unsupported_assignments = optional(list(string), [
-      "Deny-Privileged-AKS",
-      "Enforce-AKS-HTTPS",
-      "Deny-Priv-Esc-AKS"
-    ])
-    enforcement_mode_placeholder = optional(string, "{enforcementMode}")
-    enforced_replacement         = optional(string, "must")
-    not_enforced_replacement     = optional(string, "should")
+    default_message = optional(string, "This resource {enforcementMode} be compliant with the assigned policy")
+    merge_mode      = optional(string, "replace")
   })
   default     = {}
   description = <<DESCRIPTION
-Settings for the non-compliance messages of policy assignments. This is used to ensure that the non-compliance messages are set correctly for policy assignments that do not have them set.
-  The object has the following optional attributes:
-- `fallback_message_enabled` - (Optional) Whether to enable the fallback message for policy assignments that do not have a non-compliance message set. Defaults to `true`.
-- `fallback_message` - (Optional) The fallback message to use for policy assignments that do not have a non-compliance message set. Defaults to "This resource {enforcementMode} be compliant with the assigned policy."
-- `fallback_message_unsupported_assignments` - (Optional) A list of policy assignment names that do not support non-compliance messages. Defaults to a list of Azure Landing Zones policy assignments that do not support non-compliance messages.
-- `enforcement_mode_placeholder` - (Optional) The placeholder to use for the enforcement mode in the fallback message. Defaults to "{enforcementMode}".
-- `enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is enforced. Defaults to "must".
-- `not_enforced_replacement` - (Optional) The replacement string to use for the enforcement mode when the policy assignment is not enforced. Defaults to "should".
+Settings for the default non-compliance messages applied to policy assignments by the `alz` provider.
+
+The object has the following attributes:
+
+- `default_message` - (Optional) The default non-compliance message to apply to policy assignments. Supports placeholder substitution configured in the provider's `non_compliance_message_substitution_settings` block. Defaults to `null`, which disables the default non-compliance message behavior in the provider for backwards compatibility.
+- `merge_mode` - (Optional) Controls behavior when a policy assignment already has a default non-compliance message (one without a `policyDefinitionReferenceId`).
+  - `replace` (default) removes the existing default message and adds the configured default.
+  - `prefer_existing` keeps the existing default message if present, only adding the configured default when none exists.
+  Policy-specific messages (with `policyDefinitionReferenceId`) are always preserved. Assignments with no messages always receive the default if a default message is supplied.
+
+  If you wish to amend the placeholder values in the default message, you can use the `non_compliance_message_substitution_settings` block in the provider to configure this.
 DESCRIPTION
   nullable    = false
+
+  validation {
+    condition     = var.policy_assignment_non_compliance_message_settings.merge_mode == "replace" || var.policy_assignment_non_compliance_message_settings.merge_mode == "prefer_existing"
+    error_message = "The merge mode must be either 'replace' or 'prefer_existing'."
+  }
 }
 
 variable "policy_assignments_dependencies" {
