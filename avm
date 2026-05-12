@@ -173,6 +173,15 @@ if [ -f "avm.config.json" ]; then
   done
 fi
 
+# Forward AVM_BARE_* environment variables to the container with the prefix stripped
+while IFS='=' read -r bareKey bareValue; do
+  [ -z "$bareKey" ] && continue
+  strippedKey="${bareKey#AVM_BARE_}"
+  export "$strippedKey"="$bareValue"
+  LOCAL_ENVIRONMENT_VARIABLES="${LOCAL_ENVIRONMENT_VARIABLES}-e $strippedKey "
+  echo "Forwarding AVM bare variable to container as: $strippedKey"
+done < <(env | grep '^AVM_BARE_' || true)
+
 # Check if we are running in a container
 # If we are then just run make directly
 if [ -z "${AVM_IN_CONTAINER}" ]; then
@@ -199,7 +208,7 @@ if [ -z "${AVM_IN_CONTAINER}" ]; then
     -e TF_IN_AUTOMATION=1 \
     ${LOCAL_ENVIRONMENT_VARIABLES} \
     --env-file <(env | grep '^TF_VAR_') \
-    --env-file <(env | grep '^AVM_') \
+    --env-file <(env | grep '^AVM_' | grep -v '^AVM_BARE_') \
     "${CONTAINER_IMAGE}" \
     make \
     TUI="${TUI}" \

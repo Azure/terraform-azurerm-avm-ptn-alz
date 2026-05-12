@@ -653,6 +653,7 @@ map(object({
       identity         = optional(string, null)
       identity_ids     = optional(list(string), null)
       parameters       = optional(map(string), null)
+      not_scopes       = optional(list(string), null)
       non_compliance_messages = optional(set(object({
         message                        = string
         policy_definition_reference_id = optional(string, null)
