@@ -8,7 +8,7 @@ resource "azapi_resource" "policy_assignments" {
   location  = var.location
   name      = each.value.assignment.name
   parent_id = "${coalesce(lookup(var.parent_id_overrides.policy_assignments, each.key, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.mg}"
-  type      = "Microsoft.Authorization/policyAssignments@${var.resource_api_versions.policy_assignment}"
+  type      = var.resource_types.policy_assignment
   body = {
     properties = {
       description       = lookup(each.value.assignment.properties, "description", null)

@@ -482,22 +482,44 @@ policy_role_assignments_dependencies = [
 DESCRIPTION
 }
 
-variable "resource_api_versions" {
+variable "resource_types" {
   type = object({
-    policy_assignment     = optional(string, "2024-04-01")
-    policy_definition     = optional(string, "2023-04-01")
-    policy_set_definition = optional(string, "2023-04-01")
-    role_assignment       = optional(string, "2022-04-01")
-    role_definition       = optional(string, "2022-04-01")
-    management_group      = optional(string, "2023-04-01")
+    management_group              = optional(string, "Microsoft.Management/managementGroups@2023-04-01")
+    management_group_settings     = optional(string, "Microsoft.Management/managementGroups/settings@2023-04-01")
+    management_group_subscription = optional(string, "Microsoft.Management/managementGroups/subscriptions@2023-04-01")
+    policy_assignment             = optional(string, "Microsoft.Authorization/policyAssignments@2024-04-01")
+    policy_definition             = optional(string, "Microsoft.Authorization/policyDefinitions@2023-04-01")
+    policy_set_definition         = optional(string, "Microsoft.Authorization/policySetDefinitions@2023-04-01")
+    role_assignment               = optional(string, "Microsoft.Authorization/roleAssignments@2022-04-01")
+    role_definition               = optional(string, "Microsoft.Authorization/roleDefinitions@2022-04-01")
+    user_assigned_identity        = optional(string, "Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31")
   })
   default     = {}
   description = <<DESCRIPTION
-EXPERIMENTAL: Modify this to change the API versions used for each resource type. Added to support clouds with different API versions, e.g. US Government.
+A map of full AzAPI resource type strings (`<provider>/<resource>@<api-version>`) used by this module.
 
-Modifying these values may result in unexpected behavior or compatibility issues, which we cannot test for. Please do not raise issues against this module if you change these values.
+Override an entry to change the casing or API version of the corresponding resource type. This is useful for sovereign clouds that need different API versions (e.g. US Government), or to work around AzAPI casing inconsistencies between create and read responses (for example, providing `Microsoft.Authorization/RoleDefinitions@2022-04-01` to mitigate inconsistent-result errors from the upstream provider).
+
+Modifying these values may produce unexpected behavior or compatibility issues which we cannot test for. Please do not raise issues against this module if you change these values.
+
+Keys:
+
+- `management_group` - Defaults to `Microsoft.Management/managementGroups@2023-04-01`.
+- `management_group_settings` - Defaults to `Microsoft.Management/managementGroups/settings@2023-04-01`.
+- `management_group_subscription` - Defaults to `Microsoft.Management/managementGroups/subscriptions@2023-04-01`.
+- `policy_assignment` - Defaults to `Microsoft.Authorization/policyAssignments@2024-04-01`.
+- `policy_definition` - Defaults to `Microsoft.Authorization/policyDefinitions@2023-04-01`.
+- `policy_set_definition` - Defaults to `Microsoft.Authorization/policySetDefinitions@2023-04-01`.
+- `role_assignment` - Defaults to `Microsoft.Authorization/roleAssignments@2022-04-01`.
+- `role_definition` - Defaults to `Microsoft.Authorization/roleDefinitions@2022-04-01`.
+- `user_assigned_identity` - Defaults to `Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31`.
 DESCRIPTION
   nullable    = false
+
+  validation {
+    condition     = alltrue([for v in values(var.resource_types) : can(regex("^[^@]+@[^@]+$", v))])
+    error_message = "Each resource type must be a full AzAPI type string of the form `<provider>/<resource>@<api-version>`."
+  }
 }
 
 variable "retries" {

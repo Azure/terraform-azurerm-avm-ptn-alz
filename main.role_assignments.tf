@@ -28,7 +28,7 @@ resource "azapi_resource" "management_group_role_assignments" {
 
   name                   = each.value.role_assignments_azapi.this.name
   parent_id              = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_role_assignments[each.key].management_group_name])
-  type                   = "Microsoft.Authorization/roleAssignments@${var.resource_api_versions.role_assignment}"
+  type                   = var.resource_types.role_assignment
   body                   = each.value.role_assignments_azapi.this.body
   create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null

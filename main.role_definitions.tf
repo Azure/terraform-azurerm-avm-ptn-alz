@@ -3,7 +3,7 @@ resource "azapi_resource" "role_definitions" {
 
   name      = each.value.role_definition.name
   parent_id = "${coalesce(lookup(var.parent_id_overrides.role_definitions, each.key, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.mg}"
-  type      = "Microsoft.Authorization/roleDefinitions@${var.resource_api_versions.role_definition}"
+  type      = var.resource_types.role_definition
   body = {
     properties = {
       assignableScopes = each.value.role_definition.properties.assignableScopes

@@ -3,7 +3,7 @@ resource "azapi_resource" "subscription_placement" {
 
   name                   = each.value.subscription_id
   parent_id              = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}"
-  type                   = "Microsoft.Management/managementGroups/subscriptions@2023-04-01"
+  type                   = var.resource_types.management_group_subscription
   create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
@@ -33,7 +33,7 @@ resource "azapi_resource_action" "subscription_placement_create" {
 
   method                 = "PUT"
   resource_id            = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}/subscriptions/${each.value.subscription_id}"
-  type                   = "Microsoft.Management/managementGroups/subscriptions@2023-04-01"
+  type                   = var.resource_types.management_group_subscription
   headers                = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   retry = var.retries.subscription_placement.error_message_regex != null ? {
@@ -61,7 +61,7 @@ resource "azapi_resource_action" "subscription_placement_delete" {
 
   method                 = "PUT"
   resource_id            = "/providers/Microsoft.Management/managementGroups/${local.subscription_placement_destroy_management_group_id}/subscriptions/${each.value.subscription_id}"
-  type                   = "Microsoft.Management/managementGroups/subscriptions@2023-04-01"
+  type                   = var.resource_types.management_group_subscription
   headers                = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   retry = var.retries.subscription_placement.error_message_regex != null ? {
