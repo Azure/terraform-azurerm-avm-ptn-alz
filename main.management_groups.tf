@@ -7,7 +7,7 @@ resource "azapi_resource" "management_groups_level_0" {
 
   name      = each.value.id
   parent_id = "/"
-  type      = "Microsoft.Management/managementGroups@${var.resource_api_versions.management_group}"
+  type      = var.resource_types.management_group
   body = {
     properties = {
       details = {
@@ -52,7 +52,7 @@ resource "azapi_resource" "management_groups_level_1" {
 
   name      = each.value.id
   parent_id = "/"
-  type      = "Microsoft.Management/managementGroups@${var.resource_api_versions.management_group}"
+  type      = var.resource_types.management_group
   body = {
     properties = {
       details = {
@@ -94,7 +94,7 @@ resource "azapi_resource" "management_groups_level_2" {
 
   name      = each.value.id
   parent_id = "/"
-  type      = "Microsoft.Management/managementGroups@${var.resource_api_versions.management_group}"
+  type      = var.resource_types.management_group
   body = {
     properties = {
       details = {
@@ -136,7 +136,7 @@ resource "azapi_resource" "management_groups_level_3" {
 
   name      = each.value.id
   parent_id = "/"
-  type      = "Microsoft.Management/managementGroups@${var.resource_api_versions.management_group}"
+  type      = var.resource_types.management_group
   body = {
     properties = {
       details = {
@@ -178,7 +178,7 @@ resource "azapi_resource" "management_groups_level_4" {
 
   name      = each.value.id
   parent_id = "/"
-  type      = "Microsoft.Management/managementGroups@${var.resource_api_versions.management_group}"
+  type      = var.resource_types.management_group
   body = {
     properties = {
       details = {
@@ -220,7 +220,7 @@ resource "azapi_resource" "management_groups_level_5" {
 
   name      = each.value.id
   parent_id = "/"
-  type      = "Microsoft.Management/managementGroups@${var.resource_api_versions.management_group}"
+  type      = var.resource_types.management_group
   body = {
     properties = {
       details = {
@@ -262,7 +262,7 @@ resource "azapi_resource" "management_groups_level_6" {
 
   name      = each.value.id
   parent_id = "/"
-  type      = "Microsoft.Management/managementGroups@${var.resource_api_versions.management_group}"
+  type      = var.resource_types.management_group
   body = {
     properties = {
       details = {

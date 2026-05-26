@@ -3,7 +3,7 @@ resource "azapi_resource" "policy_set_definitions" {
 
   name      = each.value.set_definition.name
   parent_id = "${coalesce(lookup(var.parent_id_overrides.policy_set_definitions, each.key, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.mg}"
-  type      = "Microsoft.Authorization/policySetDefinitions@${var.resource_api_versions.policy_set_definition}"
+  type      = var.resource_types.policy_set_definition
   body = {
     properties = each.value.set_definition.properties
   }

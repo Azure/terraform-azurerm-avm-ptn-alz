@@ -6,7 +6,7 @@ data "azapi_resource" "policy_user_assigned_identities" {
   for_each = local.policy_assignments_user_assigned_identity
 
   resource_id = each.value[0]
-  type        = "Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31"
+  type        = var.resource_types.user_assigned_identity
   response_export_values = [
     "properties.principalId",
   ]
@@ -22,7 +22,7 @@ resource "azapi_resource" "policy_role_assignments" {
 
   name      = each.key
   parent_id = each.value.scope
-  type      = "Microsoft.Authorization/roleAssignments@${var.resource_api_versions.role_assignment}"
+  type      = var.resource_types.role_assignment
   body = {
     properties = {
       principalId      = each.value.principal_id
