@@ -126,7 +126,6 @@ if (-not $env:AVM_IN_CONTAINER) {
     "CONFTEST_EXCEPTIONS_URL",
     "FORCE_COLOR",
     "GITHUB_TOKEN",
-    "GREPT_URL",
     "MPTF_URL",
     "NO_COLOR",
     "PORCH_LOG_LEVEL",
