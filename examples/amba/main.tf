@@ -45,7 +45,7 @@ module "amba_alz" {
 
 module "alz_architecture" {
   source  = "Azure/avm-ptn-alz/azurerm"
-  version = "0.12.0"
+  version = "0.21.0"
 
   architecture_name  = "alz-amba"
   location           = var.location
