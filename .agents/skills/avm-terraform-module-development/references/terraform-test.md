@@ -34,7 +34,7 @@ Submodules under `./modules/` follow the same pattern — each can have its own 
 
 ## Unit Test Template
 
-Every AVM module uses the AzAPI provider. Unit tests MUST mock **all** providers declared in `terraform.tf` `required_providers`. AVM modules always include `azapi`, `modtm`, and `random`.
+Unit tests MUST mock **all** providers declared in `terraform.tf` `required_providers` for the module under test.
 
 ```hcl
 # tests/unit/unit.tftest.hcl
@@ -387,10 +387,10 @@ For debugging, the `terraform test -no-cleanup` flag prevents automatic destruct
 
 ## Best Practices
 
-1. **Always mock all providers** in unit tests — check `terraform.tf` `required_providers` for the full list. AVM modules always have at least `azapi`, `modtm`, and `random`.
+1. **Always mock all providers** in unit tests — check `terraform.tf` `required_providers` for the full list for the module under test.
 2. **Use `command = apply`** for unit tests (not `plan`) — mocked providers make apply safe and allow testing resource creation.
 3. **Write clear error messages** — assertion messages should describe the expected behavior, not restate the condition.
-4. **Set `location`** in the `variables` block — it is a required variable in all AVM modules with no default.
+4. **Set all required inputs** in the `variables` block — use the module's `variables.tf` to determine which variables are required and have no default.
 5. **Test validation rules** — use `expect_failures` to verify that invalid inputs are rejected.
 6. **Test conditional logic** — verify that optional features create resources when enabled and skip them when disabled.
 7. **Keep tests focused** — each run block should test one scenario or behavior.

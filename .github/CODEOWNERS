@@ -1,1 +1,5 @@
-.github/CODEOWNERS @Azure/avm-core-team-technical-terraform
+# This file is managed by avm-terraform-governance. Do not edit manually.
+# See: https://github.com/Azure/avm-terraform-governance
+
+# The CODEOWNERS file itself is protected to prevent unauthorized changes.
+.github/CODEOWNERS @Azure/azure-verified-modules-engineering-owners
