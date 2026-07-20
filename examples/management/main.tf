@@ -22,7 +22,7 @@ locals {
 
 module "management" {
   source  = "Azure/avm-ptn-alz-management/azurerm"
-  version = "0.6.0"
+  version = "0.9.0"
 
   automation_account_name      = local.automation_account_name
   location                     = local.location
