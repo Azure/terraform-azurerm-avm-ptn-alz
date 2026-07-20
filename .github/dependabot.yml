@@ -20,10 +20,12 @@ updates:
       day: monday
       time: "06:00"
       timezone: Etc/UTC
-    open-pull-requests-limit: 5
+    groups:
+      terraform:
+        patterns:
+          - "*"
     labels:
-      - dependencies
-      - terraform
+      - "Language: Terraform :globe_with_meridians:"
     commit-message:
       prefix: chore
       include: scope
@@ -36,10 +38,12 @@ updates:
       day: monday
       time: "06:00"
       timezone: Etc/UTC
-    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     labels:
-      - dependencies
-      - github-actions
+      - "Type: CI :rocket:"
     commit-message:
       prefix: chore
       include: scope
