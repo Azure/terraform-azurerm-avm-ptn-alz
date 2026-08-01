@@ -287,6 +287,7 @@ The value is a list of objects with the following attributes:
 
 The default value has been populated with the Azure Landing Zones policies that are assigned by default, but do not have the correct parameter metadata.
 DESCRIPTION
+  nullable    = false
 }
 
 variable "override_policy_definition_parameter_assign_permissions_unset" {
