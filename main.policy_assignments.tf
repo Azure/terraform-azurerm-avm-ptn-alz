@@ -58,17 +58,13 @@ resource "azapi_resource" "policy_assignments" {
       identity_ids = keys(lookup(identity.value, "userAssignedIdentities", {}))
     }
   }
+
   timeouts {
     create = var.timeouts.policy_assignment.create
     delete = var.timeouts.policy_assignment.delete
     read   = var.timeouts.policy_assignment.read
     update = var.timeouts.policy_assignment.update
   }
-
-  depends_on = [
-    time_sleep.after_policy_set_definitions,
-    terraform_data.policy_assignments_dependencies,
-  ]
 
   lifecycle {
     ignore_changes = [
@@ -78,4 +74,8 @@ resource "azapi_resource" "policy_assignments" {
       body.properties.metadata.updatedOn,
     ]
   }
+  depends_on = [
+    time_sleep.after_policy_set_definitions,
+    terraform_data.policy_assignments_dependencies,
+  ]
 }
