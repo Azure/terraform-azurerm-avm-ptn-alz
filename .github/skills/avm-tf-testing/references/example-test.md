@@ -1,12 +1,12 @@
-# Testing Examples Manually
+# Manual AVM Example Testing
 
 > **When to use this reference:**
 >
-> - You are running on **Windows** (on non-Windows systems, use the `avm` command instead).
 > - You want to **distribute tests across multiple Azure subscriptions**.
 > - You want to **retain deployed resources** after testing for manual validation (skip destroy).
+> - You are debugging an example outside the standard E2E runner.
 
-Each subfolder under `examples/` is a standalone Terraform root module. Test each one independently.
+Use `avm test e2e`, `avm test e2e --list`, or `avm test e2e --example <name>` for normal example validation on every operating system. Each subfolder under `examples/` is a standalone Terraform root module; use the manual workflow below only when the standard runner does not fit the scenario.
 
 ## Testing Workflow
 
@@ -19,7 +19,7 @@ For each example directory, run these steps in order. Stop and fix any errors be
 
 The idempotency check (step 4) must show **"No changes"**. If it reports drift, that is a bug - fix it. Common causes:
 
-- **Server-side defaults**: A property not set in config gets a default from Azure. Set it explicitly. Use `ignore_changes` only as a last resort.
+- **Server-side defaults**: A property not set in config gets a default from Azure. Set it explicitly. For known static drift, prefer `lifecycle.ignore_changes`; use the TFFR8 `ignore_body_changes` interface when callers need dynamic body-relative paths.
 - **Computed attributes**: An output or reference that changes on every read.
 - **Provider bugs**: Check for known issues in the provider repository.
 
