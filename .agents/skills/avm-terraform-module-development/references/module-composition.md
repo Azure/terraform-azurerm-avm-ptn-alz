@@ -62,7 +62,7 @@ Key obligations:
 
 ## Telemetry
 
-`main.telemetry.tf` declares a `modtm_telemetry` resource so AVM can measure module usage (SFR3 / SFR4). It is generated/maintained by the mapotf configuration in this governance repo — do not hand-edit it. The user can opt out with `enable_telemetry = false`.
+`main.telemetry.tf` declares a `modtm_telemetry` resource so AVM can measure module usage (SFR3 / SFR4). It is generated and maintained by the Mapotf configuration bundled with `Avm.Authoring` — do not hand-edit it. The user can opt out with `enable_telemetry = false`.
 
 ## Required providers & versions
 
@@ -72,4 +72,4 @@ Key obligations:
 - `modtm` if telemetry is implemented
 - `random` when the module directly uses it
 
-Provider version bounds are enforced by the mapotf `required_provider_versions.mptf.hcl` config in this governance repo.
+Provider version bounds are enforced by the Mapotf configuration bundled with `Avm.Authoring`.
