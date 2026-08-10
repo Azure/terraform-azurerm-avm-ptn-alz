@@ -1,6 +1,6 @@
 # Writing Terraform Tests for AVM Modules
 
-This sub-skill covers writing `.tftest.hcl` files for Azure Verified Modules (AVM). It adapts Terraform's built-in testing framework to AVM conventions.
+This reference covers writing `.tftest.hcl` files for Azure Verified Modules (AVM). It adapts Terraform's built-in testing framework to AVM conventions.
 
 ## AVM Test Directory Structure
 
@@ -361,7 +361,7 @@ Shell hooks are **not** supported: a `setup.sh` or `teardown.sh` under `tests/<t
 
 ## Running Tests
 
-Tests run via the `Avm.Authoring` PowerShell module. The temporary `./avm` and `avm.bat` compatibility launchers only print migration guidance and do not run tests.
+Tests run via the `Avm.Authoring` PowerShell module.
 
 ```pwsh
 # Unit tests

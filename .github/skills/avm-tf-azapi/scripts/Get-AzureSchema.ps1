@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Get-AzureSchema.ps1 - Query Azure resource type schemas from the command line.
+# Query Azure resource type schemas from the command line.
 #
 # Data source: bicep-types-az (https://github.com/Azure/bicep-types-az)
 #   - index.json for resource type discovery and API version listing

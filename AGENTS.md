@@ -6,7 +6,7 @@ applyTo: "**/*.terraform, **/*.tf, **/*.tfvars, **/*.tfstate, **/*.tflint.hcl, *
 # Azure Verified Modules (AVM) Terraform
 
 This repository uses Azure Verified Modules (AVM) for Terraform.
-For detailed guidance on module development, refer to the [avm-terraform-module-development skill](.agents/skills/avm-terraform-module-development/SKILL.md).
+For detailed module guidance, use the [AVM Terraform agent](.github/agents/avm-tf.agent.md) and load only the relevant skills under [.github/skills](.github/skills/).
 
 ## AVM Specifications
 
