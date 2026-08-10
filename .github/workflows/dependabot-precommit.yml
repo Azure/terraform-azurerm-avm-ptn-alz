@@ -1,0 +1,57 @@
+---
+name: Dependabot Pre-Commit
+
+on:
+  pull_request:
+    types: ['opened', 'reopened', 'synchronize']
+
+permissions:
+  contents: write
+
+jobs:
+  pre-commit:
+    name: Apply Pre-Commit Fixes
+    if: startsWith(github.head_ref, 'dependabot/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pull request branch
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Avm.Authoring
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not (Get-Module -ListAvailable -Name 'Microsoft.PowerShell.PSResourceGet')) {
+            Install-Module -Name 'Microsoft.PowerShell.PSResourceGet' -Scope CurrentUser -Force -AllowClobber
+          }
+          Import-Module 'Microsoft.PowerShell.PSResourceGet'
+          Install-PSResource -Name Avm.Authoring -Scope CurrentUser -TrustRepository
+          Import-Module Avm.Authoring
+          avm version
+
+      - name: Run pre-commit
+        shell: pwsh
+        env:
+          AVM_HOME: ${{ runner.temp }}/avm-home
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Import-Module Avm.Authoring
+          avm pre-commit
+
+      - name: Commit and push pre-commit fixes
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: |
+          if (-not (git status --porcelain)) {
+            Write-Host "No pre-commit changes to push."
+            exit 0
+          }
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore(deps): apply pre-commit fixes"
+          git push
