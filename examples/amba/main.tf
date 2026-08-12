@@ -31,7 +31,7 @@ locals {
 
 module "amba_alz" {
   source  = "Azure/avm-ptn-monitoring-amba-alz/azurerm"
-  version = "0.1.1"
+  version = "0.4.0"
   providers = {
     azurerm = azurerm.management
   }
@@ -45,7 +45,7 @@ module "amba_alz" {
 
 module "alz_architecture" {
   source  = "Azure/avm-ptn-alz/azurerm"
-  version = "0.12.0"
+  version = "0.21.0"
 
   architecture_name  = "alz-amba"
   location           = var.location
