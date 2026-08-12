@@ -2,8 +2,8 @@
 # Dependabot version updates for AVM Terraform module repositories.
 #
 # Dependabot security updates (CVE-driven) are enabled at the repository level
-# via Terraform; this file enables proactive *version* updates so that pinned
-# provider versions and SHA-pinned GitHub Actions are bumped on a schedule.
+# via Terraform; this file enables proactive *version* updates for pinned
+# provider versions.
 #
 # Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 version: 2
@@ -26,24 +26,6 @@ updates:
           - "*"
     labels:
       - "Language: Terraform :globe_with_meridians:"
-    commit-message:
-      prefix: chore
-      include: scope
-
-  # GitHub Actions workflows and composite actions under .github/.
-  - package-ecosystem: github-actions
-    directory: "/"
-    schedule:
-      interval: weekly
-      day: monday
-      time: "06:00"
-      timezone: Etc/UTC
-    groups:
-      github-actions:
-        patterns:
-          - "*"
-    labels:
-      - "Type: CI :rocket:"
     commit-message:
       prefix: chore
       include: scope
