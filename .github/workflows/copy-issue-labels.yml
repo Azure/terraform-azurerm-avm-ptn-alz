@@ -1,0 +1,88 @@
+---
+name: Copy Issue Labels to PR
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+
+jobs:
+  copy-labels:
+    name: Copy release-note labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy labels from the closing issues
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          # The labels .github/release.yml sorts into a category. Keep the two
+          # in sync. Labels are passed to gh as one comma-separated list, so a
+          # name here may not contain a comma.
+          cat > categories <<'CATEGORIES'
+          Type: Bug :bug:
+          Type: Feature Request :heavy_plus_sign:
+          Type: Documentation :page_facing_up:
+          Type: CI :rocket:
+          Type: Hygiene :broom:
+          bug
+          enhancement
+          documentation
+          CATEGORIES
+
+          # 1. Find the pull request this push merged. These repositories
+          # allow only squash merges, so the pushed commit belongs to exactly
+          # one. The merge state is still checked, because the endpoint also
+          # reports a pull request that merely contains the commit and has
+          # not merged, and the base branch is still checked, because
+          # allowing merge commits again would put commits on this branch
+          # that were merged into another one.
+          gh api "repos/${GH_REPO}/commits/${GITHUB_SHA}/pulls" \
+            | jq --arg branch "$BRANCH" \
+              'first(.[] | select(.merged_at != null and .base.ref == $branch))' \
+            > pull_request.json
+
+          if [ ! -s pull_request.json ]; then
+            echo "This push did not merge a pull request into ${BRANCH}."
+            exit 0
+          fi
+
+          number="$(jq -r '.number' pull_request.json)"
+
+          # 2. A pull request that is already categorized needs nothing copied.
+          if jq -r '.labels[].name' pull_request.json | grep -qxFf categories; then
+            echo "#${number} is already labeled."
+            exit 0
+          fi
+
+          # 3. Copy the categories from the issues it closes. Issues in another
+          # repository are skipped, because their labels need not exist here.
+          gh pr view "$number" --json closingIssuesReferences \
+            | jq -r --arg repo "$GH_REPO" \
+              '.closingIssuesReferences[]
+               | select(.repository.owner.login + "/" + .repository.name == $repo)
+               | .number' \
+            > issues
+
+          copy="$(
+            while IFS= read -r issue; do
+              gh issue view "$issue" --json labels --jq '.labels[].name'
+            done < issues | grep -xFf categories | sort -u | paste -sd, - || true
+          )"
+
+          if [ -z "$copy" ]; then
+            echo "#${number} closes no categorized issue."
+            exit 0
+          fi
+
+          echo "Copying to #${number}: ${copy}"
+          gh pr edit "$number" --add-label "$copy"
