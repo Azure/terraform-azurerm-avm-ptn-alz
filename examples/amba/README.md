@@ -38,7 +38,7 @@ locals {
 
 module "amba_alz" {
   source  = "Azure/avm-ptn-monitoring-amba-alz/azurerm"
-  version = "0.1.1"
+  version = "0.4.0"
   providers = {
     azurerm = azurerm.management
   }
@@ -52,7 +52,7 @@ module "amba_alz" {
 
 module "alz_architecture" {
   source  = "Azure/avm-ptn-alz/azurerm"
-  version = "0.12.0"
+  version = "0.21.0"
 
   architecture_name  = "alz-amba"
   location           = var.location
@@ -92,7 +92,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.2)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 5.0)
 
 ## Resources
 
@@ -296,13 +296,13 @@ The following Modules are called:
 
 Source: Azure/avm-ptn-alz/azurerm
 
-Version: 0.12.0
+Version: 0.21.0
 
 ### <a name="module_amba_alz"></a> [amba\_alz](#module\_amba\_alz)
 
 Source: Azure/avm-ptn-monitoring-amba-alz/azurerm
 
-Version: 0.1.1
+Version: 0.4.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

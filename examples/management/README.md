@@ -29,7 +29,7 @@ locals {
 
 module "management" {
   source  = "Azure/avm-ptn-alz-management/azurerm"
-  version = "0.6.0"
+  version = "0.9.0"
 
   automation_account_name      = local.automation_account_name
   location                     = local.location
@@ -81,7 +81,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0, >= 2.0.1)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 5.0)
 
 ## Resources
 
@@ -124,7 +124,7 @@ Version:
 
 Source: Azure/avm-ptn-alz-management/azurerm
 
-Version: 0.6.0
+Version: 0.9.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
