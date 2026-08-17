@@ -1,0 +1,29 @@
+changelog:
+  exclude:
+    labels:
+      - dependencies
+      - github-actions
+      - github_actions
+    authors:
+      - dependabot[bot]
+      - azure-verified-modules[bot]
+  categories:
+    - title: Features
+      labels:
+        - "Type: Feature Request :heavy_plus_sign:"
+        - enhancement
+    - title: Bug Fixes
+      labels:
+        - "Type: Bug :bug:"
+        - bug
+    - title: Documentation
+      labels:
+        - "Type: Documentation :page_facing_up:"
+        - documentation
+    - title: CI and Hygiene
+      labels:
+        - "Type: CI :rocket:"
+        - "Type: Hygiene :broom:"
+    - title: Other Changes
+      labels:
+        - "*"
