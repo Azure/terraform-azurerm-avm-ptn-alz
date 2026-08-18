@@ -1,6 +1,6 @@
 # Writing Terraform Tests for AVM Modules
 
-This sub-skill covers writing `.tftest.hcl` files for Azure Verified Modules (AVM). It adapts Terraform's built-in testing framework to AVM conventions.
+This reference covers writing `.tftest.hcl` files for Azure Verified Modules (AVM). It adapts Terraform's built-in testing framework to AVM conventions.
 
 ## AVM Test Directory Structure
 
@@ -11,10 +11,10 @@ Tests MUST live in one of two directories. No other location is permitted.
   tests/
     unit/
       unit.tftest.hcl          # Unit tests WITH mock_provider blocks
-      setup.sh                  # Optional pre-test setup script
+      setup.ps1                # Optional pre-test setup script
     integration/
       integration.tftest.hcl   # Integration tests WITHOUT mock_provider blocks
-      setup.sh                  # Optional pre-test setup script
+      setup.ps1                # Optional pre-test setup script
 ```
 
 Submodules under `./modules/` follow the same pattern — each can have its own `tests/unit/` and `tests/integration/` directories.
@@ -28,7 +28,7 @@ Submodules under `./modules/` follow the same pattern — each can have its own 
 | **Command** | `command = apply` (safe with mocks) | `command = apply` (default) |
 | **Speed** | Fast (seconds) | Slow (minutes) |
 | **Credentials needed** | No | Yes (Azure) |
-| **Run command** | `PORCH_NO_TUI=1 ./avm tf-test-unit` | `PORCH_NO_TUI=1 ./avm tf-test-integration` |
+| **Run command** | `avm test unit` | `avm test integration` |
 
 **Critical rule**: Unit tests use `command = apply` (NOT `command = plan`) because mocked providers make apply safe and allow testing resource creation logic.
 
@@ -355,35 +355,37 @@ run "test_module_b" {
 
 ### Optional Setup Script
 
-If `tests/unit/setup.sh` or `tests/integration/setup.sh` exists, it runs automatically before `terraform init`. Use this for environment preparation.
+If `tests/unit/setup.ps1` or `tests/integration/setup.ps1` exists, it runs in an isolated `pwsh` subprocess before `terraform init`. Use this for environment preparation. A failing hook records an issue and skips that target.
+
+Shell hooks are **not** supported: a `setup.sh` or `teardown.sh` under `tests/<tier>/` fails the run before Terraform is invoked. Port them to PowerShell.
 
 ## Running Tests
 
-Tests run inside the AVM container via the `./avm` wrapper. Always prefix with `PORCH_NO_TUI=1`.
+Tests run via the `Avm.Authoring` PowerShell module.
 
-```bash
+```pwsh
 # Unit tests
-PORCH_NO_TUI=1 ./avm tf-test-unit
+avm test unit
 
 # Integration tests
-PORCH_NO_TUI=1 ./avm tf-test-integration
+avm test integration
 ```
 
 The test runner automatically:
-1. Checks that `tests/unit/` or `tests/integration/` exists (skips gracefully if not)
-2. Copies the working directory to a temp location
-3. Cleans `.terraform`, lock files, and state files
-4. Runs `setup.sh` if present
-5. Runs `terraform init -test-directory ./tests/<type>`
-6. Runs `terraform test -test-directory ./tests/<type>`
-7. Repeats for each submodule under `./modules/` (in parallel)
-8. Cleans up
+1. Enumerates the module root and each immediate `modules/*` directory.
+2. Fails fast if a target has a `setup.sh` or `teardown.sh` under `tests/<tier>/`.
+3. Runs `tests/<tier>/setup.ps1` if present.
+4. Runs `terraform init -backend=false -upgrade=false -input=false -test-directory=tests/<tier>`. Pass `-NoInit` to skip this.
+5. Runs `terraform test -test-directory=tests/<tier> -no-color -json`.
+6. Reports failing run blocks and diagnostics with submodule paths.
+
+Tests execute in place, so `.terraform/` and lock files remain after `terraform init`. Bare `avm test` runs `terraform validate`; always name the test tier.
 
 ## Cleanup and Destruction
 
 Resources created by integration tests are destroyed automatically in **reverse run block order** after test completion. This handles dependency ordering correctly.
 
-For debugging, the `terraform test -no-cleanup` flag prevents automatic destruction — but note that this must be run directly, not via `./avm`.
+For debugging, the `terraform test -no-cleanup` flag prevents automatic destruction, but it must be run directly with `terraform`.
 
 ## Best Practices
 
