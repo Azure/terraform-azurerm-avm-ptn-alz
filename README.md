@@ -103,13 +103,25 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.12, < 2.0)
 
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.10, < 2.0)
+
 - <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.21)
+
+- <a name="requirement_alz"></a> [alz](#requirement\_alz) (~> 0.21)
+
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.4)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
+- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
+
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
+
+- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
+
+- <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
 - <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
 
