@@ -107,6 +107,8 @@ tfpluginschema -n Azure -p azapi --pv 2.12.0 resource schema azapi_resource
 tfpluginschema -n hashicorp -p azurerm --pv "~>4.0" resource list
 ```
 
+Use AzureRM schema inspection when analyzing an existing module as migration source input or verifying the exact resource for a permitted unsupported data-plane/non-ARM operation. Do not use it to choose AzureRM for convenience or for control-plane and ordinary supporting resources.
+
 ## Output Format
 
 Output is JSON matching the Terraform plugin schema format. Key fields for resource/data source schemas:

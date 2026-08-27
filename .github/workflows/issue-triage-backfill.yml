@@ -1,0 +1,278 @@
+---
+name: Issue Triage Backfill
+
+# Dispatches the issue triage workflow across this repository's open issues, one
+# at a time with a delay between them.
+#
+# Triage already runs on every issue as it is filed, so this is not for filling a
+# coverage gap. It exists to re-triage an existing backlog after the triage
+# workflow gains a capability — linking a pull request that fixes an issue, or
+# closing an issue a merged fix already resolved — which earlier triage runs
+# could not have applied.
+#
+# Scope is deliberately one repository per run. There is no org-wide mode.
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_issues:
+        description: 'Maximum number of issues to dispatch triage for.'
+        required: false
+        default: '25'
+        type: string
+      stagger_seconds:
+        description: 'Seconds between dispatches. A triage run takes 5-10 minutes.'
+        required: false
+        default: '180'
+        type: string
+      dry_run:
+        description: 'List the issues that would be triaged without dispatching anything.'
+        required: false
+        default: true
+        type: boolean
+      include_bot_authored:
+        description: 'Also triage bot-authored issues. Bots never trigger triage on their own, so these are excluded by default.'
+        required: false
+        default: false
+        type: boolean
+      skip_if_triaged_since:
+        description: 'Skip issues already triaged at or after this UTC timestamp, e.g. 2026-08-20T00:00:00Z. Set it to the campaign start time to resume without repeating work.'
+        required: false
+        default: ''
+        type: string
+      issue_numbers:
+        description: 'Comma or space separated issue numbers. Overrides enumeration and the bot filter, but still respects max_issues.'
+        required: false
+        default: ''
+        type: string
+      oldest_first:
+        description: 'Dispatch the oldest issues first.'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  actions: write
+  issues: read
+
+# One backfill per repository. Overlapping campaigns would double-triage issues
+# and compete for the same Search API budget.
+concurrency:
+  group: issue-triage-backfill-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    name: Backfill issue triage
+    runs-on: ubuntu-latest
+    # A job is killed at 6 hours. The budget check below refuses a combination
+    # that cannot finish, rather than being cut off part way through the backlog.
+    timeout-minutes: 360
+    steps:
+      - name: Select issues
+        id: select
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          MAX_ISSUES: ${{ inputs.max_issues }}
+          STAGGER_SECONDS: ${{ inputs.stagger_seconds }}
+          INCLUDE_BOT_AUTHORED: ${{ inputs.include_bot_authored }}
+          SKIP_IF_TRIAGED_SINCE: ${{ inputs.skip_if_triaged_since }}
+          ISSUE_NUMBERS: ${{ inputs.issue_numbers }}
+          OLDEST_FIRST: ${{ inputs.oldest_first }}
+        run: |
+          set -euo pipefail
+
+          # Inputs are strings, so validate before any arithmetic.
+          case "${MAX_ISSUES}" in
+            '' | *[!0-9]*)
+              echo "::error::max_issues must be a positive integer, got '${MAX_ISSUES}'."
+              exit 1
+              ;;
+          esac
+          case "${STAGGER_SECONDS}" in
+            '' | *[!0-9]*)
+              echo "::error::stagger_seconds must be a non-negative integer, got '${STAGGER_SECONDS}'."
+              exit 1
+              ;;
+          esac
+          if [ "${MAX_ISSUES}" -lt 1 ]; then
+            echo "::error::max_issues must be at least 1."
+            exit 1
+          fi
+
+          # Fail fast rather than being killed at the 6 hour job limit with the
+          # backlog half done and no record of where it stopped.
+          BUDGET=$(( MAX_ISSUES * STAGGER_SECONDS ))
+          if [ "${BUDGET}" -ge 21600 ]; then
+            echo "::error::max_issues (${MAX_ISSUES}) x stagger_seconds (${STAGGER_SECONDS}) is ${BUDGET}s, at or beyond the 21600s job limit. Lower either value and run several passes, using skip_if_triaged_since to resume."
+            exit 1
+          fi
+
+          # GitHub returns timestamps as 2026-08-17T12:34:56Z. Comparison below is
+          # lexical, which is only correct when the supplied value has that exact
+          # shape, so reject anything else instead of silently mis-filtering.
+          if [ -n "${SKIP_IF_TRIAGED_SINCE}" ]; then
+            if ! [[ "${SKIP_IF_TRIAGED_SINCE}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
+              echo "::error::skip_if_triaged_since must be a UTC timestamp like 2026-08-20T00:00:00Z, got '${SKIP_IF_TRIAGED_SINCE}'."
+              exit 1
+            fi
+          fi
+
+          # Refuse to run where triage is not deployed, instead of dispatching
+          # into a 404 once per issue.
+          if ! gh workflow view issue-triage.lock.yml >/dev/null 2>&1; then
+            echo "::error::issue-triage.lock.yml is not present in ${GH_REPO}. The backfill dispatches that workflow, so it must be synced first."
+            exit 1
+          fi
+
+          if [ -n "${ISSUE_NUMBERS}" ]; then
+            # An explicit list is an operator override: take it as given, minus
+            # duplicates, and keep the caller's order.
+            printf '%s' "${ISSUE_NUMBERS}" \
+              | tr -d '\r' \
+              | tr ',' ' ' \
+              | tr -s '[:space:]' '\n' \
+              | grep -E '^[0-9]+$' \
+              | awk '!seen[$0]++' > candidates.txt || true
+            if [ ! -s candidates.txt ]; then
+              echo "::error::issue_numbers was set but contained no issue numbers: '${ISSUE_NUMBERS}'."
+              exit 1
+            fi
+            SOURCE="explicit list"
+          else
+            INCLUDE_BOTS=false
+            if [ "${INCLUDE_BOT_AUTHORED}" = "true" ]; then
+              INCLUDE_BOTS=true
+            fi
+            SORT_DESCENDING=true
+            if [ "${OLDEST_FIRST}" = "true" ]; then
+              SORT_DESCENDING=false
+            fi
+            # --paginate emits one JSON array per page, so slurp before flattening.
+            # The issues endpoint also returns pull requests; drop them.
+            gh api "repos/${GH_REPO}/issues?state=open&per_page=100" --paginate \
+              | jq -s -r \
+                  --argjson include_bots "${INCLUDE_BOTS}" \
+                  --argjson descending "${SORT_DESCENDING}" '
+                    [ .[][]
+                      | select(.pull_request == null)
+                      | select($include_bots or (.user.type != "Bot"))
+                      | .number
+                    ]
+                    | sort
+                    | (if $descending then reverse else . end)
+                    | .[]
+                  ' | tr -d '\r' > candidates.txt
+            SOURCE="open issues"
+          fi
+
+          CANDIDATE_COUNT=$(wc -l < candidates.txt | tr -d ' ')
+          echo "Found ${CANDIDATE_COUNT} candidate issues from ${SOURCE}."
+
+          MARKER="gh-aw-workflow-call-id: ${GH_REPO}/issue-triage"
+          : > selected.txt
+          SKIPPED_RECENT=0
+
+          while read -r NUM; do
+            if [ "$(wc -l < selected.txt | tr -d ' ')" -ge "${MAX_ISSUES}" ]; then
+              break
+            fi
+            if [ -n "${SKIP_IF_TRIAGED_SINCE}" ]; then
+              # Read comments directly rather than using code search: the search
+              # index lags, and at these volumes the REST calls are cheap.
+              LATEST_TRIAGE=$(gh api "repos/${GH_REPO}/issues/${NUM}/comments?per_page=100" --paginate \
+                | jq -s -r --arg marker "${MARKER}" '
+                    [ .[][] | select(.body | contains($marker)) | .created_at ] | max // ""
+                  ' | tr -d '\r')
+              if [ -n "${LATEST_TRIAGE}" ] && [[ ! "${LATEST_TRIAGE}" < "${SKIP_IF_TRIAGED_SINCE}" ]]; then
+                SKIPPED_RECENT=$(( SKIPPED_RECENT + 1 ))
+                continue
+              fi
+            fi
+            echo "${NUM}" >> selected.txt
+          done < candidates.txt
+
+          SELECTED_COUNT=$(wc -l < selected.txt | tr -d ' ')
+          echo "selected_count=${SELECTED_COUNT}" >> "${GITHUB_OUTPUT}"
+
+          # 45 AI Credits is the mean of triage runs measured on this workflow.
+          # The spread is wide — two ring-0 runs on 2026-08-20 cost 24.1 and 65.0
+          # — because cost tracks how many duplicate and pull request candidates
+          # the agent has to open and read, so a repository with a dense backlog
+          # sits at the high end. Treat the total as an order of magnitude.
+          ESTIMATED_AIC=$(( SELECTED_COUNT * 45 ))
+
+          {
+            echo "## Issue triage backfill plan"
+            echo
+            echo "| | |"
+            echo "| --- | --- |"
+            echo "| Repository | \`${GH_REPO}\` |"
+            echo "| Candidates (${SOURCE}) | ${CANDIDATE_COUNT} |"
+            echo "| Skipped, triaged since \`${SKIP_IF_TRIAGED_SINCE:-n/a}\` | ${SKIPPED_RECENT} |"
+            echo "| Selected (cap ${MAX_ISSUES}) | **${SELECTED_COUNT}** |"
+            echo "| Stagger | ${STAGGER_SECONDS}s |"
+            echo "| Estimated duration | ~$(( SELECTED_COUNT * STAGGER_SECONDS / 60 )) min |"
+            echo "| Estimated cost | ~${ESTIMATED_AIC} AIC |"
+            echo
+            if [ "${SELECTED_COUNT}" -gt 0 ]; then
+              echo "Issues, in dispatch order:"
+              echo
+              awk '{ printf "#%s ", $1 } END { printf "\n" }' selected.txt
+              echo
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Dispatch triage
+        if: ${{ inputs.dry_run != true && steps.select.outputs.selected_count != '0' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          STAGGER_SECONDS: ${{ inputs.stagger_seconds }}
+        run: |
+          set -euo pipefail
+
+          DISPATCHED=0
+          FAILED=0
+          FIRST=true
+
+          while read -r NUM; do
+            # Sleep between dispatches, not after the last one. A triage run takes
+            # 5-10 minutes, so the default 180s keeps two or three overlapping.
+            #
+            # The binding limit is the GITHUB_TOKEN budget of 1000 requests per
+            # hour, which is shared across concurrent runs in a repository rather
+            # than granted per run. Triage spends roughly 40 requests per issue
+            # before the agent starts, around a dozen of them against the Search
+            # API, so 180s holds the campaign near 800 requests per hour. It
+            # degrades quietly when throttled, recording an incomplete candidate
+            # set and continuing, so going faster buys worse triage rather than a
+            # visible failure.
+            if [ "${FIRST}" = "true" ]; then
+              FIRST=false
+            else
+              sleep "${STAGGER_SECONDS}"
+            fi
+            if gh workflow run issue-triage.lock.yml -f issue_number="${NUM}"; then
+              DISPATCHED=$(( DISPATCHED + 1 ))
+              echo "Dispatched triage for #${NUM}."
+            else
+              FAILED=$(( FAILED + 1 ))
+              echo "::warning::Failed to dispatch triage for #${NUM}."
+            fi
+          done < selected.txt
+
+          {
+            echo
+            echo "Dispatched **${DISPATCHED}**, failed **${FAILED}**."
+            echo
+            echo "To stop the remainder, cancel this run. In-flight triage runs finish on their own."
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+          if [ "${FAILED}" -gt 0 ]; then
+            echo "::error::${FAILED} dispatch(es) failed."
+            exit 1
+          fi

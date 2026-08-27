@@ -36,6 +36,12 @@ Review synchronized changes before continuing. Do not restore files from the ret
 
 ## 3. Implement from current specifications
 
+Build every new resource-deploying module repository on AzAPI. Do not declare or configure `hashicorp/azurerm`, and do not create any `azurerm_*` resource or data source for control-plane operations, convenience, or ordinary supporting infrastructure in implementation, submodules, examples, E2E configurations, Terraform tests, fixtures, setup or teardown Terraform, migration examples, documentation examples, or generated snippets.
+
+When supporting configuration needs a direct Azure resource that the module under test does not supply, use an AzAPI resource, data source, or action. Each standalone Terraform root that performs direct Azure operations includes `Azure/azapi` in `required_providers`.
+
+Permit `hashicorp/azurerm ~> 4.0` only when required by an independently justified `azurerm_*` resource or data-source block. Each block scopes to one specific unsupported data-plane/non-ARM operation, adds the prescribed `provider_azurerm_disallowed` TFLint exclusion, documents the exact block and why AzAPI cannot implement it with an upstream AzAPI issue or pull request, and is replaced when support ships. One valid block does not authorize another. Examples and tests may configure AzureRM only to exercise such blocks.
+
 Fetch `llms.txt`, then read each applicable raw spec page. At minimum, review:
 
 - module classification and composition rules;
@@ -112,7 +118,7 @@ The pull request must explain:
 - compatibility or breaking-change impact;
 - state migration steps when addresses or providers changed;
 - tests and examples exercised; and
-- any narrow AzureRM exception and upstream tracking issue.
+- confirmation that control-plane and supporting resources use AzAPI, plus the evidence and upstream link for any narrow data-plane/non-ARM AzureRM exception.
 
 Review the final diff rather than only the hand-authored files. Managed and generated outputs are part of the change.
 
