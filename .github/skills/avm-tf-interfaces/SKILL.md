@@ -7,9 +7,18 @@ description: Use for AVM Terraform diagnostic settings, role assignments, locks,
 
 Read the current RMFR4, RMFR5, TFFR6, TFFR7, TFFR8, and TFNFR38 pages through <https://azure.github.io/Azure-Verified-Modules/llms.txt>.
 
+Every new module MUST use AzAPI for its primary resource and every directly authored standard-interface or supporting control-plane Azure resource. Do not use AzureRM for convenience in implementation, examples, tests, fixtures, E2E setup, or generated snippets. Each permitted `azurerm_*` resource or data-source block must independently implement one specific unsupported data-plane/non-ARM operation, document the exact block and AzAPI gap with an upstream AzAPI issue or pull request, and be replaced when support ships. One valid block does not authorize another.
+
 ## Canonical utility module
 
-Resource modules compose the canonical utility module instead of copying interface schemas:
+For every RMFR4 or RMFR5 interface migration, fetch both current sources from `Azure/Azure-Verified-Modules`:
+
+- `https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/specs-defs/specs/terraform/interfaces.md`
+- the matching `https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/static/includes/interfaces/tf/int.<interface>.schema.tf`
+
+Treat the entire canonical variable declaration as atomic. Copy it in full and replace only documented placeholders; preserve attribute ordering, types, defaults, nullability, descriptions, validations, and error messages exactly. Lint notices are migration hints, not complete implementation instructions.
+
+The resource module declares the exact consumer-facing schema. `Azure/avm-utl-interfaces/azure` provides the implementation and composition:
 
 ```hcl
 module "avm_interfaces" {
@@ -142,4 +151,4 @@ Handle nullable values and collections explicitly. If a field legitimately accep
 - Do not create destination workspaces, virtual networks, subnets, key vaults, or other consumer-owned dependencies inside a resource module.
 - Keep standard collection inputs non-null with empty defaults.
 
-Consult the `Azure/avm-utl-interfaces/azure` release documentation for exact feature-interface schemas and outputs. Do not reconstruct them from memory.
+Consult the canonical schema files for exact consumer-facing declarations and the `Azure/avm-utl-interfaces/azure` release documentation for implementation inputs and outputs. Do not reconstruct either from memory.

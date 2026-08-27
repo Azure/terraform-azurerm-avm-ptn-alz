@@ -19,6 +19,8 @@ Tests MUST live in one of two directories. No other location is permitted.
 
 Submodules under `./modules/` follow the same pattern — each can have its own `tests/unit/` and `tests/integration/` directories.
 
+All test files, fixtures, and setup or teardown Terraform for a newly authored module use AzAPI for control-plane and ordinary supporting resources. Direct Azure scaffolding uses an AzAPI resource, data source, or action, and each standalone Terraform root includes `Azure/azapi` in `required_providers`.
+
 ## Unit Tests vs Integration Tests
 
 | Aspect | Unit Tests (`tests/unit`) | Integration Tests (`tests/integration`) |
@@ -81,15 +83,9 @@ mock_provider "modtm" {}
 mock_provider "random" {}
 ```
 
-### AzureRM Module Variant
+### AzureRM exception
 
-For legacy AzureRM-based modules, mock `azurerm` instead of (or in addition to) `azapi`:
-
-```hcl
-mock_provider "azurerm" {}
-mock_provider "modtm" {}
-mock_provider "random" {}
-```
+Do not add an AzureRM mock to make test scaffolding easier. If a test needs a direct Azure dependency outside the module under test, model it with AzAPI. An AzureRM mock is permitted only when the test exercises independently justified `azurerm_*` resource or data-source blocks. Each block must implement one specific unsupported data-plane/non-ARM operation, document the exact block and AzAPI gap with an upstream issue or pull request, and be replaced when support ships. One valid block does not authorize another.
 
 ## Integration Test Template
 
@@ -358,6 +354,8 @@ run "test_module_b" {
 If `tests/unit/setup.ps1` or `tests/integration/setup.ps1` exists, it runs in an isolated `pwsh` subprocess before `terraform init`. Use this for environment preparation. A failing hook records an issue and skips that target.
 
 Shell hooks are **not** supported: a `setup.sh` or `teardown.sh` under `tests/<tier>/` fails the run before Terraform is invoked. Port them to PowerShell.
+
+If setup or teardown requires Terraform, use AzAPI for all control-plane and ordinary supporting resources. Configure AzureRM only when setup or teardown must exercise independently justified data-plane/non-ARM exception blocks.
 
 ## Running Tests
 

@@ -7,6 +7,8 @@ description: Use for AVM Terraform generated README content, _header.md, _footer
 
 AVM Terraform `README.md` files are generated. Never edit them directly.
 
+Documentation for every new resource-deploying module MUST describe an AzAPI-first implementation. Authored and generated snippets use AzAPI for all control-plane and ordinary supporting resources and MUST NOT present AzureRM as a convenience alternative.
+
 ## Source files
 
 For the root module, every submodule, and every documented example:
@@ -24,7 +26,10 @@ Submodules are full AVM modules and need their own `_header.md`, `_footer.md`, a
 - Put interface semantics in variable descriptions so generated input tables stay useful.
 - Document every variable field, especially `resource_types`, `retry`, `timeouts`, and `ignore_body_changes`.
 - For `ignore_body_changes`, state that paths are body-relative dot notation, ignored configuration is not sent to Azure, and changes take effect only after apply.
-- Document any permitted AzureRM exception, including each resource, why AzAPI cannot provide it, and the upstream tracking issue.
+- Ensure provider snippets include `Azure/azapi`. Include `hashicorp/azurerm` only for an exact permitted data-plane/non-ARM operation.
+- In examples, E2E instructions, Terraform tests, fixtures, and setup or teardown snippets, use AzAPI for direct Azure dependencies not supplied by the module under test.
+- For every permitted `azurerm_*` resource or data-source block, independently document the exact block, the specific unsupported data-plane/non-ARM operation, why no applicable AzAPI resource or action can implement it, the upstream AzAPI issue or pull request, and that the block must be replaced when support ships. One documented block does not authorize another.
+- Preserve legitimate published AVM module source addresses ending in `/azurerm`; that suffix is a legacy Registry namespace, not an AzureRM provider requirement.
 - Prefer working examples over duplicated implementation prose.
 - Keep headings and links stable for Terraform Registry rendering.
 - Do not explain internal review decisions or migration history in the README unless consumers need that information.

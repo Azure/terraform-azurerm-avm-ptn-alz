@@ -7,6 +7,10 @@ description: Use for AVM Terraform AzureRM-to-AzAPI migrations, state preservati
 
 An AzureRM-to-AzAPI migration is complete only when the implementation satisfies the current AVM specifications and existing consumers have a documented, tested state path.
 
+Migration guidance applies to existing modules only. AzureRM may be read, analyzed, and referenced as source input being migrated, including legacy `azurerm_*` state addresses. Generated target code uses AzAPI for every control-plane and supported Azure operation.
+
+The target rule includes implementation, submodules, upgrade examples, E2E configurations, Terraform tests, fixtures, setup or teardown Terraform, documentation examples, and generated snippets. Supporting control-plane resources use AzAPI, and each standalone target Terraform root includes `Azure/azapi` in `required_providers`. Retain an `azurerm_*` resource or data-source block only when that block independently implements one specific unsupported data-plane/non-ARM operation. Document the exact block and why AzAPI cannot implement it with an upstream AzAPI issue or pull request, and replace the block when support ships. One valid block does not authorize another.
+
 Read TFFR3-TFFR8, TFRMFR1, TFRMNFR1, TFRMNFR2, TFNFR38, and TFNFR39 through <https://azure.github.io/Azure-Verified-Modules/llms.txt> before choosing the migration shape.
 
 ## Separate two changes
@@ -98,7 +102,7 @@ The AzAPI target must include:
 - discrete outputs mapped from `azapi_resource.this.output`; and
 - standard interfaces composed through `Azure/avm-utl-interfaces/azure ~> 0.6`.
 
-Do not retain AzureRM as a convenience fallback. TFFR3 permits it only where no AzAPI resource form can provide the capability, with all prescribed documentation and lint requirements.
+Do not retain AzureRM as a convenience fallback or copy it into target examples and tests. Existing AzureRM configuration is migration input only, except when the target still requires the narrowly documented unsupported data-plane/non-ARM operation.
 
 ## Ignore semantics during migration
 

@@ -7,6 +7,8 @@ description: Use this skill whenever an Azure Verified Module (AVM) for Terrafor
 
 Every AVM Terraform module that deploys resources collects anonymous deployment/usage telemetry, on by default, with a single opt-out variable. The wiring lives in `main.telemetry.tf` and is maintained by the Mapotf transforms bundled with `Avm.Authoring`.
 
+New resource-deploying module repositories use AzAPI for every control-plane and supported direct Azure operation. Each permitted `azurerm_*` resource or data-source block must independently implement one specific unsupported data-plane/non-ARM operation, document the exact block and AzAPI gap with an upstream AzAPI issue or pull request, and be replaced when support ships. One valid block does not authorize another. Telemetry's AzAPI client and request headers complement that requirement.
+
 Fetch <https://azure.github.io/Azure-Verified-Modules/llms.txt> and confirm the current versions of these sources:
 - [SFR3](https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/specs-defs/includes/shared/shared/functional/SFR3.md) — Deployment/Usage Telemetry
 - [SFR4](https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/specs-defs/includes/shared/shared/functional/SFR4.md) — Telemetry Enablement Flexibility
@@ -152,6 +154,8 @@ module "kv" {
 ```
 
 This is called out in SFR4: "the telemetry parameter value **MUST** be passed through to these modules".
+
+The `/azurerm` suffix above is the Registry namespace of an existing legacy module, not an AzureRM provider declaration and not permission to generate `hashicorp/azurerm` or `azurerm_*` outside the narrow unsupported data-plane/non-ARM exception. New Registry namespaces use `/azure`.
 
 ## The Data Collection notice
 
