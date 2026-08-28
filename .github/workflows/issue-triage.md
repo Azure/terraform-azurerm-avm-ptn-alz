@@ -29,6 +29,7 @@ network:
 # conclusion jobs and their failure reports. Discriminating by issue number
 # gives each dispatched run its own group. Stripped from the compiled lock.
 concurrency:
+  group: "gh-aw-${{ github.workflow }}-${{ github.event.inputs.issue_number || github.event.issue.number || github.run_id }}"
   job-discriminator: ${{ github.event.inputs.issue_number || github.event.issue.number || github.run_id }}
 # Read-only permissions for triage
 permissions:
@@ -136,15 +137,30 @@ steps:
     # Comparing the newest release tag against the default branch yields exactly
     # the commits that are merged but not yet released. Membership in that set is
     # the whole released/unreleased question, decided here rather than inferred.
+    #
+    # The newest release is picked by sorting on published_at rather than asking
+    # /releases/latest, which does not always agree: on
+    # terraform-azurerm-avm-res-netapp-netappaccount it answers 0.2.0 (May 2025)
+    # while v0.3.0 (Dec 2025) is the real newest. Comparing against a stale tag
+    # makes already-released fixes look unreleased, which is the wrong direction
+    # to be wrong in — it would label an issue as awaiting a release that exists.
     LATEST=$(mktemp)
-    if ! gh api "repos/${GH_AW_GITHUB_REPOSITORY}/releases/latest" > "${LATEST}" 2>/dev/null; then
-      printf '%s\n' '{"loaded":true,"has_release":false,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_shas":[],"unreleased_pr_numbers":[]}' > "${OUT}"
+    if ! gh api --paginate "repos/${GH_AW_GITHUB_REPOSITORY}/releases?per_page=100" > "${LATEST}" 2>/dev/null; then
+      printf '%s\n' '{"loaded":false,"has_release":null,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_shas":[],"unreleased_pr_numbers":[]}' > "${OUT}"
       rm -f "${LATEST}"
       exit 0
     fi
-    TAG=$(jq -r '.tag_name // empty' "${LATEST}" | tr -d '\r' | head -n 1)
-    PUB=$(jq -r '.published_at // empty' "${LATEST}" | tr -d '\r' | head -n 1)
+    # --paginate concatenates one array per page, so flatten before sorting.
+    NEWEST=$(jq -s -r '
+      [ .[][]? | select((.draft | not) and (.prerelease | not)) ]
+      | sort_by(.published_at)
+      | last
+      | if . == null then "" else "\(.tag_name)\t\(.published_at)" end
+    ' "${LATEST}" 2>/dev/null | tr -d '\r' | head -n 1)
     rm -f "${LATEST}"
+    TAG=${NEWEST%%$'\t'*}
+    PUB=${NEWEST#*$'\t'}
+    if [ "${PUB}" = "${TAG}" ]; then PUB=""; fi
     if [ -z "${TAG}" ]; then
       printf '%s\n' '{"loaded":true,"has_release":false,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_shas":[],"unreleased_pr_numbers":[]}' > "${OUT}"
       exit 0
