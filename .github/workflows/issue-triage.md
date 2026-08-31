@@ -1370,7 +1370,17 @@ When the fix is confirmed but **not yet released**, do all of this and nothing m
 - In the triage comment, name the fixing PR, state that the fix is on the default branch, and name `latest_tag` as the most recent release that does **not** contain it.
 - Do not ask a maintainer to cut a release in the comment. The label is the signal AVM already uses for this; a second request in prose is noise.
 
-Before closing a released fix, post the Step 6 triage comment identifying the PR, the commit, and the release that first carried it, and recommend that version. Then use `close-issue` with `state_reason: completed`, naming the fixing PR in the body. Do not set `duplicate_of` on a fix-confirmed closure — that reason is only for duplicates.
+Before closing a released fix, post the Step 6 triage comment identifying the PR, the commit, and the release that first carried it, and recommend that version. Then use `close-issue` with `state_reason: completed`. Do not set `duplicate_of` on a fix-confirmed closure — that reason is only for duplicates.
+
+**The `close-issue` body is posted as its own comment, directly beneath your triage comment, and it is what the reporter reads as the reason their issue closed.** Give it two sentences and nothing more: what fixed the issue and in which release, then the reopen invitation.
+
+```
+Fixed by PR #270, which migrated diagnostic settings to `azapi_resource` and removed the deprecated `metric` attribute. Released in v0.8.2.
+
+If this is still happening on v0.8.2 or later, please reopen with your module version and a configuration snippet.
+```
+
+That second sentence is not a courtesy. A reopen by a human is the only trigger for the **Human Reopen Override**, which permanently blocks this workflow from closing the issue again. Omit it and the reporter has no way of knowing that route exists, so the one safeguard against a wrong closure never engages. A `close-issue` body without it is incomplete.
 
 Do **not** close for an open or draft PR, an unmerged branch, a merely likely match, a partial fix, conflicting evidence, a fix whose default-branch inclusion cannot be verified, or a fix that is merged but unreleased. When uncertain, leave the issue open and explain what a maintainer should verify.
 
@@ -1463,7 +1473,7 @@ The bullet points should include:
 - **PR linked:** If you appended `Fixes #<issue-number>` to a confirmed-fix PR, identify the PR and state that it is now linked. Do not claim an ambiguous candidate was linked.
 - **Related or partial PRs:** Always report any PR you classified as **likely related fix** or **related-only** in Step 4, with a link and a one-line reason, even though you deliberately did not link or close against it. Do not omit these just because no write action was taken on them — surfacing them is the point, so a maintainer can judge candidates you intentionally left out of the automated decision. Every candidate named as lexically plausible in the rendered screening-status line must appear here unless you reported it as a confirmed fix; if you judged one irrelevant, say so and why, rather than leaving it unmentioned.
 - **PR-evidence and screening status:** This line is rendered for you, and it belongs **inside the collapsed accordion**, not in the visible bullets — it is machine evidence for auditing a run, not a finding a maintainer needs to read. Handling rules are under the accordion bullet below.
-- **Closure:** Required on any run that emits `close-issue`, with no exception — a closure whose comment never mentions being closed reads to the reporter as an unexplained state change. State the evidence, name the release that carries the fix (or the canonical issue, for a duplicate), and end with a sentence inviting the reporter to reopen if the closure is wrong. That sentence is load-bearing: a human reopening is the only thing that triggers the Human Reopen Override, which is the one veto protecting a reporter from a wrong closure. Two of the first six real closures shipped without this bullet, so before emitting `close-issue`, confirm the comment carries it.
+- **Closure:** Required on any run that emits `close-issue`, with no exception. One line: that you are closing, and the evidence — the release that carries the fix, or the canonical issue for a duplicate. The reopen invitation does **not** go here; for a fix-confirmed closure it belongs in the `close-issue` body, and for a duplicate it is the `> **Note:**` blockquote below. Worked examples for both are in Step 6.
 - **Awaiting release:** If a confirmed fix is merged but not yet released, say so here instead of under Closure — name the fixing PR, state that it is on the default branch, name `latest_tag` as the newest release that does not contain it, and note that the issue stays open until a release carries the fix.
 - **Human reopen override:** If this workflow previously closed the issue and a person later reopened it, state that the issue will remain open for human review even if the agent found a duplicate or an existing fix.
 - **What this triage looked at (collapsed accordion):** At the very bottom of the comment, include a collapsed `<details>` block containing, in order: the verbatim contents of `/tmp/gh-aw/agent/triage-audit-block.md`; the verbatim contents of `/tmp/gh-aw/agent/triage-screening-status.md`; one line accounting for any `.must_compare` candidates you judged not related; the deterministic PR-evidence sources that fired (e.g. timeline cross-reference, exact issue-number match in a title/body/comment, commit-message reference, commit-body `Refs #N`); and the key sources you inspected. This is the run's audit trail — keeping it here is what lets the visible summary stay short.
@@ -1577,6 +1587,37 @@ When you are **highly confident** an issue is a confirmed duplicate of another (
 - Compared against #5678 (same error and context); confirmed #5678 is the oldest matching issue
 
 </details>
+```
+
+**Example — closing an issue a released fix already resolved.** This is the shape that was missing, and closures without it were omitting the `Closure:` bullet roughly one run in four. Both calls are shown, because the reopen invitation lives in the `close-issue` body rather than the comment:
+
+`add-comment`:
+
+```
+## 🤖 GitHub Agentic Workflow Automated Triage 🤖
+
+> ⚠️ _This triage was generated automatically by an AI agent and may be incomplete or inaccurate._
+
+- **Duplicate check:** No duplicates found. Compared #612 — same resource, different root cause.
+- **Issue type:** Set to `Bug` (previously `NONE`).
+- **Labels applied:** None new — the issue already carries `Type: Bug :bug:`.
+- **Already fixed:** PR #270 replaced the deprecated `metric` attribute with `enabled_metric`, merged to `main` and carried by release `v0.8.2`. Verified against the current default branch.
+- **Closure:** Closing as completed — the fix is released in `v0.8.2`, so upgrading resolves this.
+
+<details>
+<summary><b>🔎 What this triage looked at</b></summary>
+
+<the rendered audit block, the rendered screening line, then the sources you opened>
+
+</details>
+```
+
+`close-issue` with `state_reason: completed`:
+
+```
+Fixed by PR #270, which replaced the deprecated `metric` attribute with `enabled_metric`. Released in v0.8.2.
+
+If this is still happening on v0.8.2 or later, please reopen with your module version and a configuration snippet.
 ```
 
 ---
