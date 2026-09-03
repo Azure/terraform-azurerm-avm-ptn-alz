@@ -30,7 +30,7 @@ terraform {
 
 Every standalone Terraform root that performs a direct Azure operation MUST include `Azure/azapi` in `required_providers`. Use `azapi_resource`, `azapi_data_plane_resource`, `azapi_resource_action`, `azapi_update_resource`, or an AzAPI data source as appropriate. Do not start a new module from an AzureRM implementation and treat migration as future work.
 
-`hashicorp/azurerm ~> 4.0` is permitted only when required for a data-plane or other non-ARM operation that genuinely cannot be implemented with those AzAPI resource forms. Each `azurerm_*` resource or data-source block independently scopes to one specific unsupported operation, adds the prescribed `provider_azurerm_disallowed` TFLint exclusion, documents the exact block and why AzAPI cannot implement it with an upstream AzAPI issue or pull request, and is replaced when support ships. One valid block does not authorize another. Do not use the exception for any control-plane resource.
+`hashicorp/azurerm ~> 4.0` is permitted only when required for a data-plane or other non-ARM operation that genuinely cannot be implemented with those AzAPI resource forms. Each `azurerm_*` resource or data-source block independently scopes to one specific unsupported operation, documents the exact block and why AzAPI cannot implement it with an upstream AzAPI issue or pull request, and is replaced when support ships. Prefer an AVM TFLint override file, but use a justified line-level annotation when it avoids suppressing unrelated findings in the same scope. One valid block does not authorize another. Do not use the exception for any control-plane resource. Follow `avm-tf-tflint`.
 
 ## Complete resource pattern
 
@@ -76,10 +76,11 @@ The primary resource label is `this`. Satellite resources such as locks, role as
 
 - `type`: always read from `var.resource_types.<deterministic_key>`.
 - `response_export_values`: present on every resource, even when empty.
-- `replace_triggers_refs`: present on every resource, even when empty.
+- `replace_triggers_refs`: omit when no body paths require replacement. When present, use a non-empty static list of unique, valid JMESPath body paths; do not include `name` or `location`.
 - `retry`: assigned directly from `var.retry`.
 - `timeouts`: emitted with a dynamic block from `var.timeouts`.
 - `ignore_body_changes`: read from the field for this specific resource and collapse `[]` to `null`.
+- `tags`: set exactly to `var.tags` when the current AVM ruleset capability snapshot marks the resource type as taggable; omit it for unsupported types.
 
 The same requirements apply to equivalent AzAPI resource types, not only `azapi_resource`.
 

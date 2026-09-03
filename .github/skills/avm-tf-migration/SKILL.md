@@ -95,7 +95,7 @@ The AzAPI target must include:
 - standard TFNFR39 files in root and submodules;
 - `type` from the deterministic `resource_types` object;
 - `response_export_values`, including an explicit empty value;
-- `replace_triggers_refs`, including an explicit empty value;
+- `replace_triggers_refs` only when replacement paths exist, using a non-empty static list of unique, valid JMESPath body paths;
 - consumer-configurable `retry` and dynamic `timeouts`;
 - per-resource `ignore_body_changes` with empty lists collapsed to `null`;
 - nested `resource_types` and `ignore_body_changes` slots for submodules;

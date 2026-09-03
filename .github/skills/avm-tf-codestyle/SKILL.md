@@ -90,10 +90,11 @@ Every AzAPI resource must:
 
 - source `type` from the deterministic field in `var.resource_types`;
 - declare `response_export_values`;
-- declare `replace_triggers_refs`;
+- omit `replace_triggers_refs` when no replacement paths exist; otherwise declare a non-empty static list of unique, valid JMESPath body paths;
 - assign `retry = var.retry`;
 - emit `timeouts` through a dynamic block; and
 - assign the per-resource `ignore_body_changes` list, collapsing empty to `null`.
+- set `tags = var.tags` exactly on resource types supported by the current AVM TFLint capability snapshot and omit `tags` on unsupported types.
 
 See `avm-tf-azapi` for the complete pattern.
 

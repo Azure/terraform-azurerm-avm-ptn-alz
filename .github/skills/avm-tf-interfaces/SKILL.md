@@ -69,7 +69,6 @@ resource "azapi_resource" "diagnostic_settings" {
   body      = each.value.body
 
   ignore_body_changes    = length(var.ignore_body_changes.insights_diagnostic_settings) > 0 ? var.ignore_body_changes.insights_diagnostic_settings : null
-  replace_triggers_refs  = []
   response_export_values = []
   retry                  = var.retry
 
@@ -146,7 +145,7 @@ Handle nullable values and collections explicitly. If a field legitimately accep
 - Implement locks, role assignments, diagnostic settings, private endpoints, and other child or extension resources as distinct, descriptively named resources or required submodules.
 - Keep the primary resource label `this`.
 - Source every AzAPI `type` from `var.resource_types`.
-- Apply `response_export_values`, `replace_triggers_refs`, `retry`, `timeouts`, and `ignore_body_changes` to every AzAPI resource.
+- Apply `response_export_values`, `retry`, `timeouts`, and `ignore_body_changes` to every applicable AzAPI resource. Omit `replace_triggers_refs` when no replacement paths exist; otherwise use a non-empty static list of unique, valid JMESPath body paths.
 - Use unquoted lifecycle references such as `ignore_changes = [name]`.
 - Do not create destination workspaces, virtual networks, subnets, key vaults, or other consumer-owned dependencies inside a resource module.
 - Keep standard collection inputs non-null with empty defaults.

@@ -26,6 +26,8 @@ avm version
 
 Always name the tier when tests are expected. Bare `avm test` validates Terraform; it does not run unit, integration, and E2E suites.
 
+For Conftest findings or files under `examples/<name>/exceptions`, read `avm-tf-conftest` before changing Rego or suppressing a policy.
+
 ## Unit tests
 
 Place tests in `tests/unit`. Mock every provider declared by the module:
