@@ -101,7 +101,6 @@ resource "azapi_resource" "this" {
   body      = { properties = { ... } }
 
   ignore_body_changes    = length(var.ignore_body_changes.search_search_services) > 0 ? var.ignore_body_changes.search_search_services : null
-  replace_triggers_refs  = []
   response_export_values = []
   retry                  = var.retry
 
