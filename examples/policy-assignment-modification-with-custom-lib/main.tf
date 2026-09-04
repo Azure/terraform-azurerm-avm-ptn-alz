@@ -33,6 +33,7 @@ resource "azurerm_maintenance_configuration" "this" {
       classifications_to_include = ["Critical", "Security", "Definition"]
     }
   }
+
   window {
     start_date_time = "2024-01-03 00:00"
     time_zone       = "GMT Standard Time"

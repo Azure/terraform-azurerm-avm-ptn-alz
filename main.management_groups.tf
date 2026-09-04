@@ -18,9 +18,6 @@ resource "azapi_resource" "management_groups_level_0" {
       displayName = each.value.display_name
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -33,7 +30,6 @@ resource "azapi_resource" "management_groups_level_0" {
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
   schema_validation_enabled = var.schema_validation_enabled.management_groups
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -63,9 +59,6 @@ resource "azapi_resource" "management_groups_level_1" {
       displayName = each.value.display_name
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -77,7 +70,6 @@ resource "azapi_resource" "management_groups_level_1" {
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
   schema_validation_enabled = var.schema_validation_enabled.management_groups
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -105,9 +97,6 @@ resource "azapi_resource" "management_groups_level_2" {
       displayName = each.value.display_name
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -119,7 +108,6 @@ resource "azapi_resource" "management_groups_level_2" {
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
   schema_validation_enabled = var.schema_validation_enabled.management_groups
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -147,9 +135,6 @@ resource "azapi_resource" "management_groups_level_3" {
       displayName = each.value.display_name
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -161,7 +146,6 @@ resource "azapi_resource" "management_groups_level_3" {
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
   schema_validation_enabled = var.schema_validation_enabled.management_groups
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -189,9 +173,6 @@ resource "azapi_resource" "management_groups_level_4" {
       displayName = each.value.display_name
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -203,7 +184,6 @@ resource "azapi_resource" "management_groups_level_4" {
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
   schema_validation_enabled = var.schema_validation_enabled.management_groups
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -231,9 +211,6 @@ resource "azapi_resource" "management_groups_level_5" {
       displayName = each.value.display_name
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -245,7 +222,6 @@ resource "azapi_resource" "management_groups_level_5" {
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
   schema_validation_enabled = var.schema_validation_enabled.management_groups
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create
@@ -273,9 +249,6 @@ resource "azapi_resource" "management_groups_level_6" {
       displayName = each.value.display_name
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     each.value.parent_id,
   ]
@@ -287,7 +260,6 @@ resource "azapi_resource" "management_groups_level_6" {
     randomization_factor = lookup(var.retries.management_groups, "randomization_factor", null)
   } : null
   schema_validation_enabled = var.schema_validation_enabled.management_groups
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.management_group.create

@@ -16,7 +16,6 @@ provider "azurerm" {
   features {}
 }
 
-
 data "azapi_client_config" "current" {}
 
 locals {

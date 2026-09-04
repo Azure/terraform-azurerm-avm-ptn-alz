@@ -30,9 +30,6 @@ resource "azapi_resource" "management_group_role_assignments" {
   parent_id              = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_role_assignments[each.key].management_group_name])
   type                   = var.resource_types.role_assignment
   body                   = each.value.role_assignments_azapi.this.body
-  create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   retry = {
     error_message_regex  = var.retries.role_assignments.error_message_regex
@@ -42,7 +39,6 @@ resource "azapi_resource" "management_group_role_assignments" {
     randomization_factor = var.retries.role_assignments.randomization_factor
   }
   schema_validation_enabled = var.schema_validation_enabled.role_assignments
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.role_assignment.create
