@@ -31,9 +31,6 @@ resource "azapi_resource" "policy_role_assignments" {
       principalType    = "ServicePrincipal"
     }
   }
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   replace_triggers_external_values = [
     each.value.principal_id,
     each.value.role_definition_id,
@@ -47,7 +44,6 @@ resource "azapi_resource" "policy_role_assignments" {
     randomization_factor = lookup(var.retries.policy_role_assignments, "randomization_factor", null)
   } : null
   schema_validation_enabled = var.schema_validation_enabled.role_assignments
-  update_headers            = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   timeouts {
     create = var.timeouts.policy_role_assignment.create

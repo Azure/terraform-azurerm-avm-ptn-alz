@@ -4,9 +4,6 @@ resource "azapi_resource" "subscription_placement" {
   name                   = each.value.subscription_id
   parent_id              = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}"
   type                   = var.resource_types.management_group_subscription
-  create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   retry = var.retries.subscription_placement.error_message_regex != null ? {
     error_message_regex  = var.retries.subscription_placement.error_message_regex
@@ -15,7 +12,6 @@ resource "azapi_resource" "subscription_placement" {
     multiplier           = lookup(var.retries.subscription_placement, "multiplier", null)
     randomization_factor = lookup(var.retries.subscription_placement, "randomization_factor", null)
   } : null
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 
   depends_on = [
     azapi_resource.management_groups_level_0,
@@ -34,7 +30,6 @@ resource "azapi_resource_action" "subscription_placement_create" {
   method                 = "PUT"
   resource_id            = "/providers/Microsoft.Management/managementGroups/${each.value.management_group_name}/subscriptions/${each.value.subscription_id}"
   type                   = var.resource_types.management_group_subscription
-  headers                = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   retry = var.retries.subscription_placement.error_message_regex != null ? {
     error_message_regex  = var.retries.subscription_placement.error_message_regex
@@ -62,7 +57,6 @@ resource "azapi_resource_action" "subscription_placement_delete" {
   method                 = "PUT"
   resource_id            = "/providers/Microsoft.Management/managementGroups/${local.subscription_placement_destroy_management_group_id}/subscriptions/${each.value.subscription_id}"
   type                   = var.resource_types.management_group_subscription
-  headers                = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   response_export_values = []
   retry = var.retries.subscription_placement.error_message_regex != null ? {
     error_message_regex  = var.retries.subscription_placement.error_message_regex
