@@ -23,7 +23,7 @@ provider "alz" {
 }
 
 locals {
-  intermediate_root_management_group_id = [for management_group in jsondecode(file("${path.module}/lib/alz.alz_architecture_definition.json")).management_groups : management_group.id if management_group.parent_id == null][0]
+  intermediate_root_management_group_id = [for management_group in jsondecode(templatefile("${path.module}/lib/alz.alz_architecture_definition.json.tftpl", { prefix = var.random_suffix })).management_groups : management_group.id if management_group.parent_id == null][0]
   parent_management_group_id            = "alz-test-mg-${var.random_suffix}"
 }
 
