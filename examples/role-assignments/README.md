@@ -40,6 +40,7 @@ module "alz_architecture" {
       management_group_name      = "${var.prefix}test2"
     }
   }
+  role_assignment_name_use_random_uuid = true
 }
 ```
 
