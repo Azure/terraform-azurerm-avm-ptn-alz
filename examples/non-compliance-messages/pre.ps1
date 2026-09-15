@@ -42,6 +42,9 @@ $libDir = Join-Path $PSScriptRoot 'lib'
 if (Test-Path -LiteralPath $libDir -PathType Container) {
     Push-Location -LiteralPath $libDir
     try {
+        Remove-Item -LiteralPath '.terraform.lock.hcl' -Force -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath '.terraform' -Recurse -Force -ErrorAction SilentlyContinue
+
         & $terraform init -input=false
         if ($LASTEXITCODE -ne 0) { throw "terraform init failed with exit code $LASTEXITCODE." }
 
