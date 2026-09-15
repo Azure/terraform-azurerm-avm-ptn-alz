@@ -43,7 +43,10 @@ if (Test-Path -LiteralPath $libDir -PathType Container) {
     Push-Location -LiteralPath $libDir
     try {
         # Ensure we don't reuse stale provider binaries from prior runs.
-        Remove-Item -LiteralPath '.terraform' -Recurse -Force -ErrorAction SilentlyContinue
+        # Keep .terraform.lock.hcl intact so provider selection remains deterministic.
+        if (Test-Path -LiteralPath '.terraform' -PathType Container) {
+            Remove-Item -LiteralPath '.terraform' -Recurse -Force
+        }
 
         & $terraform init -input=false
         if ($LASTEXITCODE -ne 0) { throw "terraform init failed with exit code $LASTEXITCODE." }
