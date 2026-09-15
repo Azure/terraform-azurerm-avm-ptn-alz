@@ -1,5 +1,4 @@
-# This file is managed by avm-terraform-governance. Do not edit manually.
-# See: https://github.com/Azure/avm-terraform-governance
+# This file is managed by azure-verified-modules-tools. Do not edit manually.
+# Template: https://github.com/Azure/azure-verified-modules-tools/blob/main/repository-management/repository-sync/CODEOWNERS.template
 
-# The CODEOWNERS file itself is protected to prevent unauthorized changes.
 .github/CODEOWNERS @Azure/azure-verified-modules-engineering-owners
