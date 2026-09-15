@@ -146,7 +146,7 @@ steps:
     # to be wrong in — it would label an issue as awaiting a release that exists.
     LATEST=$(mktemp)
     if ! gh api --paginate "repos/${GH_AW_GITHUB_REPOSITORY}/releases?per_page=100" > "${LATEST}" 2>/dev/null; then
-      printf '%s\n' '{"loaded":false,"has_release":null,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_shas":[],"unreleased_pr_numbers":[]}' > "${OUT}"
+      printf '%s\n' '{"loaded":false,"has_release":null,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_pr_numbers":[]}' > "${OUT}"
       rm -f "${LATEST}"
       exit 0
     fi
@@ -162,19 +162,24 @@ steps:
     PUB=${NEWEST#*$'\t'}
     if [ "${PUB}" = "${TAG}" ]; then PUB=""; fi
     if [ -z "${TAG}" ]; then
-      printf '%s\n' '{"loaded":true,"has_release":false,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_shas":[],"unreleased_pr_numbers":[]}' > "${OUT}"
+      printf '%s\n' '{"loaded":true,"has_release":false,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_pr_numbers":[]}' > "${OUT}"
       exit 0
     fi
     CMP=$(mktemp)
     if gh api "repos/${GH_AW_GITHUB_REPOSITORY}/compare/${TAG}...${DEFAULT_BRANCH}" > "${CMP}" 2>/dev/null &&
        jq -e 'type == "object" and has("commits")' "${CMP}" > /dev/null 2>&1; then
+      # Commit SHAs are deliberately not published here. Two runs picked a SHA
+      # out of that list and asserted it introduced the feature under triage,
+      # both citing a `chore: run avm pre-commit` commit that touched only
+      # workflow files. A SHA carries no clue about what it changed, so any SHA
+      # in the list reads as evidence. A PR number can be checked by reading the
+      # PR, so that is the only identifier the agent is given.
       jq --arg tag "${TAG}" --arg pub "${PUB}" '{
         loaded: true,
         has_release: true,
         latest_tag: $tag,
         latest_published_at: $pub,
         ahead_by: (.ahead_by // 0),
-        unreleased_shas: [.commits[]?.sha],
         unreleased_pr_numbers: ([.commits[]?.commit.message | scan("#([0-9]+)") | .[0] | tonumber] | unique)
       }' "${CMP}" > "${OUT}" ||
         printf '%s\n' "{\"loaded\":false,\"has_release\":true,\"latest_tag\":\"${TAG}\"}" > "${OUT}"
@@ -1225,8 +1230,8 @@ AVM tracks where a fix has got to with three labels. Apply the one that matches 
 | State you established | Label to match |
 |---|---|
 | A fix for this issue exists in an **open, unmerged** PR | the "Status: In PR" label |
-| A fix is **merged to the default branch but not in any release** — its PR number or merge commit appears in `release-status.json` | the "Status: Awaiting Release To Be Cut" label |
-| A fix is **merged and carried by a published release** | the "Status: Fixed" label, alongside closing the issue |
+| A fix is **merged to the default branch but not in any release** — the fixing PR number **appears in** `unreleased_pr_numbers` | the "Status: Awaiting Release To Be Cut" label |
+| A fix is **merged and carried by a published release** — the fixing PR number is **not in** `unreleased_pr_numbers` | the "Status: Fixed" label, alongside closing the issue |
 
 AVM defines "Status: Awaiting Release To Be Cut" as *"This is fixed in the main branch but not in the latest release, will be fixed with next release cut"*. It is the state that keeps an issue open and visible to whoever cuts the next release, which is why an unreleased fix is labelled rather than closed.
 
@@ -1356,10 +1361,23 @@ Do not judge release state from a PR body, a changelog, an earlier comment, or t
 | `loaded` | `false` means the lookup failed — treat every fix as unreleased |
 | `has_release` | `false` means the module has never been released |
 | `latest_tag` / `latest_published_at` | the newest release |
-| `unreleased_shas` | merge commits on the default branch that no release contains |
-| `unreleased_pr_numbers` | the PR numbers those commits reference |
+| `unreleased_pr_numbers` | **the deciding list** — PR numbers merged to the default branch that no release contains |
 
-**A merged fix is released when its PR number is absent from `unreleased_pr_numbers` and its merge commit is absent from `unreleased_shas`.** Present in either list means merged but not yet released.
+The file carries no commit SHAs, by design. Two runs reached into a SHA list, picked one, and asserted it introduced the feature under triage — both naming `262cb246`, a `chore: run avm pre-commit` commit that touched only workflow files. A SHA says nothing about what it changed, so any SHA reads as evidence. A PR number can be checked: you can read PR #229 and see whether it added the thing.
+
+**Run this exact test on your fixing PR, and do not substitute judgement for it:**
+
+> Is the fixing PR's number in `unreleased_pr_numbers`?
+> **Yes → not released.** Apply `Status: Awaiting Release To Be Cut` and leave the issue open.
+> **No → released.** Close as `completed`.
+
+Identify the fixing PR before you run the test, and identify it from its contents. Find the PR whose diff actually adds the behaviour the issue asks for. Do not work backwards from `unreleased_pr_numbers` by asking which of those PRs might plausibly be responsible — the fixing PR is frequently not in that list, because a released fix by definition is not.
+
+There is no third answer, and nothing else is evidence. **Merge and release dates in particular are not evidence.** A PR merged seconds before a release is in that release; a PR merged months ago may still be unreleased. `avm-ptn-example-repo` PR #227 merged at `21:30:59` and `v0.1.2` was published at `21:31:32` — 33 seconds later, from that very commit. Reasoning from the timestamps would call it unreleased; the list correctly does not contain it.
+
+State the result of this test in the triage comment: name the PR number and say whether it appears in `unreleased_pr_numbers`. A conclusion about release state that does not cite that list is a conclusion you guessed.
+
+Getting this backwards is not symmetric. Calling a released fix "awaiting release" tells a maintainer to go and cut a release that already exists, which wastes their time on a non-existent task; that is the error to avoid.
 
 Close the issue as `completed` only when the fix is **confirmed**, the Human Reopen Override is not active, the **Incomplete or Failed Evidence Load or Screening** veto is not active, **and the fix is released** by the test above.
 
@@ -1601,7 +1619,7 @@ When you are **highly confident** an issue is a confirmed duplicate of another (
 - **Duplicate check:** No duplicates found. Compared #612 — same resource, different root cause.
 - **Issue type:** Set to `Bug` (previously `NONE`).
 - **Labels applied:** None new — the issue already carries `Type: Bug :bug:`.
-- **Already fixed:** PR #270 replaced the deprecated `metric` attribute with `enabled_metric`, merged to `main` and carried by release `v0.8.2`. Verified against the current default branch.
+- **Already fixed:** PR #270 replaced the deprecated `metric` attribute with `enabled_metric`, merged to `main` and carried by release `v0.8.2`. `#270` is not in `unreleased_pr_numbers`, so the fix is released.
 - **Closure:** Closing as completed — the fix is released in `v0.8.2`, so upgrading resolves this.
 
 <details>
