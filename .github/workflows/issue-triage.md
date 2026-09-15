@@ -126,67 +126,6 @@ steps:
       echo "UNKNOWN" > "${TYPE_FILE}"
     fi
     rm -f "${RAW}"
-- name: Fetch release status
-  env:
-    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    GH_AW_GITHUB_REPOSITORY: ${{ github.repository }}
-    DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-  run: |
-    set -o pipefail
-    OUT=/tmp/gh-aw/agent/release-status.json
-    # Comparing the newest release tag against the default branch yields exactly
-    # the commits that are merged but not yet released. Membership in that set is
-    # the whole released/unreleased question, decided here rather than inferred.
-    #
-    # The newest release is picked by sorting on published_at rather than asking
-    # /releases/latest, which does not always agree: on
-    # terraform-azurerm-avm-res-netapp-netappaccount it answers 0.2.0 (May 2025)
-    # while v0.3.0 (Dec 2025) is the real newest. Comparing against a stale tag
-    # makes already-released fixes look unreleased, which is the wrong direction
-    # to be wrong in — it would label an issue as awaiting a release that exists.
-    LATEST=$(mktemp)
-    if ! gh api --paginate "repos/${GH_AW_GITHUB_REPOSITORY}/releases?per_page=100" > "${LATEST}" 2>/dev/null; then
-      printf '%s\n' '{"loaded":false,"has_release":null,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_pr_numbers":[]}' > "${OUT}"
-      rm -f "${LATEST}"
-      exit 0
-    fi
-    # --paginate concatenates one array per page, so flatten before sorting.
-    NEWEST=$(jq -s -r '
-      [ .[][]? | select((.draft | not) and (.prerelease | not)) ]
-      | sort_by(.published_at)
-      | last
-      | if . == null then "" else "\(.tag_name)\t\(.published_at)" end
-    ' "${LATEST}" 2>/dev/null | tr -d '\r' | head -n 1)
-    rm -f "${LATEST}"
-    TAG=${NEWEST%%$'\t'*}
-    PUB=${NEWEST#*$'\t'}
-    if [ "${PUB}" = "${TAG}" ]; then PUB=""; fi
-    if [ -z "${TAG}" ]; then
-      printf '%s\n' '{"loaded":true,"has_release":false,"latest_tag":null,"latest_published_at":null,"ahead_by":0,"unreleased_pr_numbers":[]}' > "${OUT}"
-      exit 0
-    fi
-    CMP=$(mktemp)
-    if gh api "repos/${GH_AW_GITHUB_REPOSITORY}/compare/${TAG}...${DEFAULT_BRANCH}" > "${CMP}" 2>/dev/null &&
-       jq -e 'type == "object" and has("commits")' "${CMP}" > /dev/null 2>&1; then
-      # Commit SHAs are deliberately not published here. Two runs picked a SHA
-      # out of that list and asserted it introduced the feature under triage,
-      # both citing a `chore: run avm pre-commit` commit that touched only
-      # workflow files. A SHA carries no clue about what it changed, so any SHA
-      # in the list reads as evidence. A PR number can be checked by reading the
-      # PR, so that is the only identifier the agent is given.
-      jq --arg tag "${TAG}" --arg pub "${PUB}" '{
-        loaded: true,
-        has_release: true,
-        latest_tag: $tag,
-        latest_published_at: $pub,
-        ahead_by: (.ahead_by // 0),
-        unreleased_pr_numbers: ([.commits[]?.commit.message | scan("#([0-9]+)") | .[0] | tonumber] | unique)
-      }' "${CMP}" > "${OUT}" ||
-        printf '%s\n' "{\"loaded\":false,\"has_release\":true,\"latest_tag\":\"${TAG}\"}" > "${OUT}"
-    else
-      printf '%s\n' "{\"loaded\":false,\"has_release\":true,\"latest_tag\":\"${TAG}\"}" > "${OUT}"
-    fi
-    rm -f "${CMP}"
 - name: Fetch issue close and reopen history
   env:
     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -941,6 +880,8 @@ steps:
     PR_INDEX="${AGENT_DIR}/pr-candidate-screening-index.json"
     AUDIT_FILE="${AGENT_DIR}/triage-audit-block.md"
     STATUS_LINE="${AGENT_DIR}/triage-screening-status.md"
+    VALIDATION_FILE="${AGENT_DIR}/pr-evidence-validation.json"
+    printf '%s\n' '{"valid":false}' > "${VALIDATION_FILE}"
     # The validation programs below are the deterministic contracts the prompt used
     # to ask the agent to run by hand. Evaluating them here keeps ~5KB of dense
     # filter syntax out of the model-facing prompt, and means a run cannot report
@@ -1037,9 +978,214 @@ steps:
       fi
       echo "Screening status rendered -> ${STATUS_LINE}"
       cat "${STATUS_LINE}"
+      printf '%s\n' '{"valid":true}' > "${VALIDATION_FILE}"
     }
     render_audit
     render_status
+- name: Fetch release status
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    GH_AW_GITHUB_REPOSITORY: ${{ github.repository }}
+    DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+  run: |
+    set -euo pipefail
+    AGENT_DIR=/tmp/gh-aw/agent
+    OUT="${AGENT_DIR}/release-status.json"
+    REPO="${GH_AW_GITHUB_REPOSITORY}"
+    WORK_DIR=$(mktemp -d)
+    trap 'rm -rf "${WORK_DIR}"' EXIT
+    NUMBERS='[]'
+    HAS_RELEASE=null
+    LATEST_TAG=''
+    LATEST_PUBLISHED_AT=''
+    # Bound API work without treating an exhausted budget as negative evidence.
+    REQUEST_LIMIT=200
+    DEADLINE=$((SECONDS + 180))
+    printf '0\n' > "${WORK_DIR}/request-count"
+    api() {
+      local count
+      count=$(cat "${WORK_DIR}/request-count")
+      if [ "${count}" -ge "${REQUEST_LIMIT}" ] || [ "${SECONDS}" -ge "${DEADLINE}" ]; then
+        touch "${WORK_DIR}/budget-exhausted"
+        return 1
+      fi
+      printf '%s\n' "$((count + 1))" > "${WORK_DIR}/request-count"
+      timeout 20s gh api "$@"
+    }
+    write_unknown() {
+      local reason="$1"
+      if [ -f "${WORK_DIR}/budget-exhausted" ]; then reason=request_budget_exhausted; fi
+      jq -n --arg reason "${reason}" --argjson loaded "${2:-false}" \
+        --argjson numbers "${NUMBERS}" --argjson has_release "${HAS_RELEASE}" \
+        --arg tag "${LATEST_TAG}" --arg published "${LATEST_PUBLISHED_AT}" '
+        {
+          version:1, loaded:$loaded, has_release:$has_release,
+          latest_tag:(($tag | select(length > 0)) // null),
+          latest_published_at:(($published | select(length > 0)) // null),
+          reason:$reason,
+          prs:[$numbers[] | {number:., status:"unknown", reason:$reason, release_tag:null}]
+        }' > "${OUT}"
+      echo "Release evidence: ${reason}"
+    }
+    # An interrupted lookup must leave unknown, never an empty negative list.
+    write_unknown "lookup_incomplete"
+    if ! NUMBERS=$(jq -ce '
+      [.required_inspection[], .open_inventory_screening[]] | map(.number) | unique | sort
+      | select(all(.[]; type == "number" and . > 0 and floor == .))
+    ' "${AGENT_DIR}/pr-candidate-screening-index.json"); then
+      NUMBERS='[]'
+      write_unknown "candidate_index_unavailable"
+      exit 0
+    fi
+    if ! jq -e '.valid == true' "${AGENT_DIR}/pr-evidence-validation.json" > /dev/null; then
+      write_unknown "incomplete_pr_evidence"
+      exit 0
+    fi
+    write_unknown "lookup_incomplete"
+    if [ -z "${DEFAULT_BRANCH}" ]; then
+      write_unknown "default_branch_unavailable"
+      exit 0
+    fi
+    # Enumerate every stable release, newest publication first. An older release can contain a fix missing from a newer maintenance release.
+    if ! api --paginate "repos/${REPO}/releases?per_page=100" > "${WORK_DIR}/release-pages.json" ||
+       ! jq -se '
+         select(length > 0 and all(.[]; type == "array"))
+         | add
+         | select(all(.[];
+             (.draft | type == "boolean") and (.prerelease | type == "boolean")))
+         | map(select(.draft == false and .prerelease == false))
+         | select(all(.[];
+             (.id | type == "number" and . > 0 and floor == .)
+             and (.tag_name | type == "string" and test("^[^[:space:]]+$"))
+             and (.published_at | type == "string" and test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"))))
+         | . as $releases
+         | select(
+             ([$releases[].id] | unique | length) == ($releases | length)
+             and ([$releases[].tag_name] | unique | length) == ($releases | length))
+         | sort_by(.published_at, .id) | reverse
+       ' "${WORK_DIR}/release-pages.json" > "${WORK_DIR}/releases.json"; then
+      write_unknown "release_list_unavailable"
+      exit 0
+    fi
+    if [ "$(jq length "${WORK_DIR}/releases.json")" -eq 0 ]; then
+      HAS_RELEASE=false
+      write_unknown "no_published_release" true
+      exit 0
+    fi
+    HAS_RELEASE=true
+    LATEST_TAG=$(jq -r '.[0].tag_name' "${WORK_DIR}/releases.json")
+    LATEST_PUBLISHED_AT=$(jq -r '.[0].published_at' "${WORK_DIR}/releases.json")
+    write_unknown "lookup_incomplete"
+    resolve_commit() {
+      local encoded
+      encoded=$(jq -rn --arg ref "$1" '$ref | @uri')
+      api "repos/${REPO}/commits/${encoded}" > "$2" &&
+        jq -er '.sha | select(type == "string" and test("^[0-9a-f]{40}$"))' "$2"
+    }
+    if ! DEFAULT_SHA=$(resolve_commit "refs/heads/${DEFAULT_BRANCH}" "${WORK_DIR}/default.json"); then
+      write_unknown "default_branch_unavailable"
+      exit 0
+    fi
+    compare_commits() {
+      # Only the ancestry summary is consumed. GitHub can truncate .commits at 250 entries; neither that array nor commit-message #references is proof.
+      api "repos/${REPO}/compare/$1...$2?per_page=1" > "${WORK_DIR}/comparison.json" &&
+        jq -er --arg base "$1" --arg head "$2" '
+          select(.base_commit.sha == $base)
+          | select(.merge_base_commit.sha | type == "string" and test("^[0-9a-f]{40}$"))
+          | select(.ahead_by | type == "number" and . >= 0 and floor == .)
+          | select(.behind_by | type == "number" and . >= 0 and floor == .)
+          | select(
+              (.status == "identical" and $base == $head and .merge_base_commit.sha == $base and .ahead_by == 0 and .behind_by == 0)
+              or (.status == "ahead" and $base != $head and .merge_base_commit.sha == $base and .ahead_by > 0 and .behind_by == 0)
+              or (.status == "behind" and $base != $head and .merge_base_commit.sha == $head and .ahead_by == 0 and .behind_by > 0)
+              or (.status == "diverged" and $base != $head and .merge_base_commit.sha != $base and .merge_base_commit.sha != $head and .ahead_by > 0 and .behind_by > 0))
+          | .status
+        ' "${WORK_DIR}/comparison.json"
+    }
+    RESULTS="${WORK_DIR}/results.jsonl"
+    : > "${RESULTS}"
+    write_pr() {
+      local reason="$2"
+      if [ "$1" = unknown ] && [ -f "${WORK_DIR}/budget-exhausted" ]; then reason=request_budget_exhausted; fi
+      jq -cn --argjson number "${NUMBER}" --arg status "$1" --arg reason "${reason}" --arg tag "${3:-}" \
+        '{number:$number, status:$status, reason:$reason, release_tag:(($tag | select(length > 0)) // null)}' >> "${RESULTS}"
+    }
+    jq -r '.[] | [.id, .tag_name] | @tsv' "${WORK_DIR}/releases.json" > "${WORK_DIR}/release-refs.tsv"
+    for NUMBER in $(jq -r '.[]' <<< "${NUMBERS}"); do
+      if [ -f "${WORK_DIR}/budget-exhausted" ]; then
+        write_pr unknown request_budget_exhausted
+        continue
+      fi
+      PR="${WORK_DIR}/pr.json"
+      if ! api "repos/${REPO}/pulls/${NUMBER}" > "${PR}" ||
+         ! jq -e --argjson number "${NUMBER}" '
+           .number == $number and (.merged | type == "boolean") and (.draft | type == "boolean")
+         ' "${PR}" > /dev/null; then
+        write_pr unknown pr_metadata_unavailable
+        continue
+      fi
+      # Before merging, merge_commit_sha is a test merge, not a shipped commit.
+      if ! jq -e '.merged == true and .draft == false' "${PR}" > /dev/null; then
+        write_pr unknown pr_not_merged
+        continue
+      fi
+      if ! jq -e --arg repo "${REPO}" --arg branch "${DEFAULT_BRANCH}" \
+        '.base.repo.full_name == $repo and .base.ref == $branch' "${PR}" > /dev/null; then
+        write_pr unknown pr_not_targeting_default_branch
+        continue
+      fi
+      if ! MERGE_SHA=$(jq -er '.merge_commit_sha | select(type == "string" and test("^[0-9a-f]{40}$"))' "${PR}"); then
+        write_pr unknown merge_commit_unavailable
+        continue
+      fi
+      if ! DEFAULT_RELATION=$(compare_commits "${MERGE_SHA}" "${DEFAULT_SHA}") ||
+         { [ "${DEFAULT_RELATION}" != ahead ] && [ "${DEFAULT_RELATION}" != identical ]; }; then
+        write_pr unknown default_branch_membership_unverified
+        continue
+      fi
+      STATUS=awaiting_release
+      REASON=all_releases_precede_merge_commit
+      RELEASE_TAG=''
+      while IFS=$'\t' read -r RELEASE_ID TAG; do
+        # Cache each tag's resolved commit once per run. These internal SHAs are removed on exit and never become agent-visible reference data.
+        PIN="${WORK_DIR}/release-${RELEASE_ID}.sha"
+        if [ ! -f "${PIN}" ]; then
+          if ! resolve_commit "refs/tags/${TAG}" "${WORK_DIR}/tag.json" > "${PIN}"; then
+            : > "${PIN}"
+          fi
+        fi
+        RELEASE_SHA=$(cat "${PIN}")
+        if [ -z "${RELEASE_SHA}" ]; then
+          STATUS=unknown
+          REASON=release_tag_unavailable
+          if [ -f "${WORK_DIR}/budget-exhausted" ]; then break; fi
+          continue
+        fi
+        if ! RELATION=$(compare_commits "${MERGE_SHA}" "${RELEASE_SHA}"); then
+          STATUS=unknown
+          REASON=release_comparison_unavailable
+          if [ -f "${WORK_DIR}/budget-exhausted" ]; then break; fi
+          continue
+        fi
+        case "${RELATION}" in
+          ahead|identical)
+            STATUS=released
+            REASON=release_contains_merge_commit
+            RELEASE_TAG="${TAG}"
+            break
+            ;;
+          diverged)
+            STATUS=unknown
+            REASON=release_history_diverged
+            ;;
+        esac
+      done < "${WORK_DIR}/release-refs.tsv"
+      write_pr "${STATUS}" "${REASON}" "${RELEASE_TAG}"
+    done
+    jq -s --arg tag "${LATEST_TAG}" --arg published "${LATEST_PUBLISHED_AT}" '
+      {version:1, loaded:true, has_release:true, latest_tag:$tag,
+       latest_published_at:$published, reason:null, prs:.}
+    ' "${RESULTS}" > "${OUT}"
 tools:
   cache-memory: true
   github:
@@ -1230,8 +1376,9 @@ AVM tracks where a fix has got to with three labels. Apply the one that matches 
 | State you established | Label to match |
 |---|---|
 | A fix for this issue exists in an **open, unmerged** PR | the "Status: In PR" label |
-| A fix is **merged to the default branch but not in any release** — the fixing PR number **appears in** `unreleased_pr_numbers` | the "Status: Awaiting Release To Be Cut" label |
-| A fix is **merged and carried by a published release** — the fixing PR number is **not in** `unreleased_pr_numbers` | the "Status: Fixed" label, alongside closing the issue |
+| A confirmed fix has a computed per-PR status of `awaiting_release` | the "Status: Awaiting Release To Be Cut" label |
+| A confirmed fix has a computed per-PR status of `released` and no closure veto applies | the "Status: Fixed" label, alongside closing the issue |
+| Release membership is `unknown`, missing, failed, or incomplete | Neither release-state label; leave the issue open and explain the uncertainty |
 
 AVM defines "Status: Awaiting Release To Be Cut" as *"This is fixed in the main branch but not in the latest release, will be fixed with next release cut"*. It is the state that keeps an issue open and visible to whoever cuts the next release, which is why an unreleased fix is labelled rather than closed.
 
@@ -1304,7 +1451,7 @@ The file above is a deterministic floor, not a ceiling — it does not replace j
    - Relevant file paths and Azure resource types.
    - Likely fix language combined with the affected component, such as `fix`, `resolve`, `correct`, `validation`, or `regression`.
 4. **Search default-branch history** — Search commits after the issue was created, plus earlier commits when the report may concern a fix that existed before the issue was filed. Trace promising commits back to their PR when possible.
-5. **Check releases** — Determine whether a validated fix is available in a release. Review release notes and tags, and identify the first release containing the merged fix when possible.
+5. **Check releases** — Read the computed per-PR release evidence described below. Release notes can support what changed, but cannot substitute for verified release membership.
 
 Open every promising candidate — from the prefetched file and from these searches — and inspect its title, body, changed files, diff, commits, tests, review discussion, merge target, and merge status. A shared keyword, file, module, or resource is only a lead; it is not proof that the PR fixes the issue.
 
@@ -1354,41 +1501,49 @@ Do not add the marker to more than one PR per run. Do not add it when the PR onl
 
 Do not judge release state from a PR body, a changelog, an earlier comment, or the age of the fix. It is computed for you.
 
-`/tmp/gh-aw/agent/release-status.json` holds the answer:
+`/tmp/gh-aw/agent/release-status.json` holds per-PR evidence from the validated candidate index:
 
 | field | meaning |
 |---|---|
-| `loaded` | `false` means the lookup failed — treat every fix as unreleased |
-| `has_release` | `false` means the module has never been released |
-| `latest_tag` / `latest_published_at` | the newest release |
-| `unreleased_pr_numbers` | **the deciding list** — PR numbers merged to the default branch that no release contains |
+| `loaded` | The shared lookup finished. `false` means unknown; `true` does not imply every PR was verified. |
+| `has_release` | `false` means the complete listing contained no published stable release; `null` means the listing was unavailable. Neither proves release membership. |
+| `latest_tag` / `latest_published_at` | The newest published stable release, not necessarily the release containing a particular PR. |
+| `prs[].number` | The candidate PR checked against the default branch and published releases. |
+| `prs[].status` / `reason` | `released`, `awaiting_release`, or `unknown`, with the reason for that result. |
+| `prs[].release_tag` | A published stable release proven to contain this PR's merge result. Set only for `released`. |
 
-The file carries no commit SHAs, by design. Two runs reached into a SHA list, picked one, and asserted it introduced the feature under triage — both naming `262cb246`, a `chore: run avm pre-commit` commit that touched only workflow files. A SHA says nothing about what it changed, so any SHA reads as evidence. A PR number can be checked: you can read PR #229 and see whether it added the thing.
+Identify the fixing PR from its actual diff before consulting its release result. Release membership proves where that PR landed, not whether it fixes this issue. Never select an unrelated PR merely because its status is `released`.
 
-**Run this exact test on your fixing PR, and do not substitute judgement for it:**
+Read the entry for that exact PR number. For example, after independently identifying PR #270:
 
-> Is the fixing PR's number in `unreleased_pr_numbers`?
-> **Yes → not released.** Apply `Status: Awaiting Release To Be Cut` and leave the issue open.
-> **No → released.** Close as `completed`.
+```bash
+jq --argjson number 270 '{loaded,has_release,latest_tag,reason,pr:([.prs[] | select(.number == $number)] | if length == 1 then .[0] else {number:$number,status:"unknown",reason:"missing_or_ambiguous_pr_evidence",release_tag:null} end)}' /tmp/gh-aw/agent/release-status.json
+```
 
-Identify the fixing PR before you run the test, and identify it from its contents. Find the PR whose diff actually adds the behaviour the issue asks for. Do not work backwards from `unreleased_pr_numbers` by asking which of those PRs might plausibly be responsible — the fixing PR is frequently not in that list, because a released fix by definition is not.
+- **`released` with `loaded: true` and a nonempty `release_tag`:** GitHub confirmed that this merged PR targets the default branch. Its merge result is an ancestor of both the pinned default-branch commit and the named release commit. Only this result permits fixed-as-completed closure.
+- **`awaiting_release` with `loaded: true`:** The merge result is on the default branch, and every published stable release is a strict ancestor of that merge result. None contains it. Apply the awaiting-release label and leave the issue open.
+- **`unknown`, missing/duplicate entry, missing file, parse failure, or `loaded: false`:** Leave the issue open. Do not apply either release-state label. State the reason and what remains unverified. A separately discovered PR outside the prefetched index has no computed proof in this run and remains unknown.
 
-There is no third answer, and nothing else is evidence. **Merge and release dates in particular are not evidence.** A PR merged seconds before a release is in that release; a PR merged months ago may still be unreleased. `avm-ptn-example-repo` PR #227 merged at `21:30:59` and `v0.1.2` was published at `21:31:32` — 33 seconds later, from that very commit. Reasoning from the timestamps would call it unreleased; the list correctly does not contain it.
+The pre-step checks all stable releases newest-first and stops when one proves inclusion. It resolves each tag once, then compares exact commits using GitHub's ancestry summary. It never enumerates comparison commits or scrapes PR numbers from commit messages. Normal merges, squash merges, and GitHub rebase merges use the PR's post-merge `merge_commit_sha`; unmerged test-merge commits are rejected.
 
-State the result of this test in the triage comment: name the PR number and say whether it appears in `unreleased_pr_numbers`. A conclusion about release state that does not cite that list is a conclusion you guessed.
+Divergent histories, missing merge commits, incomplete PR evidence, failed requests, and exhausted lookup budgets yield `unknown` unless another release proves inclusion. Cherry-picks have different commit identities; this lookup does not establish whether their contents are equivalent. Investigate any alternative fix rather than overriding unknown with a claim of equivalent content.
 
-Getting this backwards is not symmetric. Calling a released fix "awaiting release" tells a maintainer to go and cut a release that already exists, which wastes their time on a non-existent task; that is the error to avoid.
+The lookup permits at most 200 API invocations and 180 seconds before refusing new requests; each invocation has a 20-second timeout. The paginated release listing must finish within that timeout or the lookup stays unknown. These budgets limit evidence collection, not the proof required for a positive result. No published stable release is reported separately as `has_release: false`, not as an API failure or confirmed awaiting-release state.
+
+The file deliberately exposes no raw commit-SHA list. You may inspect commits while investigating a PR, but commit identity alone does not establish which change fixed the issue. Dates, changelogs, PR bodies, missing commit-message references, and an absent list entry never prove release membership.
+
+In the triage comment, cite the fixing PR, its computed status and reason, and `release_tag` when released. Do not claim that this is the first containing release; the pre-step proves a containing release, not the earliest one.
 
 Close the issue as `completed` only when the fix is **confirmed**, the Human Reopen Override is not active, the **Incomplete or Failed Evidence Load or Screening** veto is not active, **and the fix is released** by the test above.
 
-When the fix is confirmed but **not yet released**, do all of this and nothing more:
+When the fix is confirmed and its computed status is **`awaiting_release`**, do all of this and nothing more:
 
 - **Leave the issue open.** Never use `close-issue` on an unreleased fix, however conclusive the evidence.
 - Apply `Status: Awaiting Release To Be Cut :scissors:` with `add-labels` — AVM defines it as *"This is fixed in the main branch but not in the latest release, will be fixed with next release cut"*, which is exactly this state. Emit it only if that name is present in `repo-labels.json`.
 - In the triage comment, name the fixing PR, state that the fix is on the default branch, and name `latest_tag` as the most recent release that does **not** contain it.
 - Do not ask a maintainer to cut a release in the comment. The label is the signal AVM already uses for this; a second request in prose is noise.
 
-Before closing a released fix, post the Step 6 triage comment identifying the PR, the commit, and the release that first carried it, and recommend that version. Then use `close-issue` with `state_reason: completed`. Do not set `duplicate_of` on a fix-confirmed closure — that reason is only for duplicates.
+Before closing a released fix, post the Step 6 triage comment identifying the PR and the proven `release_tag`, and recommend that version. Then use `close-issue` with `state_reason: completed`. Do not set `duplicate_of` on a fix-confirmed closure. Release-proof requirements affect only fixed-as-completed decisions, never the separate duplicate-confidence rules.
 
 **The `close-issue` body is posted as its own comment, directly beneath your triage comment, and it is what the reporter reads as the reason their issue closed.** Give it two sentences and nothing more: what fixed the issue and in which release, then the reopen invitation.
 
@@ -1492,7 +1647,8 @@ The bullet points should include:
 - **Related or partial PRs:** Always report any PR you classified as **likely related fix** or **related-only** in Step 4, with a link and a one-line reason, even though you deliberately did not link or close against it. Do not omit these just because no write action was taken on them — surfacing them is the point, so a maintainer can judge candidates you intentionally left out of the automated decision. Every candidate named as lexically plausible in the rendered screening-status line must appear here unless you reported it as a confirmed fix; if you judged one irrelevant, say so and why, rather than leaving it unmentioned.
 - **PR-evidence and screening status:** This line is rendered for you, and it belongs **inside the collapsed accordion**, not in the visible bullets — it is machine evidence for auditing a run, not a finding a maintainer needs to read. Handling rules are under the accordion bullet below.
 - **Closure:** Required on any run that emits `close-issue`, with no exception. One line: that you are closing, and the evidence — the release that carries the fix, or the canonical issue for a duplicate. The reopen invitation does **not** go here; for a fix-confirmed closure it belongs in the `close-issue` body, and for a duplicate it is the `> **Note:**` blockquote below. Worked examples for both are in Step 6.
-- **Awaiting release:** If a confirmed fix is merged but not yet released, say so here instead of under Closure — name the fixing PR, state that it is on the default branch, name `latest_tag` as the newest release that does not contain it, and note that the issue stays open until a release carries the fix.
+- **Awaiting release:** Only when the fixing PR's computed status is `awaiting_release`, name that PR, state that it is on the default branch, name `latest_tag`, and explain that the issue stays open until a release carries the fix.
+- **Release unknown:** When release membership cannot be verified, name the PR and computed reason, or explain that its entry is missing. Leave the issue open without calling it fixed or awaiting release.
 - **Human reopen override:** If this workflow previously closed the issue and a person later reopened it, state that the issue will remain open for human review even if the agent found a duplicate or an existing fix.
 - **What this triage looked at (collapsed accordion):** At the very bottom of the comment, include a collapsed `<details>` block containing, in order: the verbatim contents of `/tmp/gh-aw/agent/triage-audit-block.md`; the verbatim contents of `/tmp/gh-aw/agent/triage-screening-status.md`; one line accounting for any `.must_compare` candidates you judged not related; the deterministic PR-evidence sources that fired (e.g. timeline cross-reference, exact issue-number match in a title/body/comment, commit-message reference, commit-body `Refs #N`); and the key sources you inspected. This is the run's audit trail — keeping it here is what lets the visible summary stay short.
 
@@ -1619,7 +1775,7 @@ When you are **highly confident** an issue is a confirmed duplicate of another (
 - **Duplicate check:** No duplicates found. Compared #612 — same resource, different root cause.
 - **Issue type:** Set to `Bug` (previously `NONE`).
 - **Labels applied:** None new — the issue already carries `Type: Bug :bug:`.
-- **Already fixed:** PR #270 replaced the deprecated `metric` attribute with `enabled_metric`, merged to `main` and carried by release `v0.8.2`. `#270` is not in `unreleased_pr_numbers`, so the fix is released.
+- **Already fixed:** PR #270 replaced the deprecated `metric` attribute with `enabled_metric`. Its computed status is `released`, reason `release_contains_merge_commit`, with `release_tag: v0.8.2`.
 - **Closure:** Closing as completed — the fix is released in `v0.8.2`, so upgrading resolves this.
 
 <details>
