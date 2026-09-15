@@ -42,7 +42,7 @@ $libDir = Join-Path $PSScriptRoot 'lib'
 if (Test-Path -LiteralPath $libDir -PathType Container) {
     Push-Location -LiteralPath $libDir
     try {
-        Remove-Item -LiteralPath '.terraform.lock.hcl' -Force -ErrorAction SilentlyContinue
+        # Ensure we don't reuse stale provider binaries from prior runs.
         Remove-Item -LiteralPath '.terraform' -Recurse -Force -ErrorAction SilentlyContinue
 
         & $terraform init -input=false
