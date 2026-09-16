@@ -2,3 +2,5 @@
 # Template: https://github.com/Azure/azure-verified-modules-tools/blob/main/repository-management/repository-sync/CODEOWNERS.template
 
 .github/CODEOWNERS @Azure/azure-verified-modules-engineering-owners
+
+metadata.json @Azure/azure-verified-modules-engineering-owners @Azure/azure-verified-modules-module-owners
