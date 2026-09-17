@@ -28,7 +28,7 @@ module "alz_architecture" {
   architecture_name  = "alz_custom"
   location           = "northeurope"
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  enable_telemetry   = var.enable_telemetry
+  enable_telemetry   = false
   policy_assignments_to_modify = {
     ("${var.prefix}-platform") = {
       policy_assignments = {

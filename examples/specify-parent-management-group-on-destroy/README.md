@@ -63,7 +63,7 @@ module "alz_architecture" {
   architecture_name  = "alz"
   location           = "northeurope"
   parent_resource_id = azapi_resource.example.name
-  enable_telemetry   = var.enable_telemetry
+  enable_telemetry   = false
   subscription_placement = {
     test = {
       subscription_id       = data.azapi_client_config.current.subscription_id
