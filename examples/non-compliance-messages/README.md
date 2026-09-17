@@ -40,7 +40,7 @@ module "alz_architecture" {
   architecture_name  = "alz_custom"
   location           = "northeurope"
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  enable_telemetry   = var.enable_telemetry
+  enable_telemetry   = false
   policy_assignment_non_compliance_message_settings = {
     default_message = "This resource {enforcementMode} be compliant with the assigned policy. Contact the cloud platform team for guidance."
     # merge_mode      = "prefer_existing"

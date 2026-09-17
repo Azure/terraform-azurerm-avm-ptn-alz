@@ -25,7 +25,7 @@ module "alz_architecture" {
   architecture_name  = "test"
   location           = "northeurope"
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  enable_telemetry   = var.enable_telemetry
+  enable_telemetry   = false
   management_group_role_assignments = {
     test1 = {
       principal_type             = var.principal_type
