@@ -1,0 +1,6 @@
+---
+name: root-custom
+policy_assignments:
+  - "Deploy-PRA-Test"
+policy_definitions:
+  - "Deploy-PRA-Test-Def"
