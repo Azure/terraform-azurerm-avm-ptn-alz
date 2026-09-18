@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "Azure Landing Zone Management Groups and Policy",
+  "moduleDescription": "AVM Pattern Module for Azure Landing Zone",
+  "canonicalType": "alz",
+  "owners": [
+    "yeddlapurishivasai",
+    "akshayrohilla"
+  ],
+  "telemetryIdPrefix": "46d3xtrf.ptn.171c862"
+}
