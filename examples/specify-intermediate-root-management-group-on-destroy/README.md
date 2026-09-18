@@ -111,7 +111,7 @@ module "alz_architecture" {
   architecture_name  = "alz"
   location           = "northeurope"
   parent_resource_id = azapi_resource.parent.name
-  enable_telemetry   = false
+  enable_telemetry   = var.enable_telemetry
   management_groups_dependencies = [
     azapi_resource_action.subscription_placement_create,
     azapi_resource_action.subscription_placement_delete,
@@ -168,7 +168,7 @@ Description: Enable telemetry for the module.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ## Outputs
 

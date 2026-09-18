@@ -5,7 +5,7 @@ variable "prefix" {
 
 variable "enable_telemetry" {
   type        = bool
-  default     = true
+  default     = false
   description = "Enable telemetry for the module."
   nullable    = false
 }

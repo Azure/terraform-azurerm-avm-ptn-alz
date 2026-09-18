@@ -29,7 +29,7 @@ module "private_dns_zones" {
 
   location            = local.location
   resource_group_name = local.resource_group_name
-  enable_telemetry    = false
+  enable_telemetry    = var.enable_telemetry
 }
 
 module "alz" {
@@ -38,7 +38,7 @@ module "alz" {
   architecture_name  = "alz"
   location           = local.location
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  enable_telemetry   = false
+  enable_telemetry   = var.enable_telemetry
   policy_assignments_dependencies = [
     module.private_dns_zones.private_dns_zone_resource_ids,
   ]
@@ -95,7 +95,7 @@ Description: Enable telemetry for the module.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ### <a name="input_random_suffix"></a> [random\_suffix](#input\_random\_suffix)
 

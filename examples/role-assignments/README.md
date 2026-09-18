@@ -25,7 +25,7 @@ module "alz_architecture" {
   architecture_name  = "test"
   location           = "northeurope"
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  enable_telemetry   = false
+  enable_telemetry   = var.enable_telemetry
   management_group_role_assignments = {
     test1 = {
       principal_type             = var.principal_type
@@ -76,7 +76,7 @@ Description: Enable telemetry for the module.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ### <a name="input_prefix"></a> [prefix](#input\_prefix)
 

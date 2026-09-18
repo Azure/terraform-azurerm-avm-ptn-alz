@@ -46,7 +46,7 @@ module "amba_alz" {
 
   location                            = var.location
   root_management_group_name          = local.root_management_group_name
-  enable_telemetry                    = false
+  enable_telemetry                    = var.enable_telemetry
   resource_group_name                 = var.resource_group_name
   user_assigned_managed_identity_name = var.user_assigned_managed_identity_name
 }
@@ -58,7 +58,7 @@ module "alz_architecture" {
   architecture_name  = "alz-amba"
   location           = var.location
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  enable_telemetry   = false
+  enable_telemetry   = var.enable_telemetry
   policy_default_values = {
     amba_alz_management_subscription_id            = jsonencode({ value = var.management_subscription_id != "" ? var.management_subscription_id : data.azapi_client_config.current.subscription_id })
     amba_alz_resource_group_location               = jsonencode({ value = var.location })
@@ -189,7 +189,7 @@ Description: Enable telemetry for the module.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ### <a name="input_event_hub_resource_id"></a> [event\_hub\_resource\_id](#input\_event\_hub\_resource\_id)
 
