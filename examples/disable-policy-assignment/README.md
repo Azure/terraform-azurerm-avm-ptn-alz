@@ -28,7 +28,7 @@ module "alz_architecture" {
   architecture_name  = "alz_custom"
   location           = "northeurope"
   parent_resource_id = data.azapi_client_config.current.tenant_id
-  enable_telemetry   = false
+  enable_telemetry   = var.enable_telemetry
   policy_assignments_to_modify = {
     ("${var.prefix}-connectivity") = {
       policy_assignments = {
@@ -96,7 +96,7 @@ Description: Enable telemetry for the module.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ## Outputs
 
