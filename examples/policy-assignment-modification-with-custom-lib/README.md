@@ -139,7 +139,7 @@ Description: Enable telemetry for the module.
 
 Type: `bool`
 
-Default: `false`
+Default: `true`
 
 ### <a name="input_prefix"></a> [prefix](#input\_prefix)
 

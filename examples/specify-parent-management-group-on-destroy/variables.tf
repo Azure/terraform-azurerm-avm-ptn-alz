@@ -5,7 +5,7 @@ variable "random_suffix" {
 
 variable "enable_telemetry" {
   type        = bool
-  default     = false
+  default     = true
   description = "Enable telemetry for the module."
   nullable    = false
 }

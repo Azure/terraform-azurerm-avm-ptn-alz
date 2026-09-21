@@ -81,7 +81,7 @@ Description: Enable telemetry for the module.
 
 Type: `bool`
 
-Default: `false`
+Default: `true`
 
 ## Outputs
 
