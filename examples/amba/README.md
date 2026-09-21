@@ -189,7 +189,7 @@ Description: Enable telemetry for the module.
 
 Type: `bool`
 
-Default: `false`
+Default: `true`
 
 ### <a name="input_event_hub_resource_id"></a> [event\_hub\_resource\_id](#input\_event\_hub\_resource\_id)
 

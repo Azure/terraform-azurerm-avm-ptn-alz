@@ -107,7 +107,7 @@ If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
-Default: `false`
+Default: `true`
 
 ### <a name="input_random_suffix"></a> [random\_suffix](#input\_random\_suffix)
 

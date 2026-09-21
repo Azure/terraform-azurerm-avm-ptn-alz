@@ -48,7 +48,7 @@ variable "bring_your_own_user_assigned_managed_identity_resource_id" {
 
 variable "enable_telemetry" {
   type        = bool
-  default     = false
+  default     = true
   description = "Enable telemetry for the module."
   nullable    = false
 }
