@@ -54,3 +54,4 @@ examples/*/policy
 *_override.tf
 *_override.tf.json
 .avm/managed-files.json
+tests/integration/testdata/generated/

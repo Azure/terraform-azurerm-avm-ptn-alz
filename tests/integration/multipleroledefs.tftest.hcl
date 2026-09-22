@@ -1,6 +1,6 @@
 provider "alz" {
   library_references = [{
-    custom_url = "./tests/integration/testdata/multipleroledefs"
+    custom_url = "./tests/integration/testdata/generated/multipleroledefs"
   }]
 }
 
