@@ -40,7 +40,10 @@ $randomPrefix = Get-Random -Minimum 0 -Maximum 32768
 $libDir = Join-Path $PSScriptRoot 'lib'
 
 if (Test-Path -LiteralPath $libDir -PathType Container) {
-    Remove-Item -LiteralPath (Join-Path $libDir '.terraform') -Recurse -Force -ErrorAction SilentlyContinue
+    $terraformDataDir = Join-Path $libDir '.terraform'
+    if (Test-Path -LiteralPath $terraformDataDir -PathType Container) {
+        Remove-Item -LiteralPath $terraformDataDir -Recurse -Force
+    }
     Push-Location -LiteralPath $libDir
     try {
         & $terraform init
