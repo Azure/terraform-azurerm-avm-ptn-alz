@@ -14,8 +14,9 @@ if (Test-Path -LiteralPath $generatedDirectory) {
 New-Item -ItemType Directory -Path $generatedDirectory -Force | Out-Null
 Copy-Item -Path (Join-Path $sourceDirectory '*') -Destination $generatedDirectory -Recurse
 
+$runAttempt = if ($env:GITHUB_RUN_ATTEMPT) { $env:GITHUB_RUN_ATTEMPT } else { '1' }
 $runId = if ($env:GITHUB_RUN_ID) {
-    "$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT)"
+    "$($env:GITHUB_RUN_ID)-$runAttempt"
 }
 else {
     [Guid]::NewGuid().ToString('N').Substring(0, 12)
@@ -23,5 +24,5 @@ else {
 $prefix = "avm-alz-$runId"
 $architecturePath = Join-Path $generatedDirectory $architectureFile
 $architecture = Get-Content -LiteralPath $architecturePath -Raw
-$architecture = $architecture.Replace('test1', "$prefix-1").Replace('test2', "$prefix-2")
+$architecture = $architecture.Replace('__MANAGEMENT_GROUP_1__', "$prefix-1").Replace('__MANAGEMENT_GROUP_2__', "$prefix-2")
 [System.IO.File]::WriteAllText($architecturePath, $architecture)

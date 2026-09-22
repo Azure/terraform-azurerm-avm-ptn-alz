@@ -1,14 +1,14 @@
 management_groups:
   - archetypes:
       - test
-    display_name: test1
+    display_name: __MANAGEMENT_GROUP_1__
     exists: false
-    id: test1
+    id: __MANAGEMENT_GROUP_1__
     parent_id: null
   - archetypes:
       - test
-    display_name: test2
+    display_name: __MANAGEMENT_GROUP_2__
     exists: false
-    id: test2
+    id: __MANAGEMENT_GROUP_2__
     parent_id: null
 name: test
