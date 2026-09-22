@@ -44,6 +44,10 @@ if (Test-Path -LiteralPath $libDir -PathType Container) {
     if (Test-Path -LiteralPath $terraformDataDir -PathType Container) {
         Remove-Item -LiteralPath $terraformDataDir -Recurse -Force -ErrorAction Stop
     }
+    $terraformLockFile = Join-Path $libDir '.terraform.lock.hcl'
+    if (Test-Path -LiteralPath $terraformLockFile -PathType Leaf) {
+        Remove-Item -LiteralPath $terraformLockFile -Force -ErrorAction Stop
+    }
     Push-Location -LiteralPath $libDir
     try {
         & $terraform init
