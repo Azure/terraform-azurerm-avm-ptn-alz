@@ -42,7 +42,7 @@ $libDir = Join-Path $PSScriptRoot 'lib'
 if (Test-Path -LiteralPath $libDir -PathType Container) {
     $terraformDataDir = Join-Path $libDir '.terraform'
     if (Test-Path -LiteralPath $terraformDataDir -PathType Container) {
-        Remove-Item -LiteralPath $terraformDataDir -Recurse -Force
+        Remove-Item -LiteralPath $terraformDataDir -Recurse -Force -ErrorAction Stop
     }
     Push-Location -LiteralPath $libDir
     try {
