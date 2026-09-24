@@ -5,7 +5,20 @@ resource "azapi_resource" "policy_set_definitions" {
   parent_id = "${coalesce(lookup(var.parent_id_overrides.policy_set_definitions, each.key, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.mg}"
   type      = var.resource_types.policy_set_definition
   body = {
-    properties = each.value.set_definition.properties
+    properties = merge(
+      each.value.set_definition.properties,
+      {
+        metadata = merge(
+          lookup(each.value.set_definition.properties, "metadata", {}),
+          {
+            createdBy = ""
+            createdOn = ""
+            updatedBy = ""
+            updatedOn = ""
+          }
+        )
+      }
+    )
   }
   replace_triggers_external_values = lookup(each.value.set_definition.properties, "policyType", null)
   response_export_values           = []
@@ -25,6 +38,14 @@ resource "azapi_resource" "policy_set_definitions" {
     update = var.timeouts.policy_set_definition.update
   }
 
+  lifecycle {
+    ignore_changes = [
+      body.properties.metadata.createdBy,
+      body.properties.metadata.createdOn,
+      body.properties.metadata.updatedBy,
+      body.properties.metadata.updatedOn,
+    ]
+  }
   depends_on = [
     time_sleep.after_policy_definitions
   ]
