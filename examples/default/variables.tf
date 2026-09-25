@@ -43,7 +43,7 @@ DESCRIPTION
 
   validation {
     condition     = var.existing_public_ip_prefix_id == null ? true : can(regex("(?i)^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\\.Network/publicIPPrefixes/[^/]+$", var.existing_public_ip_prefix_id))
-    error_message = "`existing_public_ip_prefix_id` must be a valid `Microsoft.Network/publicIPPrefixes` resource ID."
+    error_message = "`existing_public_ip_prefix_id` must be `null` or a non-empty, valid `Microsoft.Network/publicIPPrefixes` resource ID."
   }
 
   # Whether `existing_public_ip_prefix_id` is required is enforced via a

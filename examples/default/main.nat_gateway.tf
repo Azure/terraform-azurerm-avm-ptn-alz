@@ -105,31 +105,33 @@ locals {
   # checked by re-masking the subnet's network address to the virtual
   # network's prefix length using `cidrhost()`, and comparing the result with
   # the virtual network's own network address; if the subnet is contained
-  # within the virtual network, the two addresses will match. The whole
-  # computation is wrapped in a single `try()`, resulting in `null` if any
-  # step fails (e.g. a malformed CIDR range), so that the `precondition`
-  # below fails with a clear error message instead of an unclear error from
-  # `split()`/`cidrhost()`. (The variables are also separately validated to
-  # be well-formed CIDR ranges as a first line of defense.)
-  nat_gateway_example_cidr_containment_check = try(
-    {
-      subnet_prefix_length          = tonumber(split("/", var.nat_gateway_example_subnet_address_prefix)[1])
-      virtual_network_prefix_length = tonumber(split("/", var.nat_gateway_example_virtual_network_address_space)[1])
-      # The subnet's network address, re-masked to the virtual network's
-      # (shorter, or equal) prefix length.
-      subnet_network_address_at_virtual_network_mask = cidrhost(
-        "${cidrhost(var.nat_gateway_example_subnet_address_prefix, 0)}/${tonumber(split("/", var.nat_gateway_example_virtual_network_address_space)[1])}",
-        0
-      )
-      virtual_network_network_address = cidrhost(var.nat_gateway_example_virtual_network_address_space, 0)
-    },
+  # within the virtual network, the two addresses will match. Each step is
+  # individually wrapped in `try()`, resulting in `null` if it fails (e.g. a
+  # malformed CIDR range), so that the `precondition` below fails with a
+  # clear error message instead of an unclear error from `split()`/
+  # `cidrhost()`. (The variables are also separately validated to be
+  # well-formed CIDR ranges as a first line of defense.)
+  nat_gateway_example_subnet_prefix_length          = try(tonumber(split("/", var.nat_gateway_example_subnet_address_prefix)[1]), null)
+  nat_gateway_example_virtual_network_prefix_length = try(tonumber(split("/", var.nat_gateway_example_virtual_network_address_space)[1]), null)
+
+  # The subnet's network address, re-masked to the virtual network's prefix
+  # length.
+  nat_gateway_example_subnet_network_address_at_virtual_network_mask = try(
+    cidrhost(
+      "${cidrhost(var.nat_gateway_example_subnet_address_prefix, 0)}/${local.nat_gateway_example_virtual_network_prefix_length}",
+      0
+    ),
     null
   )
+  nat_gateway_example_virtual_network_network_address = try(cidrhost(var.nat_gateway_example_virtual_network_address_space, 0), null)
 
   nat_gateway_example_subnet_contained_in_virtual_network = (
-    local.nat_gateway_example_cidr_containment_check != null &&
-    local.nat_gateway_example_cidr_containment_check.subnet_prefix_length >= local.nat_gateway_example_cidr_containment_check.virtual_network_prefix_length &&
-    local.nat_gateway_example_cidr_containment_check.subnet_network_address_at_virtual_network_mask == local.nat_gateway_example_cidr_containment_check.virtual_network_network_address
+    local.nat_gateway_example_subnet_prefix_length != null &&
+    local.nat_gateway_example_virtual_network_prefix_length != null &&
+    local.nat_gateway_example_subnet_network_address_at_virtual_network_mask != null &&
+    local.nat_gateway_example_virtual_network_network_address != null &&
+    local.nat_gateway_example_subnet_prefix_length >= local.nat_gateway_example_virtual_network_prefix_length &&
+    local.nat_gateway_example_subnet_network_address_at_virtual_network_mask == local.nat_gateway_example_virtual_network_network_address
   )
 }
 
