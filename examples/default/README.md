@@ -167,7 +167,11 @@ Default: `"vnet-alz-example-nat-gateway"`
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_nat_gateway_example_public_ip_address"></a> [nat\_gateway\_example\_public\_ip\_address](#output\_nat\_gateway\_example\_public\_ip\_address)
+
+Description: The allocated public IP address of the example NAT Gateway, from the existing public IP prefix. `null` when `enable_nat_gateway_example` is `false`.
 
 ## Modules
 
