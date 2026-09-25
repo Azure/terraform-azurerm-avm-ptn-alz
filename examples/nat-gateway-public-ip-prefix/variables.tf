@@ -42,8 +42,8 @@ DESCRIPTION
   nullable    = true
 
   validation {
-    condition     = var.existing_public_ip_prefix_id == null ? true : can(regex("(?i)^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft\\.Network/publicIPPrefixes/[^/]+$", var.existing_public_ip_prefix_id))
-    error_message = "`existing_public_ip_prefix_id` must be `null` or a non-empty, valid `Microsoft.Network/publicIPPrefixes` resource ID."
+    condition     = var.existing_public_ip_prefix_id == null ? true : can(regex("(?i)^/subscriptions/[0-9a-f-]{36}/resourceGroups/[a-zA-Z0-9_.()-]+/providers/Microsoft\\.Network/publicIPPrefixes/[a-zA-Z0-9_.-]+$", var.existing_public_ip_prefix_id))
+    error_message = "`existing_public_ip_prefix_id` must be `null` or a valid `Microsoft.Network/publicIPPrefixes` resource ID, e.g. `/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-network/providers/Microsoft.Network/publicIPPrefixes/pip-prefix-example`."
   }
 
   # Cross-variable validation (supported since Terraform 1.9, which this

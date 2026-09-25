@@ -57,12 +57,10 @@ resource "azapi_resource" "nat_gateway_example_public_ip" {
     "properties.ipAddress",
   ]
 
-  lifecycle {
-    precondition {
-      condition     = var.existing_public_ip_prefix_id != null
-      error_message = "`existing_public_ip_prefix_id` must be supplied when `enable_nat_gateway_example` is `true`."
-    }
-  }
+  # No `precondition` is needed here: the cross-variable `validation` block
+  # on `var.existing_public_ip_prefix_id` (in variables.tf) already fails
+  # `terraform plan` early with an equivalent error whenever
+  # `enable_nat_gateway_example` is `true` and the prefix ID is missing.
 }
 
 resource "azapi_resource" "nat_gateway_example_nat_gateway" {
