@@ -11,13 +11,9 @@
 # ? 1 : 0` condition, so cross-references via `one(...)` always resolve to
 # exactly one instance whenever they are evaluated (matching the convention
 # used elsewhere in this module, e.g. `main.telemetry.tf`).
-
-locals {
-  # Centralizing the API versions used by the resources in this file makes
-  # future version bumps easier to manage consistently.
-  nat_gateway_example_resource_group_api_version    = "2024-11-01"
-  nat_gateway_example_network_resources_api_version = "2024-05-01"
-}
+#
+# API versions and CIDR-containment validation logic are defined in
+# `locals.tf` to keep this file focused on resource definitions.
 
 resource "azapi_resource" "nat_gateway_example_resource_group" {
   count = var.enable_nat_gateway_example ? 1 : 0
@@ -48,7 +44,9 @@ resource "azapi_resource" "nat_gateway_example_public_ip" {
       publicIPAllocationMethod = "Static"
       # Allocates the public IP address from the existing public IP prefix.
       # The prefix must be in the same subscription and region as this
-      # public IP address.
+      # public IP address. This is only validated by Azure at apply time;
+      # if `existing_public_ip_prefix_id` refers to a prefix in a different
+      # region or subscription, the API call below will fail.
       publicIPPrefix = {
         id = var.existing_public_ip_prefix_id
       }
@@ -110,41 +108,6 @@ resource "azapi_resource" "nat_gateway_example_virtual_network" {
   }
 
   response_export_values = []
-}
-
-locals {
-  # Terraform has no built-in `cidrcontains` function, so containment is
-  # checked by re-masking the subnet's network address to the virtual
-  # network's prefix length using `cidrhost()`, and comparing the result with
-  # the virtual network's own network address; if the subnet is contained
-  # within the virtual network, the two addresses will match. Each step is
-  # individually wrapped in `try()`, resulting in `null` if it fails (e.g. a
-  # malformed CIDR range), so that the `precondition` below fails with a
-  # clear error message instead of an unclear error from `split()`/
-  # `cidrhost()`. (The variables are also separately validated to be
-  # well-formed CIDR ranges as a first line of defense.)
-  nat_gateway_example_subnet_prefix_length          = try(tonumber(split("/", var.nat_gateway_example_subnet_address_prefix)[1]), null)
-  nat_gateway_example_virtual_network_prefix_length = try(tonumber(split("/", var.nat_gateway_example_virtual_network_address_space)[1]), null)
-
-  # The subnet's network address, re-masked to the virtual network's prefix
-  # length.
-  nat_gateway_example_subnet_network_address_at_virtual_network_mask = try(
-    cidrhost(
-      "${cidrhost(var.nat_gateway_example_subnet_address_prefix, 0)}/${local.nat_gateway_example_virtual_network_prefix_length}",
-      0
-    ),
-    null
-  )
-  nat_gateway_example_virtual_network_network_address = try(cidrhost(var.nat_gateway_example_virtual_network_address_space, 0), null)
-
-  nat_gateway_example_subnet_contained_in_virtual_network = (
-    local.nat_gateway_example_subnet_prefix_length != null &&
-    local.nat_gateway_example_virtual_network_prefix_length != null &&
-    local.nat_gateway_example_subnet_network_address_at_virtual_network_mask != null &&
-    local.nat_gateway_example_virtual_network_network_address != null &&
-    local.nat_gateway_example_subnet_prefix_length >= local.nat_gateway_example_virtual_network_prefix_length &&
-    local.nat_gateway_example_subnet_network_address_at_virtual_network_mask == local.nat_gateway_example_virtual_network_network_address
-  )
 }
 
 # The NAT Gateway is associated with the subnet at creation time by setting
