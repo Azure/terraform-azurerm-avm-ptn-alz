@@ -52,3 +52,30 @@ run "enabled_with_subnet_outside_virtual_network_fails" {
     azapi_resource.nat_gateway_example_subnet,
   ]
 }
+
+run "invalid_public_ip_prefix_id_format_fails" {
+  command = plan
+
+  variables {
+    enable_nat_gateway_example   = true
+    existing_public_ip_prefix_id = "not-a-resource-id"
+  }
+
+  expect_failures = [
+    var.existing_public_ip_prefix_id,
+  ]
+}
+
+run "malformed_subnet_cidr_fails_at_variable_validation" {
+  command = plan
+
+  variables {
+    enable_nat_gateway_example                = true
+    existing_public_ip_prefix_id              = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-network/providers/Microsoft.Network/publicIPPrefixes/pip-prefix-example"
+    nat_gateway_example_subnet_address_prefix = "not-a-cidr"
+  }
+
+  expect_failures = [
+    var.nat_gateway_example_subnet_address_prefix,
+  ]
+}
