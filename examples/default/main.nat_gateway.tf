@@ -100,11 +100,43 @@ resource "azapi_resource" "nat_gateway_example_virtual_network" {
   response_export_values = []
 }
 
+locals {
+  # `Microsoft.Network/virtualNetworks/subnets` prefix lengths, e.g. the `24`
+  # in `10.20.0.0/24`.
+  nat_gateway_example_subnet_prefix_length          = tonumber(split("/", var.nat_gateway_example_subnet_address_prefix)[1])
+  nat_gateway_example_virtual_network_prefix_length = tonumber(split("/", var.nat_gateway_example_virtual_network_address_space)[1])
+
+  # The subnet can only be contained within the virtual network if its prefix
+  # length is at least as long (i.e. its address range is at least as small).
+  nat_gateway_example_subnet_prefix_length_valid = local.nat_gateway_example_subnet_prefix_length >= local.nat_gateway_example_virtual_network_prefix_length
+
+  # Terraform has no built-in `cidrcontains` function, so containment is
+  # checked by re-masking the subnet's network address to the virtual
+  # network's (shorter, or equal) prefix length using `cidrhost()`, and
+  # comparing the result with the virtual network's own network address. If
+  # the subnet is contained within the virtual network, the two addresses
+  # will match.
+  nat_gateway_example_subnet_rebased_network_address = cidrhost(
+    "${cidrhost(var.nat_gateway_example_subnet_address_prefix, 0)}/${local.nat_gateway_example_virtual_network_prefix_length}",
+    0
+  )
+  nat_gateway_example_virtual_network_network_address = cidrhost(var.nat_gateway_example_virtual_network_address_space, 0)
+
+  nat_gateway_example_subnet_contained_in_virtual_network = try(
+    local.nat_gateway_example_subnet_prefix_length_valid &&
+    local.nat_gateway_example_subnet_rebased_network_address == local.nat_gateway_example_virtual_network_network_address,
+    false
+  )
+}
+
 # The NAT Gateway is associated with the subnet at creation time by setting
 # `properties.natGateway.id` in the subnet body.
 resource "azapi_resource" "nat_gateway_example_subnet" {
   count = var.enable_nat_gateway_example ? 1 : 0
 
+  # `Microsoft.Network/virtualNetworks/subnets` is a child resource type and
+  # does not accept a `location` property, unlike the other resources in this
+  # file.
   type      = "Microsoft.Network/virtualNetworks/subnets@2024-05-01"
   name      = var.nat_gateway_example_subnet_name
   parent_id = azapi_resource.nat_gateway_example_virtual_network[0].id
@@ -122,18 +154,7 @@ resource "azapi_resource" "nat_gateway_example_subnet" {
 
   lifecycle {
     precondition {
-      # Confirms that the subnet address prefix falls within the virtual
-      # network address space, using `cidrhost()` to re-mask the subnet's
-      # network address to the virtual network's prefix length and
-      # comparing it with the virtual network's own network address.
-      condition = try(
-        tonumber(split("/", var.nat_gateway_example_subnet_address_prefix)[1]) >= tonumber(split("/", var.nat_gateway_example_virtual_network_address_space)[1]) &&
-        cidrhost(var.nat_gateway_example_virtual_network_address_space, 0) == cidrhost(
-          "${cidrhost(var.nat_gateway_example_subnet_address_prefix, 0)}/${split("/", var.nat_gateway_example_virtual_network_address_space)[1]}",
-          0
-        ),
-        false
-      )
+      condition     = local.nat_gateway_example_subnet_contained_in_virtual_network
       error_message = "`nat_gateway_example_subnet_address_prefix` must be a valid CIDR range contained within `nat_gateway_example_virtual_network_address_space`."
     }
   }
