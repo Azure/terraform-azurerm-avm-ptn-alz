@@ -6,6 +6,11 @@
 # resources are created independently, alongside the ALZ deployment, and are
 # not a dependency of the module. Set `enable_nat_gateway_example = true` and
 # supply `existing_public_ip_prefix_id` to deploy them.
+#
+# All resources below share the same `count = var.enable_nat_gateway_example
+# ? 1 : 0` condition, so cross-references via `one(...)` always resolve to
+# exactly one instance whenever they are evaluated (matching the convention
+# used elsewhere in this module, e.g. `main.telemetry.tf`).
 
 resource "azapi_resource" "nat_gateway_example_resource_group" {
   count = var.enable_nat_gateway_example ? 1 : 0
