@@ -70,6 +70,11 @@ variable "nat_gateway_example_virtual_network_address_space" {
   default     = "10.20.0.0/16"
   description = "The address space of the virtual network created for the NAT Gateway example when `enable_nat_gateway_example` is `true`."
   nullable    = false
+
+  validation {
+    condition     = can(cidrhost(var.nat_gateway_example_virtual_network_address_space, 0))
+    error_message = "`nat_gateway_example_virtual_network_address_space` must be a valid IPv4 CIDR range, e.g. `10.20.0.0/16`."
+  }
 }
 
 variable "nat_gateway_example_subnet_name" {
@@ -84,4 +89,9 @@ variable "nat_gateway_example_subnet_address_prefix" {
   default     = "10.20.0.0/24"
   description = "The address prefix of the subnet associated with the example NAT Gateway when `enable_nat_gateway_example` is `true`."
   nullable    = false
+
+  validation {
+    condition     = can(cidrhost(var.nat_gateway_example_subnet_address_prefix, 0))
+    error_message = "`nat_gateway_example_subnet_address_prefix` must be a valid IPv4 CIDR range, e.g. `10.20.0.0/24`."
+  }
 }
