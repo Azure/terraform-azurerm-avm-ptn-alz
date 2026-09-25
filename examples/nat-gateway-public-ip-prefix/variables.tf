@@ -46,9 +46,14 @@ DESCRIPTION
     error_message = "`existing_public_ip_prefix_id` must be `null` or a non-empty, valid `Microsoft.Network/publicIPPrefixes` resource ID."
   }
 
-  # Whether `existing_public_ip_prefix_id` is required is enforced via a
-  # `precondition` on `azapi_resource.nat_gateway_example_public_ip`, since
-  # that check depends on the value of `enable_nat_gateway_example`.
+  # Cross-variable validation (supported since Terraform 1.9, which this
+  # example requires) so that a missing prefix ID is reported as a clear,
+  # early plan-time variable validation error rather than only being caught
+  # later by the `precondition` on `azapi_resource.nat_gateway_example_public_ip`.
+  validation {
+    condition     = var.enable_nat_gateway_example ? var.existing_public_ip_prefix_id != null : true
+    error_message = "`existing_public_ip_prefix_id` must be supplied when `enable_nat_gateway_example` is `true`."
+  }
 }
 
 variable "nat_gateway_example_network_resource_group_name" {
