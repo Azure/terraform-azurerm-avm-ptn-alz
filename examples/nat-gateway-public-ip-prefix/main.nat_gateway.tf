@@ -44,9 +44,12 @@ resource "azapi_resource" "nat_gateway_example_public_ip" {
       publicIPAllocationMethod = "Static"
       # Allocates the public IP address from the existing public IP prefix.
       # The prefix must be in the same subscription and region as this
-      # public IP address. This is only validated by Azure at apply time;
-      # if `existing_public_ip_prefix_id` refers to a prefix in a different
-      # region or subscription, the API call below will fail.
+      # public IP address. This is a known, accepted limitation of this
+      # example: neither the variable validations above nor Terraform can
+      # check the prefix's actual region/subscription at plan time (that
+      # would require an additional data source read), so a mismatch is
+      # only caught by Azure returning an API error when this resource is
+      # applied.
       publicIPPrefix = {
         id = var.existing_public_ip_prefix_id
       }
