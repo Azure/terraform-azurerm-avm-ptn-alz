@@ -4,6 +4,26 @@
 
 This example shows how to deploy the ALZ reference architecture.
 
+## Optional: NAT Gateway with a public IP from an existing public IP prefix
+
+`module.alz_architecture` does not manage networking resources, so it has no input for a NAT Gateway or a public IP. This example optionally demonstrates, alongside (and independently of) the ALZ deployment, how to:
+
+- Create a Standard static public IP address allocated from an existing Azure Public IP Prefix (`Microsoft.Network/publicIPPrefixes`).
+- Create a Standard NAT Gateway that uses that public IP address.
+- Associate the NAT Gateway with a subnet in an example virtual network.
+
+To deploy these resources, set `enable_nat_gateway_example = true` and supply `existing_public_ip_prefix_id` with the resource ID of your existing public IP prefix, for example:
+
+```hcl
+enable_nat_gateway_example   = true
+existing_public_ip_prefix_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-network/providers/Microsoft.Network/publicIPPrefixes/pip-prefix-example"
+```
+
+> [!IMPORTANT]
+> The public IP prefix must exist in the same subscription and the same Azure region (`location`) as the public IP address that will be created from it.
+
+These resources are created independently of `module.alz_architecture` and are not configured as a dependency of it, since the `alz` provider has special plan-time behaviour that does not support arbitrary `depends_on` relationships on the module.
+
 ```hcl
 # This allows us to get the tenant id
 data "azapi_client_config" "current" {}
@@ -26,7 +46,7 @@ module "alz_architecture" {
   source = "../../"
 
   architecture_name  = "alz"
-  location           = "northeurope"
+  location           = var.location
   parent_resource_id = data.azapi_client_config.current.tenant_id
   enable_telemetry   = var.enable_telemetry
 }
@@ -47,6 +67,11 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
+- [azapi_resource.nat_gateway_example_nat_gateway](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.nat_gateway_example_public_ip](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.nat_gateway_example_resource_group](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.nat_gateway_example_subnet](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.nat_gateway_example_virtual_network](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_client_config.current](https://registry.terraform.io/providers/azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -58,6 +83,18 @@ No required inputs.
 
 The following input variables are optional (have default values):
 
+### <a name="input_enable_nat_gateway_example"></a> [enable\_nat\_gateway\_example](#input\_enable\_nat\_gateway\_example)
+
+Description: Set to `true` to additionally deploy an example network (resource group, virtual network and subnet) with a Standard NAT Gateway associated with the subnet.
+
+The NAT Gateway is configured with a Standard static public IP address allocated from the existing public IP prefix supplied via `existing_public_ip_prefix_id`.
+
+These resources are created independently of, and are not a dependency of, `module.alz_architecture`; they only demonstrate how you can bring your own public IP prefix to a NAT Gateway alongside the ALZ deployment.
+
+Type: `bool`
+
+Default: `false`
+
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
 Description: Enable telemetry for the module.
@@ -65,6 +102,68 @@ Description: Enable telemetry for the module.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_existing_public_ip_prefix_id"></a> [existing\_public\_ip\_prefix\_id](#input\_existing\_public\_ip\_prefix\_id)
+
+Description: The resource ID of an existing `Microsoft.Network/publicIPPrefixes` resource to allocate the NAT Gateway's public IP address from.
+
+Required when `enable_nat_gateway_example` is `true`. The public IP prefix must exist in the same subscription and the same Azure region (see `location`) as the public IP address that will be created from it.
+
+Example: `/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-network/providers/Microsoft.Network/publicIPPrefixes/pip-prefix-example`
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region used for the ALZ architecture resources and, when `enable_nat_gateway_example` is `true`, for the NAT Gateway example network resources.
+
+The existing public IP prefix referenced by `existing_public_ip_prefix_id` must be deployed to this same region.
+
+Type: `string`
+
+Default: `"northeurope"`
+
+### <a name="input_nat_gateway_example_network_resource_group_name"></a> [nat\_gateway\_example\_network\_resource\_group\_name](#input\_nat\_gateway\_example\_network\_resource\_group\_name)
+
+Description: The name of the resource group created to hold the example NAT Gateway network resources when `enable_nat_gateway_example` is `true`.
+
+Type: `string`
+
+Default: `"rg-alz-example-nat-gateway"`
+
+### <a name="input_nat_gateway_example_subnet_address_prefix"></a> [nat\_gateway\_example\_subnet\_address\_prefix](#input\_nat\_gateway\_example\_subnet\_address\_prefix)
+
+Description: The address prefix of the subnet associated with the example NAT Gateway when `enable_nat_gateway_example` is `true`.
+
+Type: `string`
+
+Default: `"10.20.0.0/24"`
+
+### <a name="input_nat_gateway_example_subnet_name"></a> [nat\_gateway\_example\_subnet\_name](#input\_nat\_gateway\_example\_subnet\_name)
+
+Description: The name of the subnet associated with the example NAT Gateway when `enable_nat_gateway_example` is `true`.
+
+Type: `string`
+
+Default: `"snet-alz-example-nat-gateway"`
+
+### <a name="input_nat_gateway_example_virtual_network_address_space"></a> [nat\_gateway\_example\_virtual\_network\_address\_space](#input\_nat\_gateway\_example\_virtual\_network\_address\_space)
+
+Description: The address space of the virtual network created for the NAT Gateway example when `enable_nat_gateway_example` is `true`.
+
+Type: `string`
+
+Default: `"10.20.0.0/16"`
+
+### <a name="input_nat_gateway_example_virtual_network_name"></a> [nat\_gateway\_example\_virtual\_network\_name](#input\_nat\_gateway\_example\_virtual\_network\_name)
+
+Description: The name of the virtual network created for the NAT Gateway example when `enable_nat_gateway_example` is `true`.
+
+Type: `string`
+
+Default: `"vnet-alz-example-nat-gateway"`
 
 ## Outputs
 
