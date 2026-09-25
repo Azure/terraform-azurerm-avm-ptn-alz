@@ -23,7 +23,7 @@ resource "azapi_resource" "nat_gateway_example_public_ip" {
 
   type      = "Microsoft.Network/publicIPAddresses@2024-05-01"
   name      = "pip-${var.nat_gateway_example_subnet_name}"
-  parent_id = azapi_resource.nat_gateway_example_resource_group[0].id
+  parent_id = one(azapi_resource.nat_gateway_example_resource_group).id
   location  = var.location
 
   body = {
@@ -60,7 +60,7 @@ resource "azapi_resource" "nat_gateway_example_nat_gateway" {
 
   type      = "Microsoft.Network/natGateways@2024-05-01"
   name      = "nat-${var.nat_gateway_example_subnet_name}"
-  parent_id = azapi_resource.nat_gateway_example_resource_group[0].id
+  parent_id = one(azapi_resource.nat_gateway_example_resource_group).id
   location  = var.location
 
   body = {
@@ -70,7 +70,7 @@ resource "azapi_resource" "nat_gateway_example_nat_gateway" {
     properties = {
       publicIpAddresses = [
         {
-          id = azapi_resource.nat_gateway_example_public_ip[0].id
+          id = one(azapi_resource.nat_gateway_example_public_ip).id
         }
       ]
     }
@@ -84,7 +84,7 @@ resource "azapi_resource" "nat_gateway_example_virtual_network" {
 
   type      = "Microsoft.Network/virtualNetworks@2024-05-01"
   name      = var.nat_gateway_example_virtual_network_name
-  parent_id = azapi_resource.nat_gateway_example_resource_group[0].id
+  parent_id = one(azapi_resource.nat_gateway_example_resource_group).id
   location  = var.location
 
   body = {
@@ -139,13 +139,13 @@ resource "azapi_resource" "nat_gateway_example_subnet" {
   # file.
   type      = "Microsoft.Network/virtualNetworks/subnets@2024-05-01"
   name      = var.nat_gateway_example_subnet_name
-  parent_id = azapi_resource.nat_gateway_example_virtual_network[0].id
+  parent_id = one(azapi_resource.nat_gateway_example_virtual_network).id
 
   body = {
     properties = {
       addressPrefix = var.nat_gateway_example_subnet_address_prefix
       natGateway = {
-        id = azapi_resource.nat_gateway_example_nat_gateway[0].id
+        id = one(azapi_resource.nat_gateway_example_nat_gateway).id
       }
     }
   }
