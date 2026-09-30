@@ -1,0 +1,22 @@
+{
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2022-06-01",
+  "name": "Deploy-PRA-Test",
+  "location": "${default_location}",
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "displayName": "PRA test assignment",
+    "description": "Test assignment for issue 4226.",
+    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/placeholder/providers/Microsoft.Authorization/policyDefinitions/Deploy-PRA-Test-Def",
+    "enforcementMode": "Default",
+    "parameters": {
+      "effect": {
+        "value": "DeployIfNotExists"
+      }
+    },
+    "scope": "/providers/Microsoft.Management/managementGroups/placeholder",
+    "notScopes": []
+  }
+}
