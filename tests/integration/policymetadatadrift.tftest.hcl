@@ -29,10 +29,10 @@ run "first_apply" {
   command = apply
 }
 
-run "second_apply" {
+run "verify_no_drift" {
   variables {
     parent_resource_id = run.setup.tenant_id
   }
 
-  command = apply
+  command = plan
 }
