@@ -1,0 +1,25 @@
+{
+  "name": "test-policy-metadata-drift",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2023-04-01",
+  "properties": {
+    "displayName": "Test policy metadata drift",
+    "description": "Integration-test policy definition for Azure-managed metadata drift.",
+    "metadata": {
+      "category": "Test",
+      "version": "1.0.0"
+    },
+    "mode": "All",
+    "parameters": {},
+    "policyRule": {
+      "if": {
+        "field": "type",
+        "equals": "Microsoft.Network/virtualNetworks"
+      },
+      "then": {
+        "effect": "audit"
+      }
+    },
+    "policyType": "Custom"
+  }
+}
