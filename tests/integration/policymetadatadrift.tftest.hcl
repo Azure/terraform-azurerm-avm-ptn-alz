@@ -1,6 +1,6 @@
-# Regression test for Azure/Azure-Landing-Zones#4274
-# Verifies policy definitions and policy set definitions
-# remain stable across repeated applies after metadata handling changes.
+# Regression test for Azure/Azure-Landing-Zones#4274.
+# Verifies Azure-managed metadata fields (createdBy, createdOn, updatedBy, updatedOn)
+# do not cause drift on policy definitions and policy set definitions after deployment.
 
 provider "alz" {
   library_references = [
@@ -27,6 +27,16 @@ run "first_apply" {
   }
 
   command = apply
+
+  assert {
+    condition     = length(azapi_resource.policy_definitions) == 1
+    error_message = "Expected exactly one test policy definition to be deployed."
+  }
+
+  assert {
+    condition     = length(azapi_resource.policy_set_definitions) == 1
+    error_message = "Expected exactly one test policy set definition to be deployed."
+  }
 }
 
 run "verify_no_drift" {
@@ -35,4 +45,20 @@ run "verify_no_drift" {
   }
 
   command = plan
+
+  # If Terraform plans an in-place update, the AzAPI `output` attribute
+  # becomes unknown (known after apply) and the run fails.
+  assert {
+    condition = alltrue([
+      for pd in values(azapi_resource.policy_definitions) : pd.output == {}
+    ])
+    error_message = "Policy definitions have planned changes after apply. Azure-managed metadata drift was not suppressed."
+  }
+
+  assert {
+    condition = alltrue([
+      for psd in values(azapi_resource.policy_set_definitions) : psd.output == {}
+    ])
+    error_message = "Policy set definitions have planned changes after apply. Azure-managed metadata drift was not suppressed."
+  }
 }
