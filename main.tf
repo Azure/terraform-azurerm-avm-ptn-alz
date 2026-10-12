@@ -8,3 +8,10 @@ data "alz_architecture" "this" {
   override_policy_definition_parameter_assign_permissions_set   = var.override_policy_definition_parameter_assign_permissions_set
   override_policy_definition_parameter_assign_permissions_unset = var.override_policy_definition_parameter_assign_permissions_unset
 }
+
+check "telemetry_additional_content_deprecated" {
+  assert {
+    condition     = var.telemetry_additional_content == null ? true : length(var.telemetry_additional_content) == 0
+    error_message = "telemetry_additional_content is deprecated and ignored. Custom telemetry content is no longer collected; remove this input."
+  }
+}
