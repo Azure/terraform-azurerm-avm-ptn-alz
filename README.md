@@ -765,7 +765,7 @@ Default: `{}`
 
 Description: The retry settings to apply to the CRUD operations. Value is a nested object, the top level keys are the resources and the values are an object with the following attributes:
 
-- `error_message_regex` - (Optional) A list of error message regexes to retry on. Defaults to `null`, which will will disable retries. Specify a value to enable.
+- `error_message_regex` - (Optional) A non-empty list of error message regexes to retry on. Omitted or `null` values use the resource-specific defaults; a supplied list replaces those defaults. Policy definitions retry `AuthorizationFailed` and `PolicyDefinitionNotFound`.
 - `interval_seconds` - (Optional) The initial interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
 - `max_interval_seconds` - (Optional) The maximum interval in seconds between retries. Defaults to `null` and will fall back to the provider default value.
 - `multiplier` - (Optional) DEPRECATED The multiplier to apply to the interval between retries. Defaults to `null` and will fall back to the provider default value. This value is deprecated and will be removed in a future version.
@@ -807,7 +807,8 @@ object({
     }), {})
     policy_definitions = optional(object({
       error_message_regex = optional(list(string), [
-        "AuthorizationFailed" # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+        "AuthorizationFailed", # Avoids a eventual consistency issue where a recently created management group is not yet available for a GET operation.
+        "PolicyDefinitionNotFound"
       ])
       interval_seconds     = optional(number, null)
       max_interval_seconds = optional(number, null)
