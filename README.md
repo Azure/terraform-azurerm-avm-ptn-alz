@@ -24,6 +24,12 @@
 - Create the required role assignments for Azure Policy, including support for the **assign permissions** metadata tag, just like the Azure Portal
 - Deploy custom role definitions
 
+## Role Assignment Naming
+
+Role assignment names remain deterministic by default. Set `role_assignment_name_use_random_uuid = true` to use random names.
+The Interfaces 0.9.0 upgrade retains existing random UUID resource addresses, but also creates UUID bookkeeping for deterministic assignments.
+Disabling random naming no longer removes that bookkeeping; re-enabling it reuses the retained UUID rather than generating another.
+
 ## AzAPI Provider
 
 We use the AzAPI provider to interact with the Azure APIs.
@@ -115,10 +121,6 @@ The following requirements are needed by this module:
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
-- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
-
-- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
-
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
 - <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
@@ -144,14 +146,14 @@ The following resources are used by this module:
 - [azapi_resource.policy_set_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.role_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.subscription_placement](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource_action.subscription_placement_create](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_resource_action.subscription_placement_delete](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/update_resource) (resource)
-- [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
-- [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
 - [terraform_data.management_groups_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [terraform_data.policy_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [terraform_data.policy_role_assignments_dependencies](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [time_sleep.after_management_groups](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 - [time_sleep.after_policy_set_definitions](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
@@ -159,7 +161,6 @@ The following resources are used by this module:
 - [azapi_client_config.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [azapi_resource.policy_user_assigned_identities](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/resource) (data source)
-- [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -952,7 +953,7 @@ Default: `null`
 
 ### <a name="input_telemetry_additional_content"></a> [telemetry\_additional\_content](#input\_telemetry\_additional\_content)
 
-Description: Deprecated and ignored. Custom telemetry content is no longer collected. Remove this input from module calls; it remains accepted for compatibility.
+Description: Optional telemetry deployment-name content. Keys are sorted and appended as hyphen-separated key-value pairs. Null or empty maps add no suffix. Keys and values must contain only letters, numbers, periods, underscores, hyphens, or parentheses, and the complete deployment name must not exceed 64 characters. Ignored when enable\_telemetry is false.
 
 Type: `map(string)`
 
@@ -1070,7 +1071,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.5.0
+Version: 0.9.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

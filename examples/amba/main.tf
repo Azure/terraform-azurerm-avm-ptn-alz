@@ -34,6 +34,7 @@ module "amba_alz" {
   version = "0.1.1"
   providers = {
     azurerm = azurerm.management
+    modtm   = modtm
   }
   count = var.bring_your_own_user_assigned_managed_identity ? 0 : 1
 

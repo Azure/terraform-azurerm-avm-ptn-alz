@@ -708,7 +708,7 @@ DESCRIPTION
 variable "telemetry_additional_content" {
   type        = map(string)
   default     = null
-  description = "Deprecated and ignored. Custom telemetry content is no longer collected. Remove this input from module calls; it remains accepted for compatibility."
+  description = "Optional telemetry deployment-name content. Keys are sorted and appended as hyphen-separated key-value pairs. Null or empty maps add no suffix. Keys and values must contain only letters, numbers, periods, underscores, hyphens, or parentheses, and the complete deployment name must not exceed 64 characters. Ignored when enable_telemetry is false."
 }
 
 variable "timeouts" {
