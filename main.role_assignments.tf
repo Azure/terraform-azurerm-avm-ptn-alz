@@ -9,7 +9,7 @@ module "avm_interfaces" {
   role_assignment_definition_scope          = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [each.value.management_group_name])
   role_assignments = {
     this = {
-      role_definition_id_or_name             = each.value.role_definition_id_or_name
+      role_definition_id_or_name             = length(local.role_assignment_owned_role_definition_ids[each.key]) == 1 ? local.role_assignment_owned_role_definition_ids[each.key][0] : each.value.role_definition_id_or_name
       principal_id                           = each.value.principal_id
       description                            = each.value.description
       skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
@@ -51,6 +51,12 @@ resource "azapi_resource" "management_group_role_assignments" {
     update = var.timeouts.role_assignment.update
   }
 
+  lifecycle {
+    precondition {
+      condition     = length(local.role_assignment_owned_role_definition_ids[each.key]) <= 1
+      error_message = "Role assignment ${each.key} matches multiple root-owned role definitions named ${var.management_group_role_assignments[each.key].role_definition_id_or_name} at its management group scope."
+    }
+  }
   depends_on = [
     azapi_resource.role_definitions,
   ]

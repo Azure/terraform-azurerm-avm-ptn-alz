@@ -1,0 +1,3 @@
+name: lookup_parent
+role_definitions:
+  - Ancestor role

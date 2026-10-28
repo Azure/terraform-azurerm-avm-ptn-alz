@@ -1,0 +1,10 @@
+{
+  "name": "33333333-3333-4333-8333-333333333333",
+  "properties": {
+    "roleName": "Case-sensitive role",
+    "description": "Case-sensitive role",
+    "type": "CustomRole",
+    "assignableScopes": [],
+    "permissions": [{"actions": ["*/read"], "notActions": [], "dataActions": [], "notDataActions": []}]
+  }
+}
