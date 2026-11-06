@@ -1,0 +1,10 @@
+{
+  "name": "55555555-5555-4555-8555-555555555555",
+  "properties": {
+    "roleName": "Ancestor role",
+    "description": "Inherited role",
+    "type": "CustomRole",
+    "assignableScopes": [],
+    "permissions": [{"actions": ["*/read"], "notActions": [], "dataActions": [], "notDataActions": []}]
+  }
+}
