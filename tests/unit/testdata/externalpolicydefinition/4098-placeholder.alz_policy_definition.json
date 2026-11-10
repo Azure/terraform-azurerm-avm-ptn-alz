@@ -1,0 +1,24 @@
+{
+  "name": "4098-Placeholder-Definition",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "properties": {
+    "policyType": "Custom",
+    "mode": "All",
+    "displayName": "4098 placeholder policy definition",
+    "description": "Placeholder definition for issue 4098 regression testing.",
+    "metadata": {
+      "category": "Test",
+      "version": "1.0.0"
+    },
+    "parameters": {},
+    "policyRule": {
+      "if": {
+        "field": "type",
+        "equals": "Microsoft.Network/virtualNetworks"
+      },
+      "then": {
+        "effect": "audit"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2022-06-01",
+  "name": "4098-External-Policy",
+  "location": "${default_location}",
+  "properties": {
+    "displayName": "4098 external policy definition test",
+    "description": "Regression test for issue 4098.",
+    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/placeholder/providers/Microsoft.Authorization/policyDefinitions/4098-Placeholder-Definition",
+    "enforcementMode": "Default",
+    "parameters": {},
+    "scope": "/providers/Microsoft.Management/managementGroups/placeholder",
+    "notScopes": []
+  }
+}
