@@ -22,6 +22,12 @@
 - Create the required role assignments for Azure Policy, including support for the **assign permissions** metadata tag, just like the Azure Portal
 - Deploy custom role definitions
 
+## Role Assignment Naming
+
+Role assignment names remain deterministic by default. Set `role_assignment_name_use_random_uuid = true` to use random names.
+The Interfaces 0.9.0 upgrade retains existing random UUID resource addresses, but also creates UUID bookkeeping for deterministic assignments.
+Disabling random naming no longer removes that bookkeeping; re-enabling it reuses the retained UUID rather than generating another.
+
 ## AzAPI Provider
 
 We use the AzAPI provider to interact with the Azure APIs.

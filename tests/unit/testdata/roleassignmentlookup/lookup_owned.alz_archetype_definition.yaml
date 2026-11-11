@@ -1,0 +1,4 @@
+name: lookup_owned
+role_definitions:
+  - Security-Operations
+  - Case-sensitive role

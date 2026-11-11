@@ -1,0 +1,10 @@
+{
+  "name": "22222222-2222-4222-8222-222222222222",
+  "properties": {
+    "roleName": "Assignable elsewhere",
+    "description": "Sibling-scoped role, not assignable at the test scope",
+    "type": "CustomRole",
+    "assignableScopes": [],
+    "permissions": [{"actions": ["*/read"], "notActions": [], "dataActions": [], "notDataActions": []}]
+  }
+}

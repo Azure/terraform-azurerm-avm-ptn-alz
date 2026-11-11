@@ -1,9 +1,3 @@
-variable "random_suffix" {
-  type        = string
-  default     = "sdjfnbf"
-  description = "Change me to something unique"
-}
-
 variable "enable_telemetry" {
   type        = bool
   default     = true
@@ -12,4 +6,10 @@ This variable controls whether or not telemetry is enabled for the module.
 For more information see <https://aka.ms/avm/telemetryinfo>.
 If it is set to false, then no telemetry will be collected.
 DESCRIPTION
+}
+
+variable "random_suffix" {
+  type        = string
+  default     = "sdjfnbf"
+  description = "Change me to something unique"
 }

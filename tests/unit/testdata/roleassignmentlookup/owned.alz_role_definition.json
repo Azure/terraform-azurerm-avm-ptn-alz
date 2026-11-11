@@ -1,0 +1,10 @@
+{
+  "name": "ce58096d-b508-5d2c-ab60-fcd02e554406",
+  "properties": {
+    "roleName": "Security-Operations",
+    "description": "Owned role",
+    "type": "CustomRole",
+    "assignableScopes": [],
+    "permissions": [{"actions": ["*/read"], "notActions": [], "dataActions": [], "notDataActions": []}]
+  }
+}

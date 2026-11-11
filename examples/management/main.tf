@@ -21,13 +21,14 @@ locals {
 
 module "management" {
   source  = "Azure/avm-ptn-alz-management/azurerm"
-  version = "0.6.0"
+  version = "0.10.0"
 
   automation_account_name      = local.automation_account_name
   location                     = local.location
-  log_analytics_workspace_name = local.log_analytics_workspace_name
   resource_group_name          = local.resource_group_name
   enable_telemetry             = var.enable_telemetry
+  log_analytics_workspace_name = local.log_analytics_workspace_name
+  sentinel_onboarding          = {}
 }
 
 module "alz" {
