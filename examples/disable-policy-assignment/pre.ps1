@@ -40,8 +40,12 @@ $randomPrefix = Get-Random -Minimum 0 -Maximum 32768
 $libDir = Join-Path $PSScriptRoot 'lib'
 
 if (Test-Path -LiteralPath $libDir -PathType Container) {
+    $previousPluginCache = [Environment]::GetEnvironmentVariable('TF_PLUGIN_CACHE_DIR', 'Process')
+    $pluginCache = Join-Path -Path $libDir -ChildPath '.terraform' -AdditionalChildPath 'plugin-cache'
+    $null = New-Item -ItemType Directory -Path $pluginCache -Force
     Push-Location -LiteralPath $libDir
     try {
+        $env:TF_PLUGIN_CACHE_DIR = $pluginCache
         & $terraform init -input=false
         if ($LASTEXITCODE -ne 0) { throw "terraform init failed with exit code $LASTEXITCODE." }
 
@@ -49,6 +53,8 @@ if (Test-Path -LiteralPath $libDir -PathType Container) {
         if ($LASTEXITCODE -ne 0) { throw "terraform apply failed with exit code $LASTEXITCODE." }
     }
     finally {
+        $restoredPluginCache = if ($null -eq $previousPluginCache) { [NullString]::Value } else { $previousPluginCache }
+        [Environment]::SetEnvironmentVariable('TF_PLUGIN_CACHE_DIR', $restoredPluginCache, 'Process')
         Pop-Location
     }
 }

@@ -1,15 +1,15 @@
 module "avm_interfaces" {
   source   = "Azure/avm-utl-interfaces/azure"
-  version  = "0.5.0"
+  version  = "0.9.0"
   for_each = var.management_group_role_assignments
 
+  location                                  = var.location
   enable_telemetry                          = var.enable_telemetry
   role_assignment_definition_lookup_enabled = var.role_assignment_definition_lookup_enabled
   role_assignment_definition_scope          = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [each.value.management_group_name])
-  role_assignment_name_use_random_uuid      = var.role_assignment_name_use_random_uuid
   role_assignments = {
     this = {
-      role_definition_id_or_name             = each.value.role_definition_id_or_name
+      role_definition_id_or_name             = length(local.role_assignment_owned_role_definition_ids[each.key]) == 1 ? local.role_assignment_owned_role_definition_ids[each.key][0] : each.value.role_definition_id_or_name
       principal_id                           = each.value.principal_id
       description                            = each.value.description
       skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
@@ -26,7 +26,11 @@ module "avm_interfaces" {
 resource "azapi_resource" "management_group_role_assignments" {
   for_each = module.avm_interfaces
 
-  name                   = each.value.role_assignments_azapi.this.name
+  name = var.role_assignment_name_use_random_uuid ? each.value.role_assignments_azapi.this.name : uuidv5("url", format(
+    "%s%s",
+    each.value.role_assignments_azapi.this.body.properties.principalId,
+    each.value.role_assignments_azapi.this.body.properties.roleDefinitionId
+  ))
   parent_id              = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [var.management_group_role_assignments[each.key].management_group_name])
   type                   = var.resource_types.role_assignment
   body                   = each.value.role_assignments_azapi.this.body
@@ -47,6 +51,12 @@ resource "azapi_resource" "management_group_role_assignments" {
     update = var.timeouts.role_assignment.update
   }
 
+  lifecycle {
+    precondition {
+      condition     = length(local.role_assignment_owned_role_definition_ids[each.key]) <= 1
+      error_message = "Role assignment ${each.key} matches multiple root-owned role definitions named ${var.management_group_role_assignments[each.key].role_definition_id_or_name} at its management group scope."
+    }
+  }
   depends_on = [
     azapi_resource.role_definitions,
   ]

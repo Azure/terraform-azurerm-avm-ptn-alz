@@ -1,0 +1,12 @@
+name: ambiguous
+management_groups:
+  - id: test
+    display_name: Test
+    exists: true
+    parent_id: null
+    archetypes: [lookup_owned]
+  - id: TEST
+    display_name: Ambiguous ARM scope casing
+    exists: true
+    parent_id: null
+    archetypes: [lookup_owned]
