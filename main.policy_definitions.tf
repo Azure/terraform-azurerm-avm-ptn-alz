@@ -5,7 +5,20 @@ resource "azapi_resource" "policy_definitions" {
   parent_id = "${coalesce(lookup(var.parent_id_overrides.policy_definitions, each.key, null), "/providers/Microsoft.Management/managementGroups")}/${each.value.mg}"
   type      = var.resource_types.policy_definition
   body = {
-    properties = each.value.definition.properties
+    properties = merge(
+      each.value.definition.properties,
+      {
+        metadata = merge(
+          lookup(each.value.definition.properties, "metadata", {}),
+          {
+            createdBy = ""
+            createdOn = ""
+            updatedBy = ""
+            updatedOn = ""
+          }
+        )
+      }
+    )
   }
   response_export_values = []
   retry = var.retries.policy_definitions.error_message_regex != null ? {
@@ -24,6 +37,14 @@ resource "azapi_resource" "policy_definitions" {
     update = var.timeouts.policy_definition.update
   }
 
+  lifecycle {
+    ignore_changes = [
+      body.properties.metadata.createdBy,
+      body.properties.metadata.createdOn,
+      body.properties.metadata.updatedBy,
+      body.properties.metadata.updatedOn,
+    ]
+  }
   depends_on = [
     time_sleep.after_management_groups
   ]
