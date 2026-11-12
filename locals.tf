@@ -54,8 +54,18 @@ locals {
   ]) : "${paval.mg}/${paval.key}" => paval }
   policy_assignments_final = {
     for k, v in local.policy_assignments : k => {
-      mg         = v.mg
-      assignment = v.assignment
+      mg = v.mg
+      assignment = try(var.policy_assignments_to_modify[v.mg].policy_assignments[v.key].policy_definition_id, null) != null ? merge(
+        v.assignment,
+        {
+          properties = merge(
+            v.assignment.properties,
+            {
+              policyDefinitionId = var.policy_assignments_to_modify[v.mg].policy_assignments[v.key].policy_definition_id
+            }
+          )
+        }
+      ) : v.assignment
     }
   }
 }
