@@ -1,0 +1,5 @@
+name: test
+policy_definitions:
+  - test-policy-metadata-drift
+policy_set_definitions:
+  - test-policy-set-metadata-drift
