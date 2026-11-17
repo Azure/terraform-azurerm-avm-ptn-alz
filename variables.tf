@@ -393,11 +393,12 @@ DESCRIPTION
 variable "policy_assignments_to_modify" {
   type = map(object({
     policy_assignments = map(object({
-      enforcement_mode = optional(string, null)
-      identity         = optional(string, null)
-      identity_ids     = optional(list(string), null)
-      parameters       = optional(map(string), null)
-      not_scopes       = optional(list(string), null)
+      policy_definition_id = optional(string, null)
+      enforcement_mode     = optional(string, null)
+      identity             = optional(string, null)
+      identity_ids         = optional(list(string), null)
+      parameters           = optional(map(string), null)
+      not_scopes           = optional(list(string), null)
       non_compliance_messages = optional(set(object({
         message                        = string
         policy_definition_reference_id = optional(string, null)
@@ -431,7 +432,7 @@ You only need to specify the properties you want to change.
 The key is the id of the management group. The value is an object with a single attribute, `policy_assignments`.
 The `policy_assignments` value is a map of policy assignments to modify.
 The key of this map is the assignment name, and the value is an object with optional attributes for modifying the policy assignments.
-
+- `policy_definition_id` - (Optional) The resource ID of the policy definition to use for the policy assignment. Use this to reference a policy definition managed outside this module.
 - `enforcement_mode` - (Optional) The enforcement mode of the policy assignment. Possible values are `Default` and `DoNotEnforce`.
 - `identity` - (Optional) The identity of the policy assignment. Possible values are `SystemAssigned` and `UserAssigned`.
 - `identity_ids` - (Optional) A set of ids of the user assigned identities to assign to the policy assignment.

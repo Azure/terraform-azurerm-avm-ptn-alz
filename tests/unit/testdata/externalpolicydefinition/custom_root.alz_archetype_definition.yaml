@@ -1,0 +1,6 @@
+---
+name: root-custom
+policy_assignments:
+  - "4098-External-Policy"
+policy_definitions:
+  - "4098-Placeholder-Definition"
