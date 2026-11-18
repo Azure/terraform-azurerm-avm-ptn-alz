@@ -5,10 +5,12 @@ description: Use for AVM Terraform validation, provider-mocked unit tests, real-
 
 # AVM Terraform Testing
 
-Use PowerShell 7.4 or later with the `Avm.Authoring` module. The old repository launcher, Make targets, Porch flags, and container workflow are retired.
+Use PowerShell 7.4 or later with the `Avm.Authoring` module from MAR. Follow the [installation prerequisites](https://github.com/Azure/azure-verified-modules-tools#install) to upgrade PSResourceGet and register MAR once; it is not registered by default. The old repository launcher, Make targets, Porch flags, and container workflow are retired.
 
 ```pwsh
-Install-PSResource -Name Avm.Authoring -Repository PSGallery -TrustRepository
+Install-PSResource -Name avm.authoring `
+    -Repository MAR `
+    -Scope CurrentUser
 Import-Module Avm.Authoring
 avm version
 ```

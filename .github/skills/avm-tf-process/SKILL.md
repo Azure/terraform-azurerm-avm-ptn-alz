@@ -23,10 +23,12 @@ Before creating or restructuring a repository, read the current requirements for
 
 ## 2. Establish the managed repository baseline
 
-Start from the current AVM Terraform template or governance-managed repository state. Import `Avm.Authoring` and synchronize managed files:
+Start from the current AVM Terraform template or governance-managed repository state. Follow the [MAR installation prerequisites](https://github.com/Azure/azure-verified-modules-tools#install) to upgrade PSResourceGet and register MAR once; it is not registered by default. Import `Avm.Authoring` and synchronize managed files:
 
 ```pwsh
-Install-PSResource -Name Avm.Authoring -Repository PSGallery -TrustRepository
+Install-PSResource -Name avm.authoring `
+    -Repository MAR `
+    -Scope CurrentUser
 Import-Module Avm.Authoring
 avm version
 avm sync

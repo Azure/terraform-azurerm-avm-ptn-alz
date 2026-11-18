@@ -13,3 +13,7 @@ Please provide as much information as possible when filing an issue. Include scr
 For instructions on how to get deployments and correlation ID, please follow this link [here](https://learn.microsoft.com/azure/azure-resource-manager/templates/deployment-history?tabs=azure-portal#get-deployments-and-correlation-id).
 
 We may ask you to create an Azure support request once we have triaged the issue following the process documented [here](https://learn.microsoft.com/azure/azure-portal/supportability/how-to-create-azure-support-request).
+
+## Microsoft Support Policy
+
+Support for this Azure Verified Modules (AVM) project is limited to the resources listed above.

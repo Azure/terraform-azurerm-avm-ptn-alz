@@ -29,3 +29,6 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    ignore:
+      - dependency-name: "hashicorp/azurerm"
+        versions: [">=5.0.0"]
