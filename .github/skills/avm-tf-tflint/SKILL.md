@@ -26,7 +26,7 @@ avm version
 avm lint
 ```
 
-If the version gate reports a stale installation, run `avm update`, re-import the module, and retry. Run `avm pre-commit` before linting when managed sync or transforms can affect the configuration. Use `avm pr-check` only after committing the complete worktree because it requires a clean worktree.
+If the version gate reports a stale installation, follow the [MAR update instructions](https://github.com/Azure/azure-verified-modules-tools#install), then start a new PowerShell session, import the module, and retry. Run `avm pre-commit` before linting when managed sync or transforms can affect the configuration. Use `avm pr-check` only after committing the complete worktree because it requires a clean worktree.
 
 Do not approximate the managed configuration with a separately installed TFLint binary, custom plugin setup, Make, Porch, or a container.
 

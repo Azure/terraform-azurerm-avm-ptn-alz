@@ -67,12 +67,16 @@ safe-outputs:
   close-issue:
     max: 1
     target: "*"
-    # List form lets the agent pick the reason per closure. A scalar would lock
-    # every closure to one reason, which recorded fix-confirmed closures as
-    # "duplicate". The first entry is the fallback when the agent omits one.
+    # List form lets the agent pick the reason per closure.
+    # gh aw v0.89.21 drops the per-closure state_reason because the
+    # close_issue validation config doesn't declare it. Every closure uses
+    # the first entry.
+    # completed goes first so fix-confirmed closures are correct. Duplicates
+    # close as completed with a "Duplicate of #N" body.
+    # Restore agent choice once upstream declares the field.
     state-reason:
-    - duplicate
     - completed
+    - duplicate
   update-pull-request:
     title: false
     body: true
@@ -1187,6 +1191,7 @@ steps:
        latest_published_at:$published, reason:null, prs:.}
     ' "${RESULTS}" > "${OUT}"
 tools:
+  bash: true
   cache-memory: true
   github:
     min-integrity: none

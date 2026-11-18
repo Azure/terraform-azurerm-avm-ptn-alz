@@ -71,13 +71,13 @@ Deprecated modules receive the `Status: Module Deprecated 🔴` label and are re
 >
 > All modules **MUST** be published as a `0.x.y` pre-release version (e.g. `0.1.0`, `0.1.1`, `0.2.0`) until the AVM team provides guidance that publishing `v1.0.0` is allowed.
 
-Source: <https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/contributing/process.md> and [SNFR12](https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/specs-defs/includes/shared/shared/non-functional/SNFR12.md).
+Source: <https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/contributing/process.md>, [SNFR12](https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/specs-defs/includes/shared/shared/non-functional/SNFR12.md), and [SNFR17](https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/specs-defs/includes/shared/shared/non-functional/SNFR17.md).
 
 **Practical implications:**
 
 - The first release of a new module is `0.1.0`, not `1.0.0`.
-- Breaking changes bump the **minor** segment (`0.1.0` → `0.2.0`), not the major segment.
-- Bug fixes and non-breaking features bump the **patch** segment (`0.1.0` → `0.1.1`).
+- Breaking changes **and** feature updates bump the **minor** segment (`0.1.0` → `0.2.0`), not the major segment.
+- Non-breaking, backward-compatible bug fixes bump the **patch** segment (`0.1.0` → `0.1.1`).
 - **Only the latest released version of a module is supported** ([SNFR12](https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/content/specs-defs/includes/shared/shared/non-functional/SNFR12.md)). If a consumer hits a bug on `0.3.0`, the first triage step is "upgrade to the latest version".
 - Release notes **MUST** call out breaking changes clearly — consumers rely on these to decide whether to upgrade.
 

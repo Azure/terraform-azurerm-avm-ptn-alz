@@ -5,24 +5,28 @@ on:
     types: ['opened', 'reopened', 'synchronize']
   merge_group:
   workflow_dispatch:
+    inputs:
+      authoringSource:
+        description: 'Where to obtain the Avm.Authoring PowerShell module.'
+        required: false
+        type: choice
+        options:
+          - gallery
+          - repo
+        default: gallery
+      authoringRef:
+        description: 'Avm.Authoring reference: authoringSource=gallery uses a package version (blank = latest); authoringSource=repo uses a tools SHA, tag or branch (blank = latest stable tag).'
+        required: false
+        type: string
+        default: ''
 
 jobs:
-  check:
-    permissions: {}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checking for fork
-        shell: pwsh
-        run: |
-          $isFork = "${{ github.event.pull_request.head.repo.fork }}"
-          if($isFork -eq "true") {
-            echo "### WARNING: This workflow is disabled for forked repositories. Please follow the [release branch process](https://azure.github.io/Azure-Verified-Modules/contributing/terraform/terraform-contribution-flow/#5-create-a-pull-request-to-the-upstream-repository) if end to end tests are required." >> $env:GITHUB_STEP_SUMMARY
-          }
-
   run-managed-workflow:
-    if: github.event.pull_request.head.repo.fork == false
-    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@main
+    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@31824f07a277458ce24e74ae69a33fdb18803bdf
     name: run managed workflow
+    with:
+      authoringSource: ${{ inputs.authoringSource || 'gallery' }}
+      authoringRef: ${{ inputs.authoringRef || '' }}
     secrets: inherit
     permissions:
       id-token: write

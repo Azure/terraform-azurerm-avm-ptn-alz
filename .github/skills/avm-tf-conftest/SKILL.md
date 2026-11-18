@@ -32,7 +32,7 @@ avm check policy
 avm pr-check
 ```
 
-If the version gate reports a stale installation, run `avm update`, re-import the module, and retry. Do not replace the managed command with a separately installed Conftest binary or a hand-built policy checkout.
+If the version gate reports a stale installation, follow the [MAR update instructions](https://github.com/Azure/azure-verified-modules-tools#install), then start a new PowerShell session, import the module, and retry. Do not replace the managed command with a separately installed Conftest binary or a hand-built policy checkout.
 
 ## Exception location and scope
 

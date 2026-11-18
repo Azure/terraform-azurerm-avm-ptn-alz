@@ -54,10 +54,17 @@ Do not hand-edit generated `README.md` files. Author module content in `_header.
 
 ## Use the Managed Toolchain
 
-Use PowerShell 7.4 or later with `Avm.Authoring`:
+Use PowerShell 7.4 or later with `Avm.Authoring` from Microsoft Artifact Registry (MAR). MAR is not registered by default. Follow the [PSResourceGet 1.2.0 prerequisite](https://github.com/Azure/azure-verified-modules-tools#install), then register MAR once:
 
 ```pwsh
-Install-PSResource -Name Avm.Authoring -Repository PSGallery -TrustRepository
+Import-Module Microsoft.PowerShell.PSResourceGet -MinimumVersion 1.2.0
+Register-PSResourceRepository -Name MAR `
+    -Uri 'https://mcr.microsoft.com' `
+    -ApiVersion ContainerRegistry `
+    -Trusted
+Install-PSResource -Name avm.authoring `
+    -Repository MAR `
+    -Scope CurrentUser
 Import-Module Avm.Authoring
 avm version
 ```
@@ -72,7 +79,7 @@ avm version
 | `avm lint` | Run the managed TFLint configuration. |
 | `avm check policy` | Evaluate example plans against APRL and AVMSEC through Conftest. |
 
-If the version gate reports that `Avm.Authoring` is stale, run `avm update`, re-import the module, and retry. Do not substitute the retired Make, Porch, container, or repository-launcher workflows.
+To update from MAR, repeat `Install-PSResource` with `-Reinstall`, then start a new PowerShell session and import the module. The built-in `avm update` still uses PowerShell Gallery. Do not substitute the retired Make, Porch, container, or repository-launcher workflows.
 
 ## Module Discovery
 

@@ -30,15 +30,22 @@ Keep RFC 2119 severity exact. Do not turn a SHOULD into a MUST or cite a rule fr
 
 ## Toolchain
 
-Use PowerShell 7.4 or later and the `Avm.Authoring` PowerShell module on every supported operating system:
+Use PowerShell 7.4 or later and the `Avm.Authoring` PowerShell module from Microsoft Artifact Registry (MAR) on every supported operating system. Follow the [PSResourceGet 1.2.0 prerequisite](https://github.com/Azure/azure-verified-modules-tools#install), then register MAR once; it is not registered by default:
 
 ```pwsh
-Install-PSResource -Name Avm.Authoring -Repository PSGallery -TrustRepository
+Import-Module Microsoft.PowerShell.PSResourceGet -MinimumVersion 1.2.0
+Register-PSResourceRepository -Name MAR `
+    -Uri 'https://mcr.microsoft.com' `
+    -ApiVersion ContainerRegistry `
+    -Trusted
+Install-PSResource -Name avm.authoring `
+    -Repository MAR `
+    -Scope CurrentUser
 Import-Module Avm.Authoring
 avm version
 ```
 
-If the module's version gate reports that the installation is stale, run `avm update`, re-import the module, and retry. Do not use `./avm`, `avm.ps1`, Make, Porch, Docker, Podman, or individually installed copies of the pinned tools.
+To update from MAR, repeat `Install-PSResource` with `-Reinstall`, then start a new PowerShell session and import the module. The built-in `avm update` still uses PowerShell Gallery. Do not use `./avm`, `avm.ps1`, Make, Porch, Docker, Podman, or individually installed copies of the pinned tools.
 
 | Command | Purpose |
 | --- | --- |
