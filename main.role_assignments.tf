@@ -1,6 +1,6 @@
 module "avm_interfaces" {
   source   = "Azure/avm-utl-interfaces/azure"
-  version  = "0.9.0"
+  version  = "0.10.0"
   for_each = var.management_group_role_assignments
 
   location                                  = var.location
