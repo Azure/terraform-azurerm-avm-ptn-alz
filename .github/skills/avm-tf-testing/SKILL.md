@@ -75,7 +75,7 @@ Test configurations, fixtures, and setup or teardown Terraform use AzAPI for eve
 
 AzureRM may be configured or exercised only when required by permitted `azurerm_*` resource or data-source blocks. Each block must independently implement one specific unsupported data-plane/non-ARM operation, document the exact block and why no applicable AzAPI resource or action can implement it, link the upstream AzAPI issue or pull request, and be replaced when support ships. One valid block does not authorize another.
 
-Authenticate without committed secrets. Local runs can use an authenticated Azure CLI session or supported `ARM_*` environment variables. CI uses OIDC with least-privilege identities and protected environments.
+Authenticate without committed secrets. Local runs can use an authenticated Azure CLI session or supported `ARM_*` environment variables. CI uses OIDC with least-privilege test identities; integration tests do not require an E2E label.
 
 ## E2E examples
 
@@ -83,7 +83,7 @@ Each direct child of `examples/` is a standalone Terraform root. Discover and ta
 
 ```pwsh
 avm test e2e --list
-avm test e2e --example default
+avm test e2e --example defaults
 ```
 
 Without `--example`, runnable examples execute sequentially. A `.e2eignore` marker excludes an example from discovery. E2E performs:
@@ -95,6 +95,28 @@ Without `--example`, runnable examples execute sequentially. A `.e2eignore` mark
 5. bounded retries for recognized capacity failures.
 
 An idempotency diff is a failure and is never hidden by a retry.
+
+### Canonical example requirements
+
+The pending public-spec addition TFNFR42 applies to executable direct roots under `examples/`:
+
+| Module class | Required | WAF-aligned |
+| --- | --- | --- |
+| Resource | `examples/defaults/` and `examples/waf-aligned/` | Required |
+| Pattern | `examples/defaults/` | Optional |
+| Utility | `examples/defaults/` | Optional |
+
+Use `defaults` for new modules. `default` is retained only for migration compatibility with existing tooling and repositories. Required examples must:
+
+- deploy and destroy without interactive input;
+- provide required and applicable conditional module inputs;
+- rely on module defaults for optional inputs not needed by the scenario;
+- separate test-harness prerequisites, deployment scope/setup resources, and location/telemetry controls from optional module feature overrides; and
+- omit `.e2eignore`.
+
+Do not use setup/location/telemetry variables to hide a missing scenario input, and do not copy placeholder values into an example only to clear a warning. A Terraform submodule has no separate required example tree; a parent example must exercise submodule behavior included in the scenario.
+
+An example directory named `waf-aligned` is not evidence of semantic WAF compliance. The scenario must implement or arrange applicable [SFR2](https://github.com/Azure/Azure-Verified-Modules/pull/3155) recommendations. Backfill existing repositories by renaming a suitable existing example only; gaps or ambiguity go to the owner, not to deployment rewrites or fabricated copies.
 
 Every runnable example and E2E configuration uses AzAPI for direct Azure setup and control-plane resources, and its `required_providers` includes `Azure/azapi`. It may include AzureRM only to configure or exercise independently justified unsupported data-plane/non-ARM blocks. A legacy `/azurerm` suffix in a published AVM module source is a Registry namespace and is not an AzureRM provider declaration.
 
@@ -140,6 +162,23 @@ The worktree must be clean. PR check runs sync, format, transform, lint, policy,
 - Treat `skipped` as different from `pass`. If the change requires a test tier, an undiscovered or skipped tier is not evidence.
 - Preserve logs for failed Terraform run blocks, plans, policy findings, and cleanup failures.
 
+### PR deployment labels and merge gates
+
+The managed workflow authorizes E2E deployments through labels rather than environment reviewer approvals. Open PRs early and add a deployment label when the changes and examples are ready, avoiding unnecessary cloud cost and runtime.
+
+| Label | Selected E2E examples |
+| --- | --- |
+| `PR: Run Required E2E Tests` | Applicable required examples; resource modules require runnable defaults and WAF-aligned examples, while pattern and utility modules require runnable defaults only. |
+| `PR: Run All E2E Tests` | Required examples and every other runnable optional example. |
+
+Static PR checks, unit tests, and integration tests are not label-gated. The `Report check status` merge gate requires applicable checks and all selected E2E tests to succeed, including optional examples selected by the All label. Existing required examples need either E2E label and must pass before merging; do not use `.e2eignore` to bypass them.
+
+Missing required examples produce guidance but are not yet a merge failure. A new Terraform composition check may warn about missing or misplaced canonical examples, but it is advisory before v1 and must not become a merge or release gate. If no runnable required examples exist, the Required label cannot create or substitute deployments; use the All label only for actual optional examples. If no runnable examples exist, neither label can create tests. Inspect the discovery summary, sticky PR feedback, and actual test results; label selection, a successful static check, or a skipped job does not prove deployment validation passed. Report absent suites explicitly rather than claiming they passed.
+
+Class-aware Required-label selection for pattern and utility modules and the warning-only missing-canonical-example composition check are pending `Avm.Authoring`/Tools behavior. The existing shared workflow still runs existing `default`/`defaults` and `waf-aligned` discovery. Do not represent pending behavior as published or use it as a current merge/release blocker.
+
+Labels on fork PRs never authorize privileged deployments. Follow the [process skill's reviewed fork handoff](../avm-tf-process/SKILL.md#fork-pr-release-branch-handoff) using `avm release-branch` before credentialed E2E testing, then apply the appropriate label to the same-repository follow-up PR. Do not expose credentials or weaken workflow permissions to run fork code.
+
 ## Debugging
 
 Run the smallest command that reproduces the issue:
@@ -147,7 +186,7 @@ Run the smallest command that reproduces the issue:
 ```pwsh
 avm test unit
 avm test integration
-avm test e2e --example default
+avm test e2e --example defaults
 avm lint
 avm check policy
 ```

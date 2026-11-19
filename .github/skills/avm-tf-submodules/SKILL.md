@@ -223,6 +223,8 @@ Prefer discrete outputs over whole-resource output objects.
 - Add provider-mocked unit tests for child logic and parent aggregation.
 - Add real-Azure integration coverage where ARM behavior matters.
 - Exercise representative child instances through an E2E example.
+- Keep submodule coverage in the parent example tree; do not create separate required example directories under `examples/` for submodules.
+- Parent examples must cover submodule behavior included in the scenario through required and applicable conditional inputs, while optional submodule features remain at module defaults unless the scenario explicitly needs them.
 - Verify parent and child resource IDs, nested interface propagation, and idempotency.
 
 ## Migration warning

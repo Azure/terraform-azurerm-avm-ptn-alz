@@ -1,6 +1,6 @@
 ---
 name: avm-tf-process
-description: Use for the AVM Terraform contribution process from module proposal and repository setup through implementation, Avm.Authoring validation, pull request review, and release.
+description: Use for the AVM Terraform contribution process from module proposal and repository setup through implementation, Avm.Authoring validation, pull request review, fork PR handoffs with avm release-branch, and release.
 ---
 
 # AVM Terraform Contribution Process
@@ -123,6 +123,36 @@ The pull request must explain:
 - confirmation that control-plane and supporting resources use AzAPI, plus the evidence and upstream link for any narrow data-plane/non-ARM AzureRM exception.
 
 Review the final diff rather than only the hand-authored files. Managed and generated outputs are part of the change.
+
+Open PRs early, then add `PR: Run Required E2E Tests` when required examples are ready for deployment validation, or `PR: Run All E2E Tests` to include optional examples. This avoids unnecessary cloud cost and runtime during early development. Static PR checks, unit tests, and integration tests run without these labels.
+
+Follow the [testing skill's label and merge-gate guidance](../avm-tf-testing/SKILL.md#pr-deployment-labels-and-merge-gates). The pending public-spec addition [TFNFR42](https://github.com/Azure/Azure-Verified-Modules/pull/3155) requires resource modules to provide executable `examples/defaults/` and `examples/waf-aligned/`; pattern and utility modules require only `examples/defaults/`. WAF-aligned is optional for pattern and utility modules. The exact canonical spelling is `defaults`; `default` remains only migration compatibility.
+
+Existing required examples must run and pass; absent required examples are not yet mandatory. A Terraform composition warning for missing or misplaced canonical examples is advisory before v1 and cannot block merge or release. Do not use `.e2eignore` to satisfy coverage or copy placeholders to clear warnings. Backfill by renaming a suitable existing example; route a missing or ambiguous canonical scenario to the module owner instead of rewriting deployments or fabricating copies.
+
+Required examples cover required and applicable conditional inputs and use module defaults for unrelated optional inputs. Keep location, telemetry, test harness setup, deployment scope, and dependency resources separate from module feature overrides. Terraform submodules need no separate example trees; parent examples must exercise relevant submodule behavior.
+
+A name such as `waf-aligned` does not prove semantic WAF compliance. Use applicable [SFR2](https://github.com/Azure/Azure-Verified-Modules/pull/3155) recommendations to assess the scenario.
+
+Class-aware Required-label selection and the warning-only Terraform composition check are pending Tools/Avm.Authoring behavior, not published functionality. The current shared workflow still discovers existing runnable `default`/`defaults` and `waf-aligned` examples. Confirm selected jobs actually passed rather than treating label presence or skipped tests as success. Fork labels do not grant deployment credentials; use the handoff below when credentialed E2E tests are needed.
+
+### Fork PR release-branch handoff
+
+Credentialed E2E testing of external fork PRs requires a same-repository release branch. Ordinary fork checks do not require this handoff. An authorized Microsoft FTE with write access to the upstream repository must first review all code, workflows, and dependencies on the current fork PR head that could access credentials. Do not infer this review or authorization from labels. Re-review later changes to the release branch before allowing them to use credentials.
+
+Use the MAR-installed `Avm.Authoring` module and the existing authenticated `gh` session for github.com. The upstream repository must be a non-fork with default branch `main`, and the external fork PR must be open and ready for review. Replace `Azure/example` and `123` with the upstream repository and fork PR number:
+
+```pwsh
+avm release-branch `
+    --repository 'Azure/example' `
+    --pull-request 123
+```
+
+This command changes GitHub state: it creates `release/fork-pr-<number>-<sha-prefix>` from upstream `main`, retargets the original fork PR, merges its captured head into that release branch, and opens a follow-up PR back to `main`. It does not merge the follow-up, publish a release, approve reviews, or bypass branch protections and required checks. It detects a changed head during handoff but cannot verify which commit a human reviewed. Restrict write access to the release branch.
+
+For Terraform, the command does not add an E2E label automatically. Apply `PR: Run Required E2E Tests` or `PR: Run All E2E Tests` to the follow-up PR when ready, then inspect the selected jobs and merge gates before merging to `main`.
+
+A failure can leave a created branch or a retargeted or merged PR behind. Inspect the original PR, release branch, and any follow-up PR before manual recovery; do not blindly rerun. See the [command reference](https://github.com/Azure/azure-verified-modules-tools/blob/main/docs/reference/Invoke-AvmReleaseBranch.md) for parameters and preview support.
 
 ## 9. Release
 

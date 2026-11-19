@@ -78,8 +78,29 @@ avm version
 | `avm test e2e` | Deploy, idempotency-check, and destroy runnable examples. |
 | `avm lint` | Run the managed TFLint configuration. |
 | `avm check policy` | Evaluate example plans against APRL and AVMSEC through Conftest. |
+| `avm release-branch` | Hand off a reviewed external fork PR for credentialed E2E testing. |
 
 To update from MAR, repeat `Install-PSResource` with `-Reinstall`, then start a new PowerShell session and import the module. The built-in `avm update` still uses PowerShell Gallery. Do not substitute the retired Make, Porch, container, or repository-launcher workflows.
+
+## Pull request deployment labels
+
+Open PRs early; add deployment labels when the changes and examples are ready to avoid unnecessary cloud cost and runtime. Static PR checks, unit tests, and integration tests do not require these labels.
+
+For Terraform module examples, the pending public-spec addition [TFNFR42](https://github.com/Azure/Azure-Verified-Modules/pull/3155) requires executable direct roots under `examples/`:
+
+| Module class | Required examples | Optional examples |
+| --- | --- | --- |
+| Resource | `examples/defaults/` and `examples/waf-aligned/` | Additional examples |
+| Pattern | `examples/defaults/` | `examples/waf-aligned/` and additional examples |
+| Utility | `examples/defaults/` | `examples/waf-aligned/` and additional examples |
+
+Use `defaults` for new modules. `default` remains only as a migration compatibility spelling. Required examples must use required and applicable conditional module inputs, rely on module defaults for optional inputs not needed by the scenario, keep test-harness setup, location/telemetry controls, and dependencies separate from module feature overrides, and must not contain `.e2eignore`. Terraform submodules do not require separate example trees; exercise submodule behavior through parent examples.
+
+`PR: Run Required E2E Tests` and `PR: Run All E2E Tests` exist, but class-aware selection and the Terraform missing-canonical-example composition warning are pending changes in `Avm.Authoring`/Tools and are not yet published behavior. Until those changes are released, do not claim that a required label is class-aware or that a warning is a merge/release gate. The current shared workflow still discovers existing runnable `default`/`defaults` and `waf-aligned` examples. A warning, label, or skipped job is not evidence that E2E tests passed.
+
+Backfill existing repositories by renaming suitable existing examples to `defaults` or `waf-aligned` only when the example already represents that scenario. If a canonical gap or WAF intent is ambiguous, raise it to the module owner instead of deploying a rewrite or fabricating another copy. A name such as `waf-aligned` does not prove semantic WAF compliance; validate the scenario against [SFR2](https://github.com/Azure/Azure-Verified-Modules/pull/3155).
+
+Fork PR labels do not grant deployment credentials. For credentialed E2E testing, an authorized Microsoft FTE must review the current fork changes and use `avm release-branch` for the same-repository handoff. Follow the [process skill's fork handoff guidance](skills/avm-tf-process/SKILL.md#fork-pr-release-branch-handoff); do not weaken permissions or environment controls.
 
 ## Module Discovery
 
