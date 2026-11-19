@@ -161,3 +161,18 @@ configuration:
         then:
           - removeLabel:
               label: "Status: In PR :point_right:"
+
+      - description: 'ITA24 - Remove the "Needs: Triage", "Needs: Immediate Attention", and "Status: Response Overdue" labels from an issue or PR when it''s closed.'
+        if:
+          - or:
+              - payloadType: Issues
+              - payloadType: Pull_Request
+          - isAction:
+              action: Closed
+        then:
+          - removeLabel:
+              label: "Needs: Triage :mag:"
+          - removeLabel:
+              label: "Needs: Immediate Attention :bangbang:"
+          - removeLabel:
+              label: "Status: Response Overdue :triangular_flag_on_post:"
