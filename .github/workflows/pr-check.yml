@@ -26,7 +26,7 @@ jobs:
       (github.event.action != 'labeled' && github.event.action != 'unlabeled') ||
       github.event.label.name == 'PR: Run Required E2E Tests' ||
       github.event.label.name == 'PR: Run All E2E Tests'
-    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@81fa244a4ba3c2e89cf9cbcb8fb281d8511ef7d6
+    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@c62bf0153e307777c064e536125547b47f31358b
     name: run managed workflow
     with:
       authoringSource: ${{ inputs.authoringSource || 'gallery' }}
