@@ -2,8 +2,7 @@
 name: PR Check
 on:
   pull_request:
-    types: ['opened', 'reopened', 'synchronize']
-  merge_group:
+    types: ['opened', 'reopened', 'synchronize', 'labeled', 'unlabeled']
   workflow_dispatch:
     inputs:
       authoringSource:
@@ -22,7 +21,12 @@ on:
 
 jobs:
   run-managed-workflow:
-    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@31824f07a277458ce24e74ae69a33fdb18803bdf
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.action != 'labeled' && github.event.action != 'unlabeled') ||
+      github.event.label.name == 'PR: Run Required E2E Tests' ||
+      github.event.label.name == 'PR: Run All E2E Tests'
+    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@81fa244a4ba3c2e89cf9cbcb8fb281d8511ef7d6
     name: run managed workflow
     with:
       authoringSource: ${{ inputs.authoringSource || 'gallery' }}
@@ -31,3 +35,4 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      pull-requests: write
