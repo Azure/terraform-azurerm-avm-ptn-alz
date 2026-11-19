@@ -1,10 +1,10 @@
 module "avm_interfaces" {
   source   = "Azure/avm-utl-interfaces/azure"
-  version  = "0.9.0"
+  version  = "0.10.0"
   for_each = var.management_group_role_assignments
 
-  location                                  = var.location
   enable_telemetry                          = var.enable_telemetry
+  location                                  = var.location
   role_assignment_definition_lookup_enabled = var.role_assignment_definition_lookup_enabled
   role_assignment_definition_scope          = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [each.value.management_group_name])
   role_assignments = {
