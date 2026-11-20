@@ -21,7 +21,7 @@ on:
 
 jobs:
   run-managed-workflow:
-    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@14361453cdd14f78c8c45a8235643b620397d398
+    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@bdcbf68e953ba573ffe825080dde492b2e53fbaa
     name: run managed workflow
     with:
       authoringSource: ${{ inputs.authoringSource || 'gallery' }}
