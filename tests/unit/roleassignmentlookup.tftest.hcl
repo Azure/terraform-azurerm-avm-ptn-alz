@@ -91,6 +91,110 @@ variables {
   }
 }
 
+override_resource {
+  target = azapi_resource.management_groups_level_1["test"]
+  values = {
+    id = "/providers/Microsoft.Management/managementGroups/test"
+  }
+}
+
+run "builtin_lookup_waits_for_initial_management_group_delay" {
+  command = plan
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    architecture_name                    = "managed_scope"
+    management_groups_dependencies       = ["baseline"]
+    role_assignment_name_use_random_uuid = true
+    management_group_role_assignments = {
+      builtin = {
+        management_group_name      = "test"
+        role_definition_id_or_name = "Storage Blob Data Contributor"
+        principal_id               = "00000000-0000-0000-0000-000000000001"
+      }
+    }
+  }
+
+  assert {
+    condition     = contains(keys(azapi_resource.management_groups_level_1), "test") && time_sleep.after_management_groups.create_duration == var.delays.after_management_group.create
+    error_message = "The initial lookup plan must include its managed scope and honor the configured post-management-group delay."
+  }
+}
+
+run "builtin_apply_before_management_group_dependency_change" {
+  command = apply
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    architecture_name                    = "managed_scope"
+    management_groups_dependencies       = ["baseline"]
+    role_assignment_name_use_random_uuid = true
+    management_group_role_assignments = {
+      builtin = {
+        management_group_name      = "test"
+        role_definition_id_or_name = "Storage Blob Data Contributor"
+        principal_id               = "00000000-0000-0000-0000-000000000001"
+      }
+    }
+  }
+
+  assert {
+    condition     = contains(keys(azapi_resource.management_groups_level_1), "test") && azapi_resource.management_group_role_assignments["builtin"].name == "11111111-1111-4111-8111-111111111111"
+    error_message = "The dependency-change baseline must manage the assignment's scope and establish its existing random UUID."
+  }
+}
+
+run "builtin_lookup_known_after_management_group_dependency_change" {
+  command = plan
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    architecture_name                    = "managed_scope"
+    management_groups_dependencies       = ["unrelated-infrastructure-change"]
+    role_assignment_name_use_random_uuid = true
+    management_group_role_assignments = {
+      builtin = {
+        management_group_name      = "test"
+        role_definition_id_or_name = "Storage Blob Data Contributor"
+        principal_id               = "00000000-0000-0000-0000-000000000001"
+      }
+    }
+  }
+
+  assert {
+    condition     = terraform_data.management_groups_dependencies.input == sha256(jsonencode(["unrelated-infrastructure-change"]))
+    error_message = "The regression must plan a management-group dependency change without changing the role definition."
+  }
+
+  assert {
+    condition     = azapi_resource.management_group_role_assignments["builtin"].body.properties.roleDefinitionId == "/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+    error_message = "A management-group dependency change must not defer an existing unrelated built-in role lookup until apply."
+  }
+
+  assert {
+    condition     = azapi_resource.management_group_role_assignments["builtin"].name == "11111111-1111-4111-8111-111111111111"
+    error_message = "A management-group dependency change must preserve the existing random assignment UUID."
+  }
+}
+
 run "deterministic_owned_apply" {
   command = apply
 
