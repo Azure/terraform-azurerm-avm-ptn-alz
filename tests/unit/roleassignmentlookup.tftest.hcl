@@ -195,6 +195,147 @@ run "builtin_lookup_known_after_management_group_dependency_change" {
   }
 }
 
+run "management_groups_ready_before_role_change" {
+  command = apply
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    management_group_role_assignments = {}
+  }
+
+  assert {
+    condition     = !contains(keys(azapi_resource.role_definitions), "test/Ancestor role")
+    error_message = "The baseline must not contain the role instance added by the next plan."
+  }
+}
+
+run "builtin_lookup_known_with_pending_custom_role" {
+  command = plan
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    architecture_name = "role_added"
+    management_group_role_assignments = {
+      builtin = {
+        management_group_name      = "test"
+        role_definition_id_or_name = "Storage Blob Data Contributor"
+        principal_id               = "00000000-0000-0000-0000-000000000001"
+      }
+    }
+  }
+
+  assert {
+    condition     = contains(keys(azapi_resource.role_definitions), "test/Ancestor role")
+    error_message = "The regression must plan a new role instance without changing the management-group structure."
+  }
+
+  assert {
+    condition     = azapi_resource.management_group_role_assignments["builtin"].body.properties.roleDefinitionId == "/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+    error_message = "An unrelated pending custom role must not defer built-in role resolution until apply."
+  }
+
+  assert {
+    condition = azapi_resource.management_group_role_assignments["builtin"].name == uuidv5("url", format(
+      "%s%s",
+      "00000000-0000-0000-0000-000000000001",
+      "/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+    ))
+    error_message = "An unrelated pending custom role must not make an existing built-in assignment identity unknown."
+  }
+}
+
+run "builtin_apply_before_role_amendment" {
+  command = apply
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    management_group_role_assignments = {
+      builtin = {
+        management_group_name      = "test"
+        role_definition_id_or_name = "Storage Blob Data Contributor"
+        principal_id               = "00000000-0000-0000-0000-000000000001"
+      }
+    }
+  }
+
+  assert {
+    condition     = azapi_resource.role_definitions["test/Security-Operations"].parent_id == "/providers/Microsoft.Management/managementGroups/test"
+    error_message = "The amendment regression must first establish the original custom role."
+  }
+
+  assert {
+    condition = azapi_resource.management_group_role_assignments["builtin"].name == uuidv5("url", format(
+      "%s%s",
+      "00000000-0000-0000-0000-000000000001",
+      "/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+    ))
+    error_message = "The amendment regression must first establish the existing built-in assignment identity."
+  }
+}
+
+run "builtin_lookup_known_after_role_amendment" {
+  command = plan
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    parent_id_overrides = {
+      role_definitions = {
+        "test/Security-Operations" = "/providers/Microsoft.Management/managementgroups"
+      }
+    }
+    management_group_role_assignments = {
+      builtin = {
+        management_group_name      = "test"
+        role_definition_id_or_name = "Storage Blob Data Contributor"
+        principal_id               = "00000000-0000-0000-0000-000000000001"
+      }
+    }
+  }
+
+  assert {
+    condition     = azapi_resource.role_definitions["test/Security-Operations"].parent_id == "/providers/Microsoft.Management/managementgroups/test"
+    error_message = "The regression must plan a scope-casing amendment to the existing custom role."
+  }
+
+  assert {
+    condition     = azapi_resource.management_group_role_assignments["builtin"].body.properties.roleDefinitionId == "/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+    error_message = "A custom-role amendment must not defer an existing unrelated built-in role lookup until apply."
+  }
+
+  assert {
+    condition = azapi_resource.management_group_role_assignments["builtin"].name == uuidv5("url", format(
+      "%s%s",
+      "00000000-0000-0000-0000-000000000001",
+      "/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+    ))
+    error_message = "A custom-role amendment must preserve the existing unrelated assignment resource identity."
+  }
+}
+
 run "deterministic_owned_apply" {
   command = apply
 
