@@ -21,12 +21,7 @@ on:
 
 jobs:
   run-managed-workflow:
-    if: >-
-      github.event_name != 'pull_request' ||
-      (github.event.action != 'labeled' && github.event.action != 'unlabeled') ||
-      github.event.label.name == 'PR: Run Required E2E Tests' ||
-      github.event.label.name == 'PR: Run All E2E Tests'
-    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@c62bf0153e307777c064e536125547b47f31358b
+    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@bdcbf68e953ba573ffe825080dde492b2e53fbaa
     name: run managed workflow
     with:
       authoringSource: ${{ inputs.authoringSource || 'gallery' }}

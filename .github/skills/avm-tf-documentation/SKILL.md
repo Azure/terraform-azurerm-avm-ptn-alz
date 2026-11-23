@@ -33,6 +33,10 @@ Submodules are full AVM modules and need their own `_header.md`, `_footer.md`, a
 - Prefer working examples over duplicated implementation prose.
 - Keep headings and links stable for Terraform Registry rendering.
 - Do not explain internal review decisions or migration history in the README unless consumers need that information.
+- Document the module class's pending public-spec addition [TFNFR42](https://github.com/Azure/Azure-Verified-Modules/pull/3155) example coverage: resource modules require `examples/defaults/` and `examples/waf-aligned/`; pattern and utility modules require `examples/defaults/` and may optionally provide `waf-aligned`.
+- Explain required and applicable conditional inputs in the defaults scenario, while relying on module defaults for optional inputs not needed by that scenario. Describe test-harness prerequisites, deployment scope, location/telemetry controls, and dependency setup separately from module feature overrides.
+- Do not use a submodule-only example tree or `.e2eignore` to replace parent example coverage. Exercise relevant submodule behavior in a parent example.
+- Do not imply semantic WAF compliance from the `waf-aligned` name alone. Explain the applicable [SFR2](https://github.com/Azure/Azure-Verified-Modules/pull/3155) intent only when the scenario implements or arranges it.
 
 ## Generate documentation
 
