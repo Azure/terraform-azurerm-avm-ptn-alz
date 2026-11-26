@@ -1,0 +1,17 @@
+name: ancestor_baseline
+management_groups:
+  - id: parent
+    display_name: Parent
+    exists: true
+    parent_id: null
+    archetypes: []
+  - id: test
+    display_name: Test
+    exists: true
+    parent_id: parent
+    archetypes: [lookup_owned]
+  - id: sibling
+    display_name: Sibling
+    exists: true
+    parent_id: parent
+    archetypes: [lookup_sibling]

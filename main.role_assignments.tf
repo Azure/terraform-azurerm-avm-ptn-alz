@@ -6,7 +6,7 @@ module "avm_interfaces" {
   location                                  = var.location
   enable_telemetry                          = var.enable_telemetry
   role_assignment_definition_lookup_enabled = var.role_assignment_definition_lookup_enabled
-  role_assignment_definition_scope          = provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [each.value.management_group_name])
+  role_assignment_definition_scope          = time_sleep.after_management_groups.id != null && local.role_assignment_definition_lookup_ready[each.key] ? provider::azapi::tenant_resource_id("Microsoft.Management/managementGroups", [each.value.management_group_name]) : null
   role_assignments = {
     this = {
       role_definition_id_or_name             = length(local.role_assignment_owned_role_definition_ids[each.key]) == 1 ? local.role_assignment_owned_role_definition_ids[each.key][0] : each.value.role_definition_id_or_name
@@ -19,8 +19,6 @@ module "avm_interfaces" {
       principal_type                         = each.value.principal_type
     }
   }
-
-  depends_on = [azapi_resource.role_definitions]
 }
 
 resource "azapi_resource" "management_group_role_assignments" {
