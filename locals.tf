@@ -123,3 +123,16 @@ locals {
       (var.subscription_placement_destroy_behavior == "custom" ? var.subscription_placement_destroy_custom_target_management_group_id :
   null)))
 }
+
+locals {
+  management_group_resource_provider_registrations = {
+    for registration in flatten([
+      for management_group_name, resource_provider_namespaces in var.management_group_resource_provider_registrations : [
+        for resource_provider_namespace in resource_provider_namespaces : {
+          management_group_name       = management_group_name
+          resource_provider_namespace = resource_provider_namespace
+        }
+      ]
+    ]) : "${registration.management_group_name}/${registration.resource_provider_namespace}" => registration
+  }
+}
