@@ -133,7 +133,7 @@ variable "override_policy_definition_parameter_assign_permissions_set" {
     },
     {
       "definition_name" = "516187d4-ef64-4a1b-ad6b-a7348502976c",
-      "parameter_name"  = "privateDnsZoneId"
+      "parameter_name"  = "userAssignedIdentityResourceId"
     },
     {
       "definition_name" = "56d0ed2b-60fc-44bf-af81-a78c851b5fe1",
