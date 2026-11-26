@@ -66,6 +66,26 @@ DESCRIPTION
   }
 }
 
+variable "management_group_resource_provider_registrations" {
+  type        = map(set(string))
+  default     = {}
+  description = <<DESCRIPTION
+A map of resource provider namespaces to register at management group scope.
+
+The map key is the management group name and the value is a set of resource provider namespaces to register.
+
+Example:
+
+management_group_resource_provider_registrations = {
+  alz = [
+    "Microsoft.Insights",
+    "Microsoft.Network"
+  ]
+}
+DESCRIPTION
+  nullable    = false
+}
+
 variable "management_groups_dependencies" {
   type        = any
   default     = null

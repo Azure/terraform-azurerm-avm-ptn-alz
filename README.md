@@ -147,6 +147,7 @@ The following resources are used by this module:
 - [azapi_resource.role_definitions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.subscription_placement](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource_action.management_group_resource_provider_registrations](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_resource_action.subscription_placement_create](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_resource_action.subscription_placement_delete](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_update_resource.hierarchy_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/update_resource) (resource)
@@ -248,6 +249,25 @@ object({
 ```
 
 Default: `null`
+
+### <a name="input_management_group_resource_provider_registrations"></a> [management\_group\_resource\_provider\_registrations](#input\_management\_group\_resource\_provider\_registrations)
+
+Description: A map of resource provider namespaces to register at management group scope.
+
+The map key is the management group name and the value is a set of resource provider namespaces to register.
+
+Example:
+
+management\_group\_resource\_provider\_registrations = {  
+  alz = [
+    "Microsoft.Insights",
+    "Microsoft.Network"
+  ]
+}
+
+Type: `map(set(string))`
+
+Default: `{}`
 
 ### <a name="input_management_group_role_assignments"></a> [management\_group\_role\_assignments](#input\_management\_group\_role\_assignments)
 
