@@ -1,4 +1,10 @@
 locals {
+  role_assignment_definition_lookup_ready = {
+    for key, assignment in var.management_group_role_assignments : key => alltrue([
+      for definition in azapi_resource.role_definitions : definition.id != null
+      if var.role_assignment_definition_lookup_enabled && definition.body.properties.roleName == assignment.role_definition_id_or_name
+    ])
+  }
   role_assignment_owned_role_definition_ids = {
     for key, assignment in var.management_group_role_assignments : key => var.role_assignment_definition_lookup_enabled ? [
       for definition in azapi_resource.role_definitions :

@@ -98,6 +98,84 @@ override_resource {
   }
 }
 
+run "management_groups_ready_before_ancestor_role_creation" {
+  command = apply
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    architecture_name                 = "ancestor_baseline"
+    management_group_role_assignments = {}
+  }
+
+  assert {
+    condition     = !contains(keys(azapi_resource.role_definitions), "parent/Ancestor role")
+    error_message = "The baseline must complete management-group readiness before any ancestor role exists."
+  }
+}
+
+run "new_ancestor_role_lookup_is_deferred" {
+  command = plan
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    management_group_role_assignments = {
+      inherited = {
+        management_group_name      = "test"
+        role_definition_id_or_name = "Ancestor role"
+        principal_id               = "00000000-0000-0000-0000-000000000001"
+      }
+    }
+  }
+
+  assert {
+    condition     = contains(keys(azapi_resource.role_definitions), "parent/Ancestor role") && local.management_groups["test"].parent_id == "parent"
+    error_message = "The plan must add an ancestor role after management-group readiness has completed."
+  }
+}
+
+run "new_ancestor_role_resolves_after_creation" {
+  command = apply
+
+  providers = {
+    alz    = alz
+    azapi  = azapi
+    random = random
+    time   = time
+  }
+
+  variables {
+    management_group_role_assignments = {
+      inherited = {
+        management_group_name      = "test"
+        role_definition_id_or_name = "Ancestor role"
+        principal_id               = "00000000-0000-0000-0000-000000000001"
+      }
+    }
+  }
+
+  assert {
+    condition     = contains(keys(azapi_resource.role_definitions), "parent/Ancestor role") && local.management_groups["test"].parent_id == "parent"
+    error_message = "The apply must create the ancestor role and assign it at a child management group."
+  }
+
+  assert {
+    condition     = azapi_resource.management_group_role_assignments["inherited"].body.properties.roleDefinitionId == "/providers/Microsoft.Authorization/roleDefinitions/55555555-5555-4555-8555-555555555555"
+    error_message = "A newly created ancestor role must resolve to its canonical ID through the ordered remote lookup."
+  }
+}
+
 run "builtin_lookup_waits_for_initial_management_group_delay" {
   command = plan
 
