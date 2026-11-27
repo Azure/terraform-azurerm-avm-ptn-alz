@@ -24,8 +24,7 @@ updates:
       terraform:
         patterns:
           - "*"
-    labels:
-      - "Language: Terraform :globe_with_meridians:"
+    labels: []
     commit-message:
       prefix: chore
       include: scope

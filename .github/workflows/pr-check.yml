@@ -2,7 +2,7 @@
 name: PR Check
 on:
   pull_request:
-    types: ['opened', 'reopened', 'synchronize', 'labeled', 'unlabeled']
+    types: ['opened', 'reopened', 'synchronize']
   workflow_dispatch:
     inputs:
       authoringSource:
@@ -21,7 +21,16 @@ on:
 
 jobs:
   run-managed-workflow:
-    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@bdcbf68e953ba573ffe825080dde492b2e53fbaa
+    if: >-
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name != 'pull_request') ||
+      !(
+        (github.event.pull_request.user.login == 'azure-verified-modules[bot]') &&
+        startsWith(github.head_ref, 'avm-bot/pre-commit-') &&
+        (github.event.pull_request.base.repo.full_name == github.repository) &&
+        (github.event.pull_request.head.repo.full_name == github.repository)
+      )
+    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@23cfc981167157e2b8ef8f5a89c5ea0b0eaf5869
     name: run managed workflow
     with:
       authoringSource: ${{ inputs.authoringSource || 'gallery' }}
@@ -30,4 +39,5 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      issues: read
       pull-requests: write
