@@ -23,12 +23,39 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          if (-not (Get-Module -ListAvailable -Name 'Microsoft.PowerShell.PSResourceGet')) {
-            Install-Module -Name 'Microsoft.PowerShell.PSResourceGet' -Scope CurrentUser -Force -AllowClobber
+          if (-not @(Get-Module -ListAvailable -Name 'Microsoft.PowerShell.PSResourceGet' |
+              Where-Object { $_.Version -ge [version]'1.2.0' }).Count) {
+            Install-Module -Name 'Microsoft.PowerShell.PSResourceGet' `
+              -MinimumVersion 1.2.0 `
+              -Repository PSGallery `
+              -Scope CurrentUser `
+              -Force `
+              -AllowClobber `
+              -ErrorAction Stop
           }
-          Import-Module 'Microsoft.PowerShell.PSResourceGet'
-          Install-PSResource -Name Avm.Authoring -Scope CurrentUser -TrustRepository
-          Import-Module Avm.Authoring
+          Import-Module 'Microsoft.PowerShell.PSResourceGet' -MinimumVersion 1.2.0 -ErrorAction Stop
+
+          $marUri = 'https://mcr.microsoft.com'
+          $repositories = @(Get-PSResourceRepository -ErrorAction Stop)
+          $hasMar = @($repositories | Where-Object {
+            $uriProperty = $_.PSObject.Properties['Uri']
+            $uri = if ($null -eq $uriProperty) { '' } else { ([string]$uriProperty.Value).TrimEnd('/') }
+            $uri -ieq $marUri
+          }).Count -gt 0
+          if (-not $hasMar) {
+            Register-PSResourceRepository -Name MAR `
+              -Uri "$marUri/" `
+              -ApiVersion ContainerRegistry `
+              -Trusted `
+              -ErrorAction Stop
+          }
+
+          Install-PSResource -Name avm.authoring `
+            -Repository MAR `
+            -Scope CurrentUser `
+            -TrustRepository `
+            -ErrorAction Stop
+          Import-Module Avm.Authoring -ErrorAction Stop
           avm version
 
       - name: Run pre-commit
@@ -38,8 +65,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $ErrorActionPreference = 'Stop'
-          Import-Module Avm.Authoring
-          avm pre-commit
+          Import-Module Avm.Authoring -ErrorAction Stop
+          avm pre-commit -SkipModuleVersionCheck
 
       - name: Commit and push pre-commit fixes
         if: ${{ !cancelled() }}

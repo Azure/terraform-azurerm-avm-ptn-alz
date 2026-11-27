@@ -7,11 +7,9 @@ disabled: false
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:
-      - description: 'ITA06 - If a new issue or PR is opened add the "Needs: Triage :mag:" label'
+      - description: 'ITA06 - If a new issue is opened add the "Needs: Triage :mag:" label'
         if:
-          - or:
-              - payloadType: Issues
-              - payloadType: Pull_Request
+          - payloadType: Issues
           - isAction:
               action: Opened
         then:
@@ -20,9 +18,8 @@ configuration:
 
       - description: 'ITA09 - When #RR is used in an issue, add the "Needs: Author Feedback :ear:" label'
         if:
-          - or:
-              - payloadType: Pull_Request_Review_Comment
-              - payloadType: Issue_Comment
+          - payloadType: Issue_Comment
+          - isIssue
           - commentContains:
               pattern: "#RR"
           - not:
@@ -34,9 +31,8 @@ configuration:
 
       - description: 'ITA10 - When #wontfix is used in an issue, mark it by using the label of "Status: Won''t Fix :broken_heart:"'
         if:
-          - or:
-              - payloadType: Pull_Request_Review_Comment
-              - payloadType: Issue_Comment
+          - payloadType: Issue_Comment
+          - isIssue
           - commentContains:
               pattern: "#wontfix"
           - not:
@@ -49,9 +45,8 @@ configuration:
 
       - description: 'ITA11 - When the author replies, remove the "Needs: Author Feedback :ear:" label and label with "Needs: Attention :wave:"'
         if:
-          - or:
-              - payloadType: Pull_Request_Review_Comment
-              - payloadType: Issue_Comment
+          - payloadType: Issue_Comment
+          - isIssue
           - not:
               isAction:
                 action: Closed
@@ -72,33 +67,6 @@ configuration:
           - payloadType: Issue_Comment
         then:
           - cleanEmailReply
-
-      - description: 'ITA15 - remove the "Needs: Triage" label from a PR, if it already has a "Type: XYZ" label added at the time of creating it.'
-        if:
-          - payloadType: Pull_Request
-          - isAction:
-              action: Opened
-          - or:
-              - hasLabel:
-                  label: "Type: Bug :bug:"
-              - hasLabel:
-                  label: "Type: Documentation :page_facing_up:"
-              - hasLabel:
-                  label: "Type: Duplicate :palms_up_together:"
-              - hasLabel:
-                  label: "Type: Feature Request :heavy_plus_sign:"
-              - hasLabel:
-                  label: "Type: Hygiene :broom:"
-              - hasLabel:
-                  label: "Type: New Module Proposal :bulb:"
-              - hasLabel:
-                  label: "Type: Question/Feedback :raising_hand:"
-              - hasLabel:
-                  label: "Type: Security Bug :lock:"
-          - isAssignedToSomeone
-        then:
-          - removeLabel:
-              label: "Needs: Triage :mag:"
 
       - description: 'ITA20 - If the type is feature request, assign the "Type: Feature Request :heavy_plus_sign:" label on the issue'
         if:
@@ -162,11 +130,9 @@ configuration:
           - removeLabel:
               label: "Status: In PR :point_right:"
 
-      - description: 'ITA24 - Remove the "Needs: Triage", "Needs: Immediate Attention", and "Status: Response Overdue" labels from an issue or PR when it''s closed.'
+      - description: 'ITA24 - Remove the "Needs: Triage", "Needs: Immediate Attention", and "Status: Response Overdue" labels from an issue when it''s closed.'
         if:
-          - or:
-              - payloadType: Issues
-              - payloadType: Pull_Request
+          - payloadType: Issues
           - isAction:
               action: Closed
         then:
